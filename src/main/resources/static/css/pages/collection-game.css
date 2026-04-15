@@ -7177,10 +7177,12 @@ details.cg-pt-accordion[open] .cgpd-card__pct-bar .cgpt-read-pct-fill {
   transform-origin: left center;
 }
 .cg-hero-meta-chips {
+  align-items: flex-start;
   display: flex;
   flex-wrap: wrap;
   gap: 0.42rem 0.48rem;
   justify-content: flex-start;
+  max-width: 100%;
 }
 .cg-hero-meta-chip {
   align-items: center;
@@ -7197,9 +7199,15 @@ details.cg-pt-accordion[open] .cgpd-card__pct-bar .cgpt-read-pct-fill {
   padding: 0.38rem 0.78rem 0.4rem;
 }
 .cg-hero-meta-chip--platform {
+  align-self: flex-start;
+  border-radius: 0.95rem;
+  display: flex;
+  flex: 0 1 100%;
   justify-content: flex-start;
-  max-width: min(100%, 32rem);
+  max-width: 100%;
   min-width: 0;
+  text-align: left;
+  width: fit-content;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
