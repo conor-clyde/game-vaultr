@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/layout-head :: head}"></head>
+<head th:replace="~{fragments/layout/layout-head :: head}"></head>
 
 <body class="search-page">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
 
     <main th:with="hasQuery=${query != null and !#strings.isEmpty(query)}, hasFilters=${hasActiveFilters != null and hasActiveFilters}"
         th:classappend="${hasQuery ? ' has-query' : ''}">
@@ -60,12 +60,12 @@
             <div class="cg-flash cg-flash--ok cg-flash--dismissible search-collection-added-flash" role="status"
                 th:if="${searchCollectionAdded != null && searchCollectionAdded}">
                 <span class="cg-flash__body" th:text="|Added “${searchCollectionAddedTitle}” to your collection.|">Added to your collection.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+                <th:block th:replace="~{fragments/layout/flash-banner :: closeButton}"></th:block>
             </div>
             <div class="cg-flash cg-flash--err cg-flash--dismissible" role="alert"
                 th:if="${searchCollectionAddError != null}">
                 <span class="cg-flash__body" th:text="${searchCollectionAddError}">Choose a platform before adding to your collection.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+                <th:block th:replace="~{fragments/layout/flash-banner :: closeButton}"></th:block>
             </div>
         </div>
 
@@ -77,7 +77,7 @@
         </template>
 
         <template id="searchResultCardTemplate">
-            <th:block th:replace="~{fragments/search-results :: cardSkeleton()}">
+            <th:block th:replace="~{fragments/search/search-results :: cardSkeleton()}">
             </th:block>
         </template>
 
@@ -153,7 +153,7 @@
                         </div>
 
                         <div
-                            th:replace="~{fragments/search-results :: resultsList('searchResultsList', ${searchResult != null ? searchResult.results : null}, ${query})}">
+                            th:replace="~{fragments/search/search-results :: resultsList('searchResultsList', ${searchResult != null ? searchResult.results : null}, ${query})}">
                         </div>
 
                         <div id="searchResultsLoadMore" class="results-load-more"
@@ -180,17 +180,17 @@
                         </section>
                     </div>
 
-                    <th:block th:replace="~{fragments/search-filters-form :: sidebarPanel()}"></th:block>
+                    <th:block th:replace="~{fragments/search/search-filters-form :: sidebarPanel()}"></th:block>
 
                 </div>
             </th:block>
         </div>
 
-        <th:block th:replace="~{fragments/search-filters-form :: overlayPanel()}"></th:block>
+        <th:block th:replace="~{fragments/search/search-filters-form :: overlayPanel()}"></th:block>
 
     </main>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
 
     <script th:inline="javascript">
         /*<![CDATA[*/

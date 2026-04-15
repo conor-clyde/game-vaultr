@@ -1,182 +1,352 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout/layout-head :: head}"></head>
 
-<head th:replace="~{fragments/layout-head :: head}"></head>
-
-<body class="coll-page" th:classappend="${hasCollectionFilter ? ' coll-filter-active' : ''}">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+  <body
+    class="coll-page"
+    th:classappend="${hasCollectionFilter ? ' coll-filter-active' : ''}"
+  >
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
 
     <main class="coll">
-        <header class="coll-hero">
-            <div class="coll-panel">
-                <div class="coll-panel-top">
-                    <h1 class="coll-title">My <span class="coll-title-mark">Collection</span></h1>
-                    <div class="coll-toolbar">
-                        <div class="coll-tools" role="group" aria-label="Collection tools">
-                            <div class="coll-search">
-                                <label class="coll-sr" for="col-q">Search within your collection</label>
-                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                <input type="search" id="col-q" placeholder="Search collection…" autocomplete="off">
-                            </div>
-                            <button type="button" class="btn btn-ghost" id="colFilterOpenBtn"
-                                title="Filter collection"
-                                th:classappend="${hasCollectionFilter ? ' has-filters' : ''}">
-                                <i class="fa-solid fa-sliders" aria-hidden="true"></i> Filter
-                            </button>
-                            <span class="coll-tools-split" aria-hidden="true"></span>
-                            <a th:href="@{/search}" class="btn btn-ghost coll-add-game"><i class="fa-solid fa-plus"
-                                    aria-hidden="true"></i> Add game</a>
-                        </div>
-                        <div class="coll-settings dropdown">
-                            <button type="button"
-                                class="btn btn-ghost btn-icon dropdown-trigger dropdown-trigger--square"
-                                id="colSettingsBtn" aria-label="Collection settings"
-                                aria-expanded="false" aria-controls="colSettingsPanel" aria-haspopup="true">
-                                <i class="fa-solid fa-gear" aria-hidden="true"></i>
-                            </button>
-                            <div id="colSettingsPanel" class="dropdown-panel dropdown-panel--end coll-settings-dropdown"
-                                role="menu" aria-hidden="true" aria-labelledby="colSettingsMenuLabel">
-                                <p class="dropdown-section-label" id="colSettingsMenuLabel">Settings</p>
-                                <label class="coll-settings-row">
-                                    <input type="checkbox" id="colToggleDropped" />
-                                    <span>Hide shelved games</span>
-                                </label>
-                                <label class="coll-settings-row">
-                                    <input type="checkbox" id="colOnlyPlayingOnLoad" />
-                                    <span>Select Playing by default</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+      <header class="coll-hero">
+        <div class="coll-panel">
+          <div class="coll-panel-top">
+            <h1 class="coll-title">
+              My <span class="coll-title-mark">Collection</span>
+            </h1>
+            <div class="coll-toolbar">
+              <div
+                class="coll-tools"
+                role="group"
+                aria-label="Collection tools"
+              >
+                <div class="coll-search">
+                  <label class="coll-sr" for="col-q"
+                    >Search within your collection</label
+                  >
+                  <i
+                    class="fa-solid fa-magnifying-glass"
+                    aria-hidden="true"
+                  ></i>
+                  <input
+                    type="search"
+                    id="col-q"
+                    placeholder="Search collection…"
+                    autocomplete="off"
+                  />
                 </div>
-                <nav class="coll-status-nav" aria-label="Show games by status">
-                    <div class="coll-chips-wrap">
-                        <div class="coll-chips">
-                            <button type="button" class="btn btn-ghost btn-sm coll-status-chip is-active" aria-pressed="true">All games</button>
-                            <button type="button" class="btn btn-ghost btn-sm coll-status-chip" th:each="st : ${collectionStatusOrder}"
-                                th:text="${st.displayName}" th:attr="data-status=${st.name()}" aria-pressed="false">
-                                Playing</button>
-                        </div>
-                        <div class="coll-chips-edge" aria-hidden="true"></div>
-                    </div>
-                    <div class="coll-status-aside" role="group" aria-label="Other library views">
-                        <button type="button" class="btn btn-ghost btn-sm coll-nav-pill" tabindex="-1" title="Coming soon">
-                            <i class="fa-solid fa-box-archive" aria-hidden="true"></i> Archived
-                        </button>
-                        <button type="button" class="btn btn-ghost btn-sm coll-nav-pill" tabindex="-1" title="Coming soon">
-                            <i class="fa-solid fa-heart" aria-hidden="true"></i> Wishlist
-                        </button>
-                    </div>
-                </nav>
-            </div>
-        </header>
-
-        <div class="coll-page-flashes" role="region" aria-label="Status updates"
-            th:if="${(playLogSaved != null && playLogSaved) || (playLogError != null) || (collectionRemoved != null && collectionRemoved)}">
-            <div th:if="${playLogSaved}" class="cg-flash cg-flash--ok cg-flash--dismissible coll-playlog-flash" role="status">
-                <span class="cg-flash__body">Logged a play session.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
-            </div>
-            <div th:if="${playLogError}" class="cg-flash cg-flash--err cg-flash--dismissible coll-playlog-flash" role="alert">
-                <span class="cg-flash__body" th:text="${playLogError}">Could not log play.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
-            </div>
-            <div th:if="${collectionRemoved}" class="cg-flash cg-flash--ok cg-flash--dismissible coll-playlog-flash" role="status">
-                <span class="cg-flash__body">Removed game from your collection.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
-            </div>
-        </div>
-
-        <div class="coll-active-filters-mount" id="colActiveFiltersMount"
-            th:if="${totalLibraryGames != null && totalLibraryGames > 0 && sections != null && !sections.isEmpty()}"
-            hidden>
-            <div id="colActiveFilters" class="coll-filters-active search-filters-active">
-                <div class="search-filters-active-header coll-active-filters-row">
-                    <div class="active-filters-chips" id="colActiveFilterChips"></div>
-                    <a href="#" class="active-filters-clear-link" id="colClearAllFilters">Clear all</a>
+                <button
+                  type="button"
+                  class="btn btn-ghost"
+                  id="colFilterOpenBtn"
+                  title="Filter collection"
+                  th:classappend="${hasCollectionFilter ? ' has-filters' : ''}"
+                >
+                  <i class="fa-solid fa-sliders" aria-hidden="true"></i> Filter
+                </button>
+                <span class="coll-tools-split" aria-hidden="true"></span>
+                <a th:href="@{/search}" class="btn btn-ghost coll-add-game"
+                  ><i class="fa-solid fa-plus" aria-hidden="true"></i> Add
+                  game</a
+                >
+              </div>
+              <div class="coll-settings dropdown">
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-icon dropdown-trigger dropdown-trigger--square"
+                  id="colSettingsBtn"
+                  aria-label="Collection settings"
+                  aria-expanded="false"
+                  aria-controls="colSettingsPanel"
+                  aria-haspopup="true"
+                >
+                  <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                </button>
+                <div
+                  id="colSettingsPanel"
+                  class="dropdown-panel dropdown-panel--end coll-settings-dropdown"
+                  role="menu"
+                  aria-hidden="true"
+                  aria-labelledby="colSettingsMenuLabel"
+                >
+                  <p class="dropdown-section-label" id="colSettingsMenuLabel">
+                    Settings
+                  </p>
+                  <label class="coll-settings-row">
+                    <input type="checkbox" id="colToggleDropped" />
+                    <span>Hide shelved games</span>
+                  </label>
+                  <label class="coll-settings-row">
+                    <input type="checkbox" id="colOnlyPlayingOnLoad" />
+                    <span>Select Playing by default</span>
+                  </label>
                 </div>
+              </div>
             </div>
+          </div>
+          <nav class="coll-status-nav" aria-label="Show games by status">
+            <div class="coll-chips-wrap">
+              <div class="coll-chips">
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm coll-status-chip is-active"
+                  aria-pressed="true"
+                >
+                  All games
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm coll-status-chip"
+                  th:each="st : ${collectionStatusOrder}"
+                  th:text="${st.displayName}"
+                  th:attr="data-status=${st.name()}"
+                  aria-pressed="false"
+                >
+                  Playing
+                </button>
+              </div>
+              <div class="coll-chips-edge" aria-hidden="true"></div>
+            </div>
+            <div
+              class="coll-status-aside"
+              role="group"
+              aria-label="Other library views"
+            >
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm coll-nav-pill"
+                tabindex="-1"
+                title="Coming soon"
+              >
+                <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
+                Archived
+              </button>
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm coll-nav-pill"
+                tabindex="-1"
+                title="Coming soon"
+              >
+                <i class="fa-solid fa-heart" aria-hidden="true"></i> Wishlist
+              </button>
+            </div>
+          </nav>
         </div>
+      </header>
 
-        <div class="empty-state empty-state--hero" th:if="${totalLibraryGames != null && totalLibraryGames == 0}"
-            role="status">
-            <div class="empty-state__icon" aria-hidden="true">
-                <i class="fa-solid fa-layer-group"></i>
-            </div>
-            <p class="empty-state__title">Your collection is empty</p>
-            <p class="empty-state__hint">Search for games and add them to start building your library.</p>
-            <div class="empty-state__actions">
-                <a th:href="@{/search}" class="btn btn-ghost btn-sm">Search games</a>
-            </div>
+      <div
+        class="coll-page-flashes"
+        role="region"
+        aria-label="Status updates"
+        th:if="${(playLogSaved != null && playLogSaved) || (playLogError != null) || (collectionRemoved != null && collectionRemoved)}"
+      >
+        <div
+          th:if="${playLogSaved}"
+          class="cg-flash cg-flash--ok cg-flash--dismissible coll-playlog-flash"
+          role="status"
+        >
+          <span class="cg-flash__body">Logged a play session.</span>
+          <th:block
+            th:replace="~{fragments/layout/flash-banner :: closeButton}"
+          ></th:block>
         </div>
-
-        <div class="empty-state empty-state--hero" role="status"
-            th:if="${totalLibraryGames != null && totalLibraryGames > 0 && (sections == null || sections.isEmpty())}">
-            <div class="empty-state__icon" aria-hidden="true">
-                <i class="fa-solid fa-box-archive"></i>
-            </div>
-            <p class="empty-state__title">No shelves to show yet</p>
-            <p class="empty-state__hint">Games you add from search appear here grouped by status.</p>
+        <div
+          th:if="${playLogError}"
+          class="cg-flash cg-flash--err cg-flash--dismissible coll-playlog-flash"
+          role="alert"
+        >
+          <span class="cg-flash__body" th:text="${playLogError}"
+            >Could not log play.</span
+          >
+          <th:block
+            th:replace="~{fragments/layout/flash-banner :: closeButton}"
+          ></th:block>
         </div>
-
-        <div id="colFilterEmptyState" class="empty-state empty-state--surface empty-state--collection-filter"
-            role="status" hidden th:if="${sections != null && !sections.isEmpty()}">
-            <div class="empty-state__icon" aria-hidden="true">
-                <i class="fa-solid fa-magnifying-glass"></i>
-            </div>
-            <p id="colFilterEmptyMessage" class="empty-state__title">No games to show.</p>
+        <div
+          th:if="${collectionRemoved}"
+          class="cg-flash cg-flash--ok cg-flash--dismissible coll-playlog-flash"
+          role="status"
+        >
+          <span class="cg-flash__body">Removed game from your collection.</span>
+          <th:block
+            th:replace="~{fragments/layout/flash-banner :: closeButton}"
+          ></th:block>
         </div>
+      </div>
 
-        <div class="coll-board" id="colBoard" th:if="${sections != null && !sections.isEmpty()}">
-            <section th:each="section : ${sections}" class="coll-shelf"
-                th:classappend="${(section.statusKey == 'NOT_PLAYING' or section.statusKey == 'DROPPED') ? ' coll-shelf-dense' : ''}"
-                th:attr="data-status=${section.statusKey}">
-                <div class="coll-shelf-head">
-                    <h2 th:id="${'coll-shelf-title-' + section.statusKey}" th:text="${section.displayName}">Playing</h2>
-                    <span class="coll-shelf-count" th:text="${#lists.size(section.games)}">0</span>
-                    <span class="coll-shelf-line" aria-hidden="true"></span>
+      <div
+        class="coll-active-filters-mount"
+        id="colActiveFiltersMount"
+        th:if="${totalLibraryGames != null && totalLibraryGames > 0 && sections != null && !sections.isEmpty()}"
+        hidden
+      >
+        <div
+          id="colActiveFilters"
+          class="coll-filters-active search-filters-active"
+        >
+          <div class="search-filters-active-header coll-active-filters-row">
+            <div class="active-filters-chips" id="colActiveFilterChips"></div>
+            <a
+              href="#"
+              class="active-filters-clear-link"
+              id="colClearAllFilters"
+              >Clear all</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="empty-state empty-state--hero"
+        th:if="${totalLibraryGames != null && totalLibraryGames == 0}"
+        role="status"
+      >
+        <div class="empty-state__icon" aria-hidden="true">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <p class="empty-state__title">Your collection is empty</p>
+        <p class="empty-state__hint">
+          Search for games and add them to start building your library.
+        </p>
+        <div class="empty-state__actions">
+          <a th:href="@{/search}" class="btn btn-ghost btn-sm">Search games</a>
+        </div>
+      </div>
+
+      <div
+        class="empty-state empty-state--hero"
+        role="status"
+        th:if="${totalLibraryGames != null && totalLibraryGames > 0 && (sections == null || sections.isEmpty())}"
+      >
+        <div class="empty-state__icon" aria-hidden="true">
+          <i class="fa-solid fa-box-archive"></i>
+        </div>
+        <p class="empty-state__title">No shelves to show yet</p>
+        <p class="empty-state__hint">
+          Games you add from search appear here grouped by status.
+        </p>
+      </div>
+
+      <div
+        id="colFilterEmptyState"
+        class="empty-state empty-state--surface empty-state--collection-filter"
+        role="status"
+        hidden
+        th:if="${sections != null && !sections.isEmpty()}"
+      >
+        <div class="empty-state__icon" aria-hidden="true">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <p id="colFilterEmptyMessage" class="empty-state__title">
+          No games to show.
+        </p>
+      </div>
+
+      <div
+        class="coll-board"
+        id="colBoard"
+        th:if="${sections != null && !sections.isEmpty()}"
+      >
+        <section
+          th:each="section : ${sections}"
+          class="coll-shelf"
+          th:classappend="${(section.statusKey == 'NOT_PLAYING' or section.statusKey == 'DROPPED') ? ' coll-shelf-dense' : ''}"
+          th:attr="data-status=${section.statusKey}"
+        >
+          <div class="coll-shelf-head">
+            <h2
+              th:id="${'coll-shelf-title-' + section.statusKey}"
+              th:text="${section.displayName}"
+            >
+              Playing
+            </h2>
+            <span
+              class="coll-shelf-count"
+              th:text="${#lists.size(section.games)}"
+              >0</span
+            >
+            <span class="coll-shelf-line" aria-hidden="true"></span>
+          </div>
+          <div
+            class="coll-shelf-grid"
+            th:id="${'coll-shelf-grid-' + section.statusKey}"
+          >
+            <article
+              class="coll-tile"
+              th:each="card : ${section.games}"
+              th:with="logPlayBlockedElsewhere=${navActivePlaySession && navActivePlaySessionGameApiId != null && !#strings.equals(card.apiId, navActivePlaySessionGameApiId)}"
+              th:attr="data-platform=${card.platform != null ? card.platform : ''},data-why-playings=${card.hasWhyPlayings() ? card.whyPlayingNamesCsv : ''}"
+            >
+              <a
+                class="coll-tile-link"
+                th:href="@{/collection/{id}(id=${card.apiId})}"
+                th:attr="aria-label=${'Open ' + card.title}"
+              >
+                <div
+                  class="coll-platform"
+                  th:classappend="${card.platformHeaderClass}"
+                  th:text="${(card.platform != null && !card.platform.isEmpty()) ? card.platform : 'Not specified'}"
+                >
+                  Platform
                 </div>
-                <div class="coll-shelf-grid" th:id="${'coll-shelf-grid-' + section.statusKey}">
-                    <article class="coll-tile" th:each="card : ${section.games}"
-                        th:with="logPlayBlockedElsewhere=${navActivePlaySession && navActivePlaySessionGameApiId != null && !#strings.equals(card.apiId, navActivePlaySessionGameApiId)}"
-                        th:attr="data-platform=${card.platform != null ? card.platform : ''},data-why-playings=${card.hasWhyPlayings() ? card.whyPlayingNamesCsv : ''}">
-                        <a class="coll-tile-link" th:href="@{/collection/{id}(id=${card.apiId})}"
-                            th:attr="aria-label=${'Open ' + card.title}">
-                            <div class="coll-platform" th:classappend="${card.platformHeaderClass}"
-                                th:text="${(card.platform != null && !card.platform.isEmpty()) ? card.platform : 'Not specified'}">Platform</div>
-                            <div class="coll-cover">
-                                <img th:src="${card.imageUrl}" th:alt="${card.title}" class="coll-cover-img"
-                                    th:attr="onerror=|this.onerror=null;this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='flex';|" />
-                                <div class="coll-cover-ph" aria-hidden="true" style="display: none;"><i
-                                        class="fa-solid fa-gamepad"></i></div>
-                                <div class="coll-cover-intent-wrap"
-                                    th:if="${card.hasWhyPlayings()}"
-                                    role="group"
-                                    th:attr="aria-label=${'Play intent: ' + card.whyPlayingCommaDataLabels},
-                                        title=${#lists.size(card.whyPlayingDataLabels) > 1 ? card.whyPlayingCommaDataLabels : null}">
-                                    <span class="coll-cover-intent-pill">
-                                        <span class="coll-cover-intent-emoji"
-                                            th:text="${card.whyPlayingEmojis.get(0)}">📖</span>
-                                        <span class="coll-cover-intent-txt"
-                                            th:attr="data-why=${card.whyPlayingDataLabels.get(0)}"
-                                            th:text="${card.whyPlayingDataLabels.get(0)}">Story</span>
-                                    </span>
-                                    <span th:if="${#lists.size(card.whyPlayingDataLabels) > 1}"
-                                        class="coll-cover-intent-more"
-                                        aria-hidden="true"
-                                        th:text="|+${#lists.size(card.whyPlayingDataLabels) - 1}|">+1</span>
-                                </div>
-                            </div>
-                            <h3 th:attr="title=${card.title}">
-                                <span class="coll-tile-title-text" th:text="${card.title}">Game title</span>
-                            </h3>
-                        </a>
-                        <div class="coll-tile-foot">
-                            <div class="coll-tile-actions">
-                                <button type="button" class="btn btn-ghost btn-sm js-log-play-open"
-                                    th:data-log-api-id="${card.apiId}"
-                                    th:data-log-title="${card.title}"
-                                    th:attr="data-log-baseline-minutes=${card.displayPlayMinutes},
+                <div class="coll-cover">
+                  <img
+                    th:src="${card.imageUrl}"
+                    th:alt="${card.title}"
+                    class="coll-cover-img"
+                    th:attr="onerror=|this.onerror=null;this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='flex';|"
+                  />
+                  <div
+                    class="coll-cover-ph"
+                    aria-hidden="true"
+                    style="display: none"
+                  >
+                    <i class="fa-solid fa-gamepad"></i>
+                  </div>
+                  <div
+                    class="coll-cover-intent-wrap"
+                    th:if="${card.hasWhyPlayings()}"
+                    role="group"
+                    th:attr="aria-label=${'Play intent: ' + card.whyPlayingCommaDataLabels},
+                                        title=${#lists.size(card.whyPlayingDataLabels) > 1 ? card.whyPlayingCommaDataLabels : null}"
+                  >
+                    <span class="coll-cover-intent-pill">
+                      <span
+                        class="coll-cover-intent-emoji"
+                        th:text="${card.whyPlayingEmojis.get(0)}"
+                        >📖</span
+                      >
+                      <span
+                        class="coll-cover-intent-txt"
+                        th:attr="data-why=${card.whyPlayingDataLabels.get(0)}"
+                        th:text="${card.whyPlayingDataLabels.get(0)}"
+                        >Story</span
+                      >
+                    </span>
+                    <span
+                      th:if="${#lists.size(card.whyPlayingDataLabels) > 1}"
+                      class="coll-cover-intent-more"
+                      aria-hidden="true"
+                      th:text="|+${#lists.size(card.whyPlayingDataLabels) - 1}|"
+                      >+1</span
+                    >
+                  </div>
+                </div>
+                <h3 th:attr="title=${card.title}">
+                  <span class="coll-tile-title-text" th:text="${card.title}"
+                    >Game title</span
+                  >
+                </h3>
+              </a>
+              <div class="coll-tile-foot">
+                <div class="coll-tile-actions">
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm js-log-play-open"
+                    th:data-log-api-id="${card.apiId}"
+                    th:data-log-title="${card.title}"
+                    th:attr="data-log-baseline-minutes=${card.displayPlayMinutes},
                                         data-log-has-play-logs=${card.logModalHasPlayLogs},
                                         data-log-last-played-relative=${card.logModalLastPlayedRelative},
                                         data-log-play-session-count=${card.logModalSessionCount},
@@ -185,524 +355,645 @@
                                         data-log-playthrough-count=${card.logModalPlaythroughCount},
                                         data-log-open-session-id=${navActivePlaySession && navActivePlaySessionGameApiId != null && #strings.equals(card.apiId, navActivePlaySessionGameApiId) ? navActivePlaySessionLogId : null},
                                         data-open-session-start-epoch-ms=${navActivePlaySession && navActivePlaySessionGameApiId != null && #strings.equals(card.apiId, navActivePlaySessionGameApiId) ? navActivePlaySessionStartedAtEpochMs : null}"
-                                    data-log-redirect="collection"
-                                    th:disabled="${logPlayBlockedElsewhere}"
-                                    th:classappend="${logPlayBlockedElsewhere} ? 'log-play-btn--elsewhere' : ''"
-                                    th:title="${logPlayBlockedElsewhere ? 'You already have a session on ' + navActivePlaySessionGameTitle + '. End it there before logging this game.' : 'Log a play session'}"
-                                    th:aria-label="${logPlayBlockedElsewhere ? 'Busy — finish session on ' + navActivePlaySessionGameTitle + ' first' : 'Log play for ' + card.title}">
-                                    <i th:if="${logPlayBlockedElsewhere}" class="fa-solid fa-lock" aria-hidden="true"></i>
-                                    <i th:unless="${logPlayBlockedElsewhere}" class="fa-solid fa-play" aria-hidden="true"></i>
-                                    <th:block th:if="${logPlayBlockedElsewhere}">
-                                        <span th:class="${section.statusKey == 'NOT_PLAYING' or section.statusKey == 'DROPPED'} ? 'coll-sr' : ''" th:text="'Busy'">Busy</span>
-                                    </th:block>
-                                    <span th:unless="${logPlayBlockedElsewhere}">Log</span>
-                                </button>
-                            </div>
-                        </div>
-                    </article>
+                    data-log-redirect="collection"
+                    th:disabled="${logPlayBlockedElsewhere}"
+                    th:classappend="${logPlayBlockedElsewhere} ? 'log-play-btn--elsewhere' : ''"
+                    th:title="${logPlayBlockedElsewhere ? 'You already have a session on ' + navActivePlaySessionGameTitle + '. End it there before logging this game.' : 'Log a play session'}"
+                    th:aria-label="${logPlayBlockedElsewhere ? 'Busy — finish session on ' + navActivePlaySessionGameTitle + ' first' : 'Log play for ' + card.title}"
+                  >
+                    <i
+                      th:if="${logPlayBlockedElsewhere}"
+                      class="fa-solid fa-lock"
+                      aria-hidden="true"
+                    ></i>
+                    <i
+                      th:unless="${logPlayBlockedElsewhere}"
+                      class="fa-solid fa-play"
+                      aria-hidden="true"
+                    ></i>
+                    <th:block th:if="${logPlayBlockedElsewhere}">
+                      <span
+                        th:class="${section.statusKey == 'NOT_PLAYING' or section.statusKey == 'DROPPED'} ? 'coll-sr' : ''"
+                        th:text="'Busy'"
+                        >Busy</span
+                      >
+                    </th:block>
+                    <span th:unless="${logPlayBlockedElsewhere}">Log</span>
+                  </button>
                 </div>
-                <div class="coll-shelf-more">
-                    <button type="button" class="btn btn-ghost btn-sm">Show all</button>
-                </div>
-            </section>
-        </div>
+              </div>
+            </article>
+          </div>
+          <div class="coll-shelf-more">
+            <button type="button" class="btn btn-ghost btn-sm">Show all</button>
+          </div>
+        </section>
+      </div>
     </main>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
 
-    <th:block th:replace="~{fragments/search-filters-form :: collectionOverlay()}"></th:block>
+    <th:block
+      th:replace="~{fragments/search/search-filters-form :: collectionOverlay()}"
+    ></th:block>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var colFilterOverlay = document.getElementById('colFilterOverlay');
-            var colFilterOpenBtn = document.getElementById('colFilterOpenBtn');
-            var colFilterClose = document.getElementById('colFilterClose');
-            var colFilterBackdrop = document.getElementById('colFilterBackdrop');
-            function setColFilterOpen(open) {
-                if (!colFilterOverlay) return;
-                colFilterOverlay.classList.toggle('open', open);
-                colFilterOverlay.setAttribute('aria-hidden', open ? 'false' : 'true');
-                document.body.style.overflow = open ? 'hidden' : '';
-            }
-            if (colFilterOpenBtn && colFilterOverlay) {
-                colFilterOpenBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    setColFilterOpen(true);
-                });
-            }
-            if (colFilterClose) {
-                colFilterClose.addEventListener('click', function () { setColFilterOpen(false); });
-            }
-            if (colFilterBackdrop) {
-                colFilterBackdrop.addEventListener('click', function () { setColFilterOpen(false); });
-            }
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && colFilterOverlay && colFilterOverlay.classList.contains('open')) {
-                    setColFilterOpen(false);
-                }
-            });
-
-            var LS_HIDE_DROPPED = 'playstate.collection.hideDropped';
-            /* 'true' = hide shelved (DROPPED) games; missing/'false' = show them (default) */
-            var LS_ONLY_PLAYING_ON_LOAD = 'playstate.collection.onlyPlayingOnLoad';
-            /* 'true' = Playing chip selected on load; missing/'false' = All games (default) */
-            var hideDropped = localStorage.getItem(LS_HIDE_DROPPED) === 'true';
-            document.body.classList.toggle('coll-hide-dropped', hideDropped);
-            var colToggleDroppedEl = document.getElementById('colToggleDropped');
-            if (colToggleDroppedEl) {
-                colToggleDroppedEl.checked = hideDropped;
-            }
-
-            var onlyPlayingOnLoad = localStorage.getItem(LS_ONLY_PLAYING_ON_LOAD) === 'true';
-            var colOnlyPlayingOnLoadEl = document.getElementById('colOnlyPlayingOnLoad');
-            if (colOnlyPlayingOnLoadEl) {
-                colOnlyPlayingOnLoadEl.checked = onlyPlayingOnLoad;
-            }
-
-            var colSettingsBtn = document.getElementById('colSettingsBtn');
-            var colSettingsPanel = document.getElementById('colSettingsPanel');
-            var colSettingsWrap = colSettingsBtn ? colSettingsBtn.closest('.dropdown') : null;
-            function setColSettingsOpen(open) {
-                if (!colSettingsPanel || !colSettingsBtn) return;
-                colSettingsPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
-                colSettingsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            }
-            function isColSettingsOpen() {
-                return colSettingsPanel && colSettingsPanel.getAttribute('aria-hidden') === 'false';
-            }
-            if (colSettingsBtn && colSettingsPanel && colSettingsWrap) {
-                colSettingsBtn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setColSettingsOpen(!isColSettingsOpen());
-                });
-                document.addEventListener('click', function (e) {
-                    if (!isColSettingsOpen()) return;
-                    if (!colSettingsWrap.contains(e.target)) setColSettingsOpen(false);
-                });
-                document.addEventListener('keydown', function (e) {
-                    if (e.key === 'Escape' && isColSettingsOpen()) setColSettingsOpen(false);
-                });
-            }
-
-            if (colToggleDroppedEl) {
-                colToggleDroppedEl.addEventListener('change', function () {
-                    var hide = this.checked;
-                    localStorage.setItem(LS_HIDE_DROPPED, hide ? 'true' : 'false');
-                    document.body.classList.toggle('coll-hide-dropped', hide);
-                    sync();
-                });
-            }
-
-            var applyStatusFilterFn = null;
-
-            function cols(grid) {
-                var cs = getComputedStyle(grid);
-                var raw = cs.getPropertyValue('--coll-clip-cols').trim();
-                if (raw) {
-                    var parsed = parseInt(raw, 10);
-                    if (!isNaN(parsed) && parsed > 0) {
-                        return parsed;
-                    }
-                }
-                var t = cs.gridTemplateColumns.trim();
-                var p = t.split(/\s+/).filter(Boolean);
-                if (p.length > 1) return Math.max(1, p.length);
-                var m = t.match(/^repeat\(\s*(\d+)/i);
-                return m ? Math.max(1, parseInt(m[1], 10)) : 1;
-            }
-            function sync() {
-                document.querySelectorAll('.coll-shelf').forEach(function (sec) {
-                    var grid = sec.querySelector('.coll-shelf-grid');
-                    var more = sec.querySelector('.coll-shelf-more');
-                    var btn = sec.querySelector('.coll-shelf-more .btn');
-                    if (!grid || !more || !btn) return;
-                    if (sec.getAttribute('data-status') === 'PLAYING') {
-                        sec.classList.remove('coll-shelf--clip', 'coll-shelf--open');
-                        more.classList.remove('is-on');
-                        return;
-                    }
-                    var n = grid.querySelectorAll('.coll-tile:not(.is-platform-hidden):not(.is-why-hidden):not(.is-search-hidden)').length;
-                    var c = cols(grid);
-                    var over = n > c;
-                    var open = sec.classList.contains('coll-shelf--open');
-                    sec.classList.toggle('coll-shelf--clip', over);
-                    more.classList.toggle('is-on', over && !open);
-                    if (!over) sec.classList.remove('coll-shelf--open');
-                    if (over && !open) {
-                        var h = n - c;
-                        btn.textContent = h > 0 ? 'Show all (' + h + ')' : 'Show all';
-                    }
-                });
-            }
-
-            /* ── Collection search + filter DOM refs (must exist before status chips call colApplyLibraryFilters) ── */
-            var colSearchInput = document.getElementById('col-q');
-            var colBoard = document.getElementById('colBoard');
-            var colFilterEmptyState = document.getElementById('colFilterEmptyState');
-            var colFilterEmptyMessage = document.getElementById('colFilterEmptyMessage');
-            var colActiveFiltersMount = document.getElementById('colActiveFiltersMount');
-            var colActiveFilterChips = document.getElementById('colActiveFilterChips');
-            var colClearAllFilters = document.getElementById('colClearAllFilters');
-            var colFilterForm = document.getElementById('colFilterForm');
-            var COL_TILE_VISIBLE = '.coll-tile:not(.is-platform-hidden):not(.is-why-hidden):not(.is-search-hidden)';
-
-            function colApplyTextSearch() {
-                if (!colSearchInput) return;
-                var q = colSearchInput.value || '';
-                var query = q.trim().toLowerCase();
-                var cards = document.querySelectorAll('.coll-tile');
-                cards.forEach(function (card) {
-                    var titleEl = card.querySelector('.coll-tile-link h3');
-                    var title = titleEl ? (titleEl.textContent || '').toLowerCase() : '';
-                    var matches = !query || title.indexOf(query) !== -1;
-                    card.classList.toggle('is-search-hidden', !matches);
-                });
-                colApplyLibraryFilters();
-            }
-
-            if (colSearchInput) {
-                colSearchInput.addEventListener('input', function () {
-                    colApplyTextSearch();
-                });
-            }
-
-            /* ── Status filter chips: All games / per-status shelves ── */
-            (function colWireStatusFilter() {
-                var chips = document.querySelectorAll('.coll-status-chip');
-                if (!chips.length) return;
-
-                function applyStatusFilter(status) {
-                    var isAll = !status || status === 'ALL';
-                    document.querySelectorAll('.coll-shelf[data-status]').forEach(function (sec) {
-                        var key = sec.getAttribute('data-status');
-                        if (isAll) {
-                            sec.style.display = '';
-                        } else {
-                            sec.style.display = key === status ? '' : 'none';
-                        }
-                    });
-
-                    chips.forEach(function (chip) {
-                        var chipStatus = chip.getAttribute('data-status') || 'ALL';
-                        var active = isAll ? chipStatus === 'ALL' : chipStatus === status;
-                        chip.classList.toggle('is-active', active);
-                        chip.setAttribute('aria-pressed', active ? 'true' : 'false');
-                    });
-
-                    colApplyLibraryFilters();
-                }
-
-                applyStatusFilterFn = applyStatusFilter;
-
-                chips.forEach(function (chip) {
-                    chip.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        var status = chip.getAttribute('data-status') || 'ALL';
-                        applyStatusFilter(status);
-                    });
-                });
-
-                applyStatusFilter(onlyPlayingOnLoad ? 'PLAYING' : 'ALL');
-            })();
-
-            if (colOnlyPlayingOnLoadEl) {
-                colOnlyPlayingOnLoadEl.addEventListener('change', function () {
-                    var on = this.checked;
-                    localStorage.setItem(LS_ONLY_PLAYING_ON_LOAD, on ? 'true' : 'false');
-                });
-            }
-
-            /* ── Platform + why playing: client-side; URL synced with replaceState ── */
-
-            function colParsePlatformsFromUrl() {
-                var params = new URLSearchParams(window.location.search);
-                var list = params.getAll('platform');
-                var out = [];
-                for (var i = 0; i < list.length; i++) {
-                    var v = list[i];
-                    if (v != null && String(v).trim() !== '') out.push(String(v).trim());
-                }
-                return out;
-            }
-
-            function colParseWhyPlayingsFromUrl() {
-                var params = new URLSearchParams(window.location.search);
-                var list = params.getAll('whyPlaying').concat(params.getAll('playIntent'));
-                var seen = {};
-                var out = [];
-                for (var i = 0; i < list.length; i++) {
-                    var v = list[i];
-                    if (v == null || String(v).trim() === '') continue;
-                    var t = String(v).trim();
-                    if (!seen[t]) {
-                        seen[t] = true;
-                        out.push(t);
-                    }
-                }
-                return out;
-            }
-
-            function colSetUrlFromLibraryFilters(platforms, whyPlayings) {
-                var url = new URL(window.location.href);
-                url.searchParams.delete('platform');
-                url.searchParams.delete('whyPlaying');
-                url.searchParams.delete('playIntent');
-                for (var i = 0; i < platforms.length; i++) {
-                    url.searchParams.append('platform', platforms[i]);
-                }
-                for (var j = 0; j < whyPlayings.length; j++) {
-                    url.searchParams.append('whyPlaying', whyPlayings[j]);
-                }
-                var next = url.pathname + url.search + url.hash;
-                var cur = window.location.pathname + window.location.search + window.location.hash;
-                if (next !== cur) {
-                    window.history.replaceState({}, '', next);
-                }
-            }
-
-            function colGetSelectedPlatformsFromInputs() {
-                var inputs = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-platform-input[name="platform"]') : [];
-                var sel = [];
-                inputs.forEach(function (inp) {
-                    if (inp.checked) sel.push(inp.value);
-                });
-                return sel;
-            }
-
-            function colGetSelectedWhyPlayingsFromInputs() {
-                var inputs = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-why-playing-input[name="whyPlaying"]') : [];
-                var sel = [];
-                inputs.forEach(function (inp) {
-                    if (inp.checked) sel.push(inp.value);
-                });
-                return sel;
-            }
-
-            function colSyncPlatformInputsFromList(platforms) {
-                var set = {};
-                platforms.forEach(function (p) { set[p] = true; });
-                var inputs = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-platform-input[name="platform"]') : [];
-                inputs.forEach(function (inp) {
-                    inp.checked = !!set[inp.value];
-                });
-            }
-
-            function colSyncWhyPlayingInputsFromList(reasons) {
-                var set = {};
-                reasons.forEach(function (p) { set[p] = true; });
-                var inputs = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-why-playing-input[name="whyPlaying"]') : [];
-                inputs.forEach(function (inp) {
-                    inp.checked = !!set[inp.value];
-                });
-            }
-
-            function colApplyLibraryFilters() {
-                var selectedPlats = colGetSelectedPlatformsFromInputs();
-                var selectedWhy = colGetSelectedWhyPlayingsFromInputs();
-                var hasSearchQuery = !!(colSearchInput && colSearchInput.value && colSearchInput.value.trim() !== '');
-                colSetUrlFromLibraryFilters(selectedPlats, selectedWhy);
-                var platActive = selectedPlats.length > 0;
-                var whyActive = selectedWhy.length > 0;
-                var filtersActive = platActive || whyActive;
-                document.body.classList.toggle('coll-filter-active', filtersActive);
-                var openBtn = document.getElementById('colFilterOpenBtn');
-                if (openBtn) openBtn.classList.toggle('has-filters', filtersActive);
-
-                document.querySelectorAll('.coll-tile[data-platform]').forEach(function (card) {
-                    var p = card.getAttribute('data-platform') || '';
-                    var showPlat = !platActive || (p !== '' && selectedPlats.indexOf(p) >= 0);
-                    card.classList.toggle('is-platform-hidden', !showPlat);
-                });
-
-                document.querySelectorAll('.coll-tile').forEach(function (card) {
-                    var raw = card.getAttribute('data-why-playings') || '';
-                    var cardWhy = raw.split(',').map(function (s) { return s.trim(); }).filter(Boolean);
-                    var showWhy =
-                        !whyActive ||
-                        cardWhy.some(function (ci) {
-                            return selectedWhy.indexOf(ci) >= 0;
-                        });
-                    card.classList.toggle('is-why-hidden', !showWhy);
-                });
-
-                document.querySelectorAll('.coll-shelf[data-status]').forEach(function (sec) {
-                    var vis = sec.querySelectorAll(COL_TILE_VISIBLE).length;
-                    var nEl = sec.querySelector('.coll-shelf-count');
-                    if (nEl) nEl.textContent = String(vis);
-                    var statusHiddenByChip = sec.style.display === 'none';
-                    var shouldHideSection = !statusHiddenByChip && (hasSearchQuery || filtersActive) && vis === 0;
-                    sec.classList.toggle('coll-shelf--empty-filter', shouldHideSection);
-                });
-
-                if (colActiveFiltersMount && colActiveFilterChips) {
-                    colActiveFiltersMount.hidden = !filtersActive;
-                    colActiveFiltersMount.setAttribute('aria-hidden', filtersActive ? 'false' : 'true');
-                    colActiveFilterChips.innerHTML = '';
-                    if (filtersActive) {
-                        selectedPlats.forEach(function (plat) {
-                            var btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'filter-chip coll-filter-chip';
-                            btn.setAttribute('data-platform', plat);
-                            btn.setAttribute('aria-label', 'Remove filter ' + plat);
-                            var span = document.createElement('span');
-                            span.textContent = plat;
-                            btn.appendChild(span);
-                            var ic = document.createElement('i');
-                            ic.className = 'fa-solid fa-xmark';
-                            ic.setAttribute('aria-hidden', 'true');
-                            btn.appendChild(ic);
-                            colActiveFilterChips.appendChild(btn);
-                        });
-                        selectedWhy.forEach(function (whyVal) {
-                            var label = whyVal;
-                            var refInp = null;
-                            if (colFilterForm) {
-                                colFilterForm.querySelectorAll('input.coll-filter-why-playing-input[name="whyPlaying"]').forEach(function (inp) {
-                                    if (inp.value === whyVal) refInp = inp;
-                                });
-                            }
-                            if (refInp && refInp.getAttribute('data-chip-label')) {
-                                label = refInp.getAttribute('data-chip-label');
-                            }
-                            var btn2 = document.createElement('button');
-                            btn2.type = 'button';
-                            btn2.className = 'filter-chip coll-filter-chip';
-                            btn2.setAttribute('data-why-playing', whyVal);
-                            btn2.setAttribute('aria-label', 'Remove play intent filter ' + label);
-                            var span2 = document.createElement('span');
-                            span2.textContent = label;
-                            btn2.appendChild(span2);
-                            var ic2 = document.createElement('i');
-                            ic2.className = 'fa-solid fa-xmark';
-                            ic2.setAttribute('aria-hidden', 'true');
-                            btn2.appendChild(ic2);
-                            colActiveFilterChips.appendChild(btn2);
-                        });
-                    }
-                }
-
-                var visibleCardsInScope = 0;
-                document.querySelectorAll('.coll-shelf[data-status]').forEach(function (sec) {
-                    var statusHiddenByChip = sec.style.display === 'none';
-                    if (statusHiddenByChip) return;
-                    var vis = sec.querySelectorAll(COL_TILE_VISIBLE).length;
-                    visibleCardsInScope += vis;
-                });
-
-                var showNoMatch = visibleCardsInScope === 0;
-                if (colFilterEmptyMessage) {
-                    if (hasSearchQuery || filtersActive) {
-                        colFilterEmptyMessage.textContent = 'No games match your search or filters.';
-                    } else {
-                        colFilterEmptyMessage.textContent = 'No games in this status yet.';
-                    }
-                }
-                if (colBoard) colBoard.hidden = showNoMatch;
-                if (colFilterEmptyState) colFilterEmptyState.hidden = !showNoMatch;
-
-                sync();
-            }
-
-            if (colFilterForm) {
-                colFilterForm.querySelectorAll('input.coll-filter-platform-input').forEach(function (inp) {
-                    inp.addEventListener('change', function () {
-                        colApplyLibraryFilters();
-                    });
-                });
-                colFilterForm.querySelectorAll('input.coll-filter-why-playing-input').forEach(function (inp) {
-                    inp.addEventListener('change', function () {
-                        colApplyLibraryFilters();
-                    });
-                });
-            }
-            if (colClearAllFilters) {
-                colClearAllFilters.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    colSyncPlatformInputsFromList([]);
-                    colSyncWhyPlayingInputsFromList([]);
-                    colApplyLibraryFilters();
-                });
-            }
-            if (colActiveFilterChips) {
-                colActiveFilterChips.addEventListener('click', function (e) {
-                    var chip = e.target.closest('.coll-filter-chip');
-                    if (!chip) return;
-                    var plat = chip.getAttribute('data-platform');
-                    if (plat) {
-                        var inputs = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-platform-input[name="platform"]') : [];
-                        inputs.forEach(function (inp) {
-                            if (inp.value === plat) inp.checked = false;
-                        });
-                    }
-                    var whyRem = chip.getAttribute('data-why-playing');
-                    if (whyRem) {
-                        var inps = colFilterForm ? colFilterForm.querySelectorAll('input.coll-filter-why-playing-input[name="whyPlaying"]') : [];
-                        inps.forEach(function (inp) {
-                            if (inp.value === whyRem) inp.checked = false;
-                        });
-                    }
-                    colApplyLibraryFilters();
-                });
-            }
-
-            window.addEventListener('popstate', function () {
-                colSyncPlatformInputsFromList(colParsePlatformsFromUrl());
-                colSyncWhyPlayingInputsFromList(colParseWhyPlayingsFromUrl());
-                colApplyLibraryFilters();
-            });
-
-            (function colInitLibraryFiltersFromUrl() {
-                var plats = colParsePlatformsFromUrl();
-                if (plats.length > 0) colSyncPlatformInputsFromList(plats);
-                var why = colParseWhyPlayingsFromUrl();
-                if (why.length > 0) colSyncWhyPlayingInputsFromList(why);
-                colApplyLibraryFilters();
-            })();
-
-            document.body.addEventListener('click', function (e) {
-                var b = e.target.closest('.coll-shelf-more .btn');
-                if (!b) return;
-                e.preventDefault();
-                var sec = b.closest('.coll-shelf');
-                if (!sec || sec.classList.contains('coll-shelf--open')) return;
-                sec.classList.add('coll-shelf--open');
-                var m = sec.querySelector('.coll-shelf-more');
-                if (m) m.classList.remove('is-on');
-            });
-
-            sync();
-            requestAnimationFrame(function () {
-                sync();
-            });
-
-            var chipsRow = document.querySelector('.coll-chips');
-            var chipsInner = document.querySelector('.coll-chips-wrap');
-            function syncChipsScrollEnd() {
-                if (!chipsRow || !chipsInner) return;
-                var maxScroll = chipsRow.scrollWidth - chipsRow.clientWidth;
-                var atEnd = maxScroll <= 2 || chipsRow.scrollLeft >= maxScroll - 2;
-                chipsInner.classList.toggle('is-scroll-end', atEnd);
-            }
-            if (chipsRow && chipsInner) {
-                chipsRow.addEventListener('scroll', syncChipsScrollEnd);
-                syncChipsScrollEnd();
-                requestAnimationFrame(function () {
-                    requestAnimationFrame(syncChipsScrollEnd);
-                });
-            }
-
-            var t;
-            var tChips;
-            window.addEventListener('resize', function () {
-                clearTimeout(t);
-                t = setTimeout(sync, 150);
-                clearTimeout(tChips);
-                tChips = setTimeout(syncChipsScrollEnd, 150);
-            });
+      document.addEventListener("DOMContentLoaded", function () {
+        var colFilterOverlay = document.getElementById("colFilterOverlay");
+        var colFilterOpenBtn = document.getElementById("colFilterOpenBtn");
+        var colFilterClose = document.getElementById("colFilterClose");
+        var colFilterBackdrop = document.getElementById("colFilterBackdrop");
+        function setColFilterOpen(open) {
+          if (!colFilterOverlay) return;
+          colFilterOverlay.classList.toggle("open", open);
+          colFilterOverlay.setAttribute("aria-hidden", open ? "false" : "true");
+          document.body.style.overflow = open ? "hidden" : "";
+        }
+        if (colFilterOpenBtn && colFilterOverlay) {
+          colFilterOpenBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            setColFilterOpen(true);
+          });
+        }
+        if (colFilterClose) {
+          colFilterClose.addEventListener("click", function () {
+            setColFilterOpen(false);
+          });
+        }
+        if (colFilterBackdrop) {
+          colFilterBackdrop.addEventListener("click", function () {
+            setColFilterOpen(false);
+          });
+        }
+        document.addEventListener("keydown", function (e) {
+          if (
+            e.key === "Escape" &&
+            colFilterOverlay &&
+            colFilterOverlay.classList.contains("open")
+          ) {
+            setColFilterOpen(false);
+          }
         });
-    </script>
-</body>
 
+        var LS_HIDE_DROPPED = "playstate.collection.hideDropped";
+        /* 'true' = hide shelved (DROPPED) games; missing/'false' = show them (default) */
+        var LS_ONLY_PLAYING_ON_LOAD = "playstate.collection.onlyPlayingOnLoad";
+        /* 'true' = Playing chip selected on load; missing/'false' = All games (default) */
+        var hideDropped = localStorage.getItem(LS_HIDE_DROPPED) === "true";
+        document.body.classList.toggle("coll-hide-dropped", hideDropped);
+        var colToggleDroppedEl = document.getElementById("colToggleDropped");
+        if (colToggleDroppedEl) {
+          colToggleDroppedEl.checked = hideDropped;
+        }
+
+        var onlyPlayingOnLoad =
+          localStorage.getItem(LS_ONLY_PLAYING_ON_LOAD) === "true";
+        var colOnlyPlayingOnLoadEl = document.getElementById(
+          "colOnlyPlayingOnLoad",
+        );
+        if (colOnlyPlayingOnLoadEl) {
+          colOnlyPlayingOnLoadEl.checked = onlyPlayingOnLoad;
+        }
+
+        var colSettingsBtn = document.getElementById("colSettingsBtn");
+        var colSettingsPanel = document.getElementById("colSettingsPanel");
+        var colSettingsWrap = colSettingsBtn
+          ? colSettingsBtn.closest(".dropdown")
+          : null;
+        function setColSettingsOpen(open) {
+          if (!colSettingsPanel || !colSettingsBtn) return;
+          colSettingsPanel.setAttribute("aria-hidden", open ? "false" : "true");
+          colSettingsBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        }
+        function isColSettingsOpen() {
+          return (
+            colSettingsPanel &&
+            colSettingsPanel.getAttribute("aria-hidden") === "false"
+          );
+        }
+        if (colSettingsBtn && colSettingsPanel && colSettingsWrap) {
+          colSettingsBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            setColSettingsOpen(!isColSettingsOpen());
+          });
+          document.addEventListener("click", function (e) {
+            if (!isColSettingsOpen()) return;
+            if (!colSettingsWrap.contains(e.target)) setColSettingsOpen(false);
+          });
+          document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && isColSettingsOpen())
+              setColSettingsOpen(false);
+          });
+        }
+
+        if (colToggleDroppedEl) {
+          colToggleDroppedEl.addEventListener("change", function () {
+            var hide = this.checked;
+            localStorage.setItem(LS_HIDE_DROPPED, hide ? "true" : "false");
+            document.body.classList.toggle("coll-hide-dropped", hide);
+            sync();
+          });
+        }
+
+        var applyStatusFilterFn = null;
+
+        function cols(grid) {
+          var cs = getComputedStyle(grid);
+          var raw = cs.getPropertyValue("--coll-clip-cols").trim();
+          if (raw) {
+            var parsed = parseInt(raw, 10);
+            if (!isNaN(parsed) && parsed > 0) {
+              return parsed;
+            }
+          }
+          var t = cs.gridTemplateColumns.trim();
+          var p = t.split(/\s+/).filter(Boolean);
+          if (p.length > 1) return Math.max(1, p.length);
+          var m = t.match(/^repeat\(\s*(\d+)/i);
+          return m ? Math.max(1, parseInt(m[1], 10)) : 1;
+        }
+        function sync() {
+          document.querySelectorAll(".coll-shelf").forEach(function (sec) {
+            var grid = sec.querySelector(".coll-shelf-grid");
+            var more = sec.querySelector(".coll-shelf-more");
+            var btn = sec.querySelector(".coll-shelf-more .btn");
+            if (!grid || !more || !btn) return;
+            if (sec.getAttribute("data-status") === "PLAYING") {
+              sec.classList.remove("coll-shelf--clip", "coll-shelf--open");
+              more.classList.remove("is-on");
+              return;
+            }
+            var n = grid.querySelectorAll(
+              ".coll-tile:not(.is-platform-hidden):not(.is-why-hidden):not(.is-search-hidden)",
+            ).length;
+            var c = cols(grid);
+            var over = n > c;
+            var open = sec.classList.contains("coll-shelf--open");
+            sec.classList.toggle("coll-shelf--clip", over);
+            more.classList.toggle("is-on", over && !open);
+            if (!over) sec.classList.remove("coll-shelf--open");
+            if (over && !open) {
+              var h = n - c;
+              btn.textContent = h > 0 ? "Show all (" + h + ")" : "Show all";
+            }
+          });
+        }
+
+        /* ── Collection search + filter DOM refs (must exist before status chips call colApplyLibraryFilters) ── */
+        var colSearchInput = document.getElementById("col-q");
+        var colBoard = document.getElementById("colBoard");
+        var colFilterEmptyState = document.getElementById(
+          "colFilterEmptyState",
+        );
+        var colFilterEmptyMessage = document.getElementById(
+          "colFilterEmptyMessage",
+        );
+        var colActiveFiltersMount = document.getElementById(
+          "colActiveFiltersMount",
+        );
+        var colActiveFilterChips = document.getElementById(
+          "colActiveFilterChips",
+        );
+        var colClearAllFilters = document.getElementById("colClearAllFilters");
+        var colFilterForm = document.getElementById("colFilterForm");
+        var COL_TILE_VISIBLE =
+          ".coll-tile:not(.is-platform-hidden):not(.is-why-hidden):not(.is-search-hidden)";
+
+        function colApplyTextSearch() {
+          if (!colSearchInput) return;
+          var q = colSearchInput.value || "";
+          var query = q.trim().toLowerCase();
+          var cards = document.querySelectorAll(".coll-tile");
+          cards.forEach(function (card) {
+            var titleEl = card.querySelector(".coll-tile-link h3");
+            var title = titleEl
+              ? (titleEl.textContent || "").toLowerCase()
+              : "";
+            var matches = !query || title.indexOf(query) !== -1;
+            card.classList.toggle("is-search-hidden", !matches);
+          });
+          colApplyLibraryFilters();
+        }
+
+        if (colSearchInput) {
+          colSearchInput.addEventListener("input", function () {
+            colApplyTextSearch();
+          });
+        }
+
+        /* ── Status filter chips: All games / per-status shelves ── */
+        (function colWireStatusFilter() {
+          var chips = document.querySelectorAll(".coll-status-chip");
+          if (!chips.length) return;
+
+          function applyStatusFilter(status) {
+            var isAll = !status || status === "ALL";
+            document
+              .querySelectorAll(".coll-shelf[data-status]")
+              .forEach(function (sec) {
+                var key = sec.getAttribute("data-status");
+                if (isAll) {
+                  sec.style.display = "";
+                } else {
+                  sec.style.display = key === status ? "" : "none";
+                }
+              });
+
+            chips.forEach(function (chip) {
+              var chipStatus = chip.getAttribute("data-status") || "ALL";
+              var active = isAll ? chipStatus === "ALL" : chipStatus === status;
+              chip.classList.toggle("is-active", active);
+              chip.setAttribute("aria-pressed", active ? "true" : "false");
+            });
+
+            colApplyLibraryFilters();
+          }
+
+          applyStatusFilterFn = applyStatusFilter;
+
+          chips.forEach(function (chip) {
+            chip.addEventListener("click", function (e) {
+              e.preventDefault();
+              var status = chip.getAttribute("data-status") || "ALL";
+              applyStatusFilter(status);
+            });
+          });
+
+          applyStatusFilter(onlyPlayingOnLoad ? "PLAYING" : "ALL");
+        })();
+
+        if (colOnlyPlayingOnLoadEl) {
+          colOnlyPlayingOnLoadEl.addEventListener("change", function () {
+            var on = this.checked;
+            localStorage.setItem(
+              LS_ONLY_PLAYING_ON_LOAD,
+              on ? "true" : "false",
+            );
+          });
+        }
+
+        /* ── Platform + why playing: client-side; URL synced with replaceState ── */
+
+        function colParsePlatformsFromUrl() {
+          var params = new URLSearchParams(window.location.search);
+          var list = params.getAll("platform");
+          var out = [];
+          for (var i = 0; i < list.length; i++) {
+            var v = list[i];
+            if (v != null && String(v).trim() !== "")
+              out.push(String(v).trim());
+          }
+          return out;
+        }
+
+        function colParseWhyPlayingsFromUrl() {
+          var params = new URLSearchParams(window.location.search);
+          var list = params
+            .getAll("whyPlaying")
+            .concat(params.getAll("playIntent"));
+          var seen = {};
+          var out = [];
+          for (var i = 0; i < list.length; i++) {
+            var v = list[i];
+            if (v == null || String(v).trim() === "") continue;
+            var t = String(v).trim();
+            if (!seen[t]) {
+              seen[t] = true;
+              out.push(t);
+            }
+          }
+          return out;
+        }
+
+        function colSetUrlFromLibraryFilters(platforms, whyPlayings) {
+          var url = new URL(window.location.href);
+          url.searchParams.delete("platform");
+          url.searchParams.delete("whyPlaying");
+          url.searchParams.delete("playIntent");
+          for (var i = 0; i < platforms.length; i++) {
+            url.searchParams.append("platform", platforms[i]);
+          }
+          for (var j = 0; j < whyPlayings.length; j++) {
+            url.searchParams.append("whyPlaying", whyPlayings[j]);
+          }
+          var next = url.pathname + url.search + url.hash;
+          var cur =
+            window.location.pathname +
+            window.location.search +
+            window.location.hash;
+          if (next !== cur) {
+            window.history.replaceState({}, "", next);
+          }
+        }
+
+        function colGetSelectedPlatformsFromInputs() {
+          var inputs = colFilterForm
+            ? colFilterForm.querySelectorAll(
+                'input.coll-filter-platform-input[name="platform"]',
+              )
+            : [];
+          var sel = [];
+          inputs.forEach(function (inp) {
+            if (inp.checked) sel.push(inp.value);
+          });
+          return sel;
+        }
+
+        function colGetSelectedWhyPlayingsFromInputs() {
+          var inputs = colFilterForm
+            ? colFilterForm.querySelectorAll(
+                'input.coll-filter-why-playing-input[name="whyPlaying"]',
+              )
+            : [];
+          var sel = [];
+          inputs.forEach(function (inp) {
+            if (inp.checked) sel.push(inp.value);
+          });
+          return sel;
+        }
+
+        function colSyncPlatformInputsFromList(platforms) {
+          var set = {};
+          platforms.forEach(function (p) {
+            set[p] = true;
+          });
+          var inputs = colFilterForm
+            ? colFilterForm.querySelectorAll(
+                'input.coll-filter-platform-input[name="platform"]',
+              )
+            : [];
+          inputs.forEach(function (inp) {
+            inp.checked = !!set[inp.value];
+          });
+        }
+
+        function colSyncWhyPlayingInputsFromList(reasons) {
+          var set = {};
+          reasons.forEach(function (p) {
+            set[p] = true;
+          });
+          var inputs = colFilterForm
+            ? colFilterForm.querySelectorAll(
+                'input.coll-filter-why-playing-input[name="whyPlaying"]',
+              )
+            : [];
+          inputs.forEach(function (inp) {
+            inp.checked = !!set[inp.value];
+          });
+        }
+
+        function colApplyLibraryFilters() {
+          var selectedPlats = colGetSelectedPlatformsFromInputs();
+          var selectedWhy = colGetSelectedWhyPlayingsFromInputs();
+          var hasSearchQuery = !!(
+            colSearchInput &&
+            colSearchInput.value &&
+            colSearchInput.value.trim() !== ""
+          );
+          colSetUrlFromLibraryFilters(selectedPlats, selectedWhy);
+          var platActive = selectedPlats.length > 0;
+          var whyActive = selectedWhy.length > 0;
+          var filtersActive = platActive || whyActive;
+          document.body.classList.toggle("coll-filter-active", filtersActive);
+          var openBtn = document.getElementById("colFilterOpenBtn");
+          if (openBtn) openBtn.classList.toggle("has-filters", filtersActive);
+
+          document
+            .querySelectorAll(".coll-tile[data-platform]")
+            .forEach(function (card) {
+              var p = card.getAttribute("data-platform") || "";
+              var showPlat =
+                !platActive || (p !== "" && selectedPlats.indexOf(p) >= 0);
+              card.classList.toggle("is-platform-hidden", !showPlat);
+            });
+
+          document.querySelectorAll(".coll-tile").forEach(function (card) {
+            var raw = card.getAttribute("data-why-playings") || "";
+            var cardWhy = raw
+              .split(",")
+              .map(function (s) {
+                return s.trim();
+              })
+              .filter(Boolean);
+            var showWhy =
+              !whyActive ||
+              cardWhy.some(function (ci) {
+                return selectedWhy.indexOf(ci) >= 0;
+              });
+            card.classList.toggle("is-why-hidden", !showWhy);
+          });
+
+          document
+            .querySelectorAll(".coll-shelf[data-status]")
+            .forEach(function (sec) {
+              var vis = sec.querySelectorAll(COL_TILE_VISIBLE).length;
+              var nEl = sec.querySelector(".coll-shelf-count");
+              if (nEl) nEl.textContent = String(vis);
+              var statusHiddenByChip = sec.style.display === "none";
+              var shouldHideSection =
+                !statusHiddenByChip &&
+                (hasSearchQuery || filtersActive) &&
+                vis === 0;
+              sec.classList.toggle(
+                "coll-shelf--empty-filter",
+                shouldHideSection,
+              );
+            });
+
+          if (colActiveFiltersMount && colActiveFilterChips) {
+            colActiveFiltersMount.hidden = !filtersActive;
+            colActiveFiltersMount.setAttribute(
+              "aria-hidden",
+              filtersActive ? "false" : "true",
+            );
+            colActiveFilterChips.innerHTML = "";
+            if (filtersActive) {
+              selectedPlats.forEach(function (plat) {
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "filter-chip coll-filter-chip";
+                btn.setAttribute("data-platform", plat);
+                btn.setAttribute("aria-label", "Remove filter " + plat);
+                var span = document.createElement("span");
+                span.textContent = plat;
+                btn.appendChild(span);
+                var ic = document.createElement("i");
+                ic.className = "fa-solid fa-xmark";
+                ic.setAttribute("aria-hidden", "true");
+                btn.appendChild(ic);
+                colActiveFilterChips.appendChild(btn);
+              });
+              selectedWhy.forEach(function (whyVal) {
+                var label = whyVal;
+                var refInp = null;
+                if (colFilterForm) {
+                  colFilterForm
+                    .querySelectorAll(
+                      'input.coll-filter-why-playing-input[name="whyPlaying"]',
+                    )
+                    .forEach(function (inp) {
+                      if (inp.value === whyVal) refInp = inp;
+                    });
+                }
+                if (refInp && refInp.getAttribute("data-chip-label")) {
+                  label = refInp.getAttribute("data-chip-label");
+                }
+                var btn2 = document.createElement("button");
+                btn2.type = "button";
+                btn2.className = "filter-chip coll-filter-chip";
+                btn2.setAttribute("data-why-playing", whyVal);
+                btn2.setAttribute(
+                  "aria-label",
+                  "Remove play intent filter " + label,
+                );
+                var span2 = document.createElement("span");
+                span2.textContent = label;
+                btn2.appendChild(span2);
+                var ic2 = document.createElement("i");
+                ic2.className = "fa-solid fa-xmark";
+                ic2.setAttribute("aria-hidden", "true");
+                btn2.appendChild(ic2);
+                colActiveFilterChips.appendChild(btn2);
+              });
+            }
+          }
+
+          var visibleCardsInScope = 0;
+          document
+            .querySelectorAll(".coll-shelf[data-status]")
+            .forEach(function (sec) {
+              var statusHiddenByChip = sec.style.display === "none";
+              if (statusHiddenByChip) return;
+              var vis = sec.querySelectorAll(COL_TILE_VISIBLE).length;
+              visibleCardsInScope += vis;
+            });
+
+          var showNoMatch = visibleCardsInScope === 0;
+          if (colFilterEmptyMessage) {
+            if (hasSearchQuery || filtersActive) {
+              colFilterEmptyMessage.textContent =
+                "No games match your search or filters.";
+            } else {
+              colFilterEmptyMessage.textContent =
+                "No games in this status yet.";
+            }
+          }
+          if (colBoard) colBoard.hidden = showNoMatch;
+          if (colFilterEmptyState) colFilterEmptyState.hidden = !showNoMatch;
+
+          sync();
+        }
+
+        if (colFilterForm) {
+          colFilterForm
+            .querySelectorAll("input.coll-filter-platform-input")
+            .forEach(function (inp) {
+              inp.addEventListener("change", function () {
+                colApplyLibraryFilters();
+              });
+            });
+          colFilterForm
+            .querySelectorAll("input.coll-filter-why-playing-input")
+            .forEach(function (inp) {
+              inp.addEventListener("change", function () {
+                colApplyLibraryFilters();
+              });
+            });
+        }
+        if (colClearAllFilters) {
+          colClearAllFilters.addEventListener("click", function (e) {
+            e.preventDefault();
+            colSyncPlatformInputsFromList([]);
+            colSyncWhyPlayingInputsFromList([]);
+            colApplyLibraryFilters();
+          });
+        }
+        if (colActiveFilterChips) {
+          colActiveFilterChips.addEventListener("click", function (e) {
+            var chip = e.target.closest(".coll-filter-chip");
+            if (!chip) return;
+            var plat = chip.getAttribute("data-platform");
+            if (plat) {
+              var inputs = colFilterForm
+                ? colFilterForm.querySelectorAll(
+                    'input.coll-filter-platform-input[name="platform"]',
+                  )
+                : [];
+              inputs.forEach(function (inp) {
+                if (inp.value === plat) inp.checked = false;
+              });
+            }
+            var whyRem = chip.getAttribute("data-why-playing");
+            if (whyRem) {
+              var inps = colFilterForm
+                ? colFilterForm.querySelectorAll(
+                    'input.coll-filter-why-playing-input[name="whyPlaying"]',
+                  )
+                : [];
+              inps.forEach(function (inp) {
+                if (inp.value === whyRem) inp.checked = false;
+              });
+            }
+            colApplyLibraryFilters();
+          });
+        }
+
+        window.addEventListener("popstate", function () {
+          colSyncPlatformInputsFromList(colParsePlatformsFromUrl());
+          colSyncWhyPlayingInputsFromList(colParseWhyPlayingsFromUrl());
+          colApplyLibraryFilters();
+        });
+
+        (function colInitLibraryFiltersFromUrl() {
+          var plats = colParsePlatformsFromUrl();
+          if (plats.length > 0) colSyncPlatformInputsFromList(plats);
+          var why = colParseWhyPlayingsFromUrl();
+          if (why.length > 0) colSyncWhyPlayingInputsFromList(why);
+          colApplyLibraryFilters();
+        })();
+
+        document.body.addEventListener("click", function (e) {
+          var b = e.target.closest(".coll-shelf-more .btn");
+          if (!b) return;
+          e.preventDefault();
+          var sec = b.closest(".coll-shelf");
+          if (!sec || sec.classList.contains("coll-shelf--open")) return;
+          sec.classList.add("coll-shelf--open");
+          var m = sec.querySelector(".coll-shelf-more");
+          if (m) m.classList.remove("is-on");
+        });
+
+        sync();
+        requestAnimationFrame(function () {
+          sync();
+        });
+
+        var chipsRow = document.querySelector(".coll-chips");
+        var chipsInner = document.querySelector(".coll-chips-wrap");
+        function syncChipsScrollEnd() {
+          if (!chipsRow || !chipsInner) return;
+          var maxScroll = chipsRow.scrollWidth - chipsRow.clientWidth;
+          var atEnd = maxScroll <= 2 || chipsRow.scrollLeft >= maxScroll - 2;
+          chipsInner.classList.toggle("is-scroll-end", atEnd);
+        }
+        if (chipsRow && chipsInner) {
+          chipsRow.addEventListener("scroll", syncChipsScrollEnd);
+          syncChipsScrollEnd();
+          requestAnimationFrame(function () {
+            requestAnimationFrame(syncChipsScrollEnd);
+          });
+        }
+
+        var t;
+        var tChips;
+        window.addEventListener("resize", function () {
+          clearTimeout(t);
+          t = setTimeout(sync, 150);
+          clearTimeout(tChips);
+          tChips = setTimeout(syncChipsScrollEnd, 150);
+        });
+      });
+    </script>
+  </body>
 </html>

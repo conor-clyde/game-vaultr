@@ -10,22 +10,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseUserDetailsService implements UserDetailsService {
 
-    private final UserAccountRepository userAccountRepository;
+  private final UserAccountRepository userAccountRepository;
 
-    public DatabaseUserDetailsService(UserAccountRepository userAccountRepository) {
-        this.userAccountRepository = userAccountRepository;
-    }
+  public DatabaseUserDetailsService(UserAccountRepository userAccountRepository) {
+    this.userAccountRepository = userAccountRepository;
+  }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userAccountRepository
-                .findByUsernameIgnoreCase(username.trim())
-                .map(
-                        account ->
-                                User.withUsername(account.getUsername())
-                                        .password(account.getPasswordHash())
-                                        .roles("USER")
-                                        .build())
-                .orElseThrow(() -> new UsernameNotFoundException("Unknown user"));
-    }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    return userAccountRepository
+        .findByUsernameIgnoreCase(username.trim())
+        .map(
+            account ->
+                User.withUsername(account.getUsername())
+                    .password(account.getPasswordHash())
+                    .roles("USER")
+                    .build())
+        .orElseThrow(() -> new UsernameNotFoundException("Unknown user"));
+  }
 }

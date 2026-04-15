@@ -1,27 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Serif:ital@0;1&family=Orbitron:wght@600;700;800;900&family=Syne:wght@400;600;700;800&display=swap");
+@import url(https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Serif:ital@0;1&family=Orbitron:wght@600;700;800;900&family=Syne:wght@400;600;700;800&display=swap);
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 :root {
   --bg: #0e0e12;
   --surface: #16161d;
   --surface-2: #1d1d27;
   --surface-3: #232333;
-
   --surface2: var(--surface-2);
   --surface3: var(--surface-3);
-
   --accent: #7c3aed;
   --accent-glow: rgba(124, 58, 237, 0.35);
   --accent-mid: #a78bfa;
   --accent-2: #f0abfc;
   --accent-light: var(--accent-2);
-
   --focus-ring: #c4b5fd;
   --link-hover: #d8cffe;
-
   --brand-logo-deep: 109, 40, 217;
   --brand-logo-bright: 168, 85, 247;
   --brand-logo-soft: 167, 139, 250;
@@ -31,32 +27,21 @@
     rgb(var(--brand-logo-deep)),
     rgb(var(--brand-logo-bright))
   );
-
   --text-1: #f7f7ff;
   --text-2: #c9c9de;
   --text-3: #9898b0;
-
   --text-primary: var(--text-1);
   --text-secondary: var(--text-2);
-
   --green: #4ade80;
   --yellow: #fbbf24;
   --red: #f06292;
   --blue: #60a5fa;
-
   --border: #3d3d4e;
-  --border-h: rgba(255, 255, 255, 0.18);
-
+  --border-h: hsla(0, 0%, 100%, 0.18);
   --font-syne: "Syne", sans-serif;
-
   --font-dm: "DM Sans", sans-serif;
-
-  /* Hero “Log play” CTAs — wide geometric display (matches classic purple pill) */
   --font-hero-log-play: "Orbitron", "Syne", system-ui, sans-serif;
-
   --font-serif-display: "Instrument Serif", Georgia, "Times New Roman", serif;
-
-  /* Primary actions — one shared visual system site-wide */
   --btn-primary-font: var(--font-dm);
   --btn-primary-font-size: 0.875rem;
   --btn-primary-font-weight: 700;
@@ -77,21 +62,19 @@
     #7c3aed 78%,
     #6d28d9 100%
   );
-  --btn-primary-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset,
-    0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.2) inset,
-    0 3px 14px rgba(109, 40, 217, 0.38),
-    0 2px 8px rgba(0, 0, 0, 0.28);
-  --btn-primary-shadow-hover: 0 0 0 1px rgba(255, 255, 255, 0.18) inset,
-    0 1px 0 rgba(255, 255, 255, 0.12) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.18) inset,
-    0 5px 22px rgba(109, 40, 217, 0.48),
-    0 3px 12px rgba(0, 0, 0, 0.32);
+  --btn-primary-shadow:
+    0 0 0 1px hsla(0, 0%, 100%, 0.14) inset,
+    0 1px 0 hsla(0, 0%, 100%, 0.1) inset, 0 -1px 0 rgba(0, 0, 0, 0.2) inset,
+    0 3px 14px rgba(109, 40, 217, 0.38), 0 2px 8px rgba(0, 0, 0, 0.28);
+  --btn-primary-shadow-hover:
+    0 0 0 1px hsla(0, 0%, 100%, 0.18) inset,
+    0 1px 0 hsla(0, 0%, 100%, 0.12) inset, 0 -1px 0 rgba(0, 0, 0, 0.18) inset,
+    0 5px 22px rgba(109, 40, 217, 0.48), 0 3px 12px rgba(0, 0, 0, 0.32);
   --btn-primary-hover-translate-y: -1px;
 }
 html {
-  font-family: var(--font-dm);
   color-scheme: dark;
+  font-family: var(--font-dm);
   scroll-behavior: smooth;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -101,58 +84,58 @@ html {
 }
 h1,
 h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-syne);
+h3 {
   color: var(--text-1);
+  font-family: var(--font-syne);
   text-wrap: balance;
 }
 h1 {
   font-size: 2.2rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
 }
-h2 {
+h2,
+h3 {
   font-size: 1.3rem;
-  font-weight: 700;
   letter-spacing: -0.01em;
+  font-weight: 700;
 }
 h3 {
   font-size: 0.95rem;
-  font-weight: 700;
   letter-spacing: 0.02em;
 }
 button {
-  font: inherit;
   color: inherit;
   cursor: pointer;
+  font: inherit;
 }
+.eyebrow,
 p {
   font-family: var(--font-dm);
+}
+p {
+  color: var(--text-2);
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.75;
-  color: var(--text-2);
 }
 .eyebrow {
-  font-family: var(--font-dm);
+  color: rgba(196, 181, 253, 0.95);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(196, 181, 253, 0.95);
   margin: 0 0 10px;
+  text-transform: uppercase;
+}
+.tagline,
+h1 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 .tagline {
+  color: var(--text-1);
   font-family: var(--font-syne);
   font-size: clamp(1.9rem, 4vw, 2.5rem);
-  font-weight: 800;
-  color: var(--text-1);
-  margin: 0 0 0.65rem;
-  letter-spacing: -0.02em;
   line-height: 1.35;
+  margin: 0 0 0.65rem;
 }
 @media (max-width: 820px) {
   .tagline {
@@ -166,8 +149,8 @@ p {
   }
   .tagline {
     font-size: clamp(1.35rem, 5.5vw, 1.75rem);
-    margin-bottom: 20px;
     line-height: 1.28;
+    margin-bottom: 20px;
   }
 }
 @media (max-width: 380px) {
@@ -176,14 +159,13 @@ p {
     margin-bottom: 16px;
   }
 }
+.input,
 input,
-textarea,
-select,
-.input {
+textarea {
+  color: var(--text-1);
   font-family: var(--font-dm);
   font-size: 1rem;
   font-weight: 400;
-  color: var(--text-1);
 }
 input::placeholder,
 textarea::placeholder {
@@ -192,31 +174,24 @@ textarea::placeholder {
 textarea {
   resize: none;
 }
+.auth-lead a[href],
 main
-  :where(p, li, blockquote, figcaption)
+  :where(p, li)
   a[href]:not(.hd-tile):not(.hd-preview-card):not(.cg-bc-link):not(
     .cg-play-log-item
-  ),
-.auth-lead a[href] {
+  ) {
   color: var(--accent-mid);
-  text-underline-offset: 0.2em;
   text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
 }
+.auth-lead a[href]:hover,
 main
-  :where(p, li, blockquote, figcaption)
+  :where(p, li)
   a[href]:not(.hd-tile):not(.hd-preview-card):not(.cg-bc-link):not(
     .cg-play-log-item
-  ):hover,
-.auth-lead a[href]:hover {
+  ):hover {
   color: var(--link-hover);
   text-decoration: underline;
-}
-:where(a[href], button, input, textarea, select, summary):focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-:where(a[href].btn):focus-visible {
-  outline-offset: 3px;
 }
 ::selection {
   background: rgba(167, 139, 250, 0.38);
@@ -224,8 +199,8 @@ main
 }
 @media (prefers-reduced-motion: reduce) {
   *,
-  *::before,
-  *::after {
+  :after,
+  :before {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

@@ -1,0 +1,205 @@
+<nav xmlns:th="http://www.thymeleaf.org" th:fragment="navbar" class="navbar">
+  <div class="navbar-left">
+    <th:block th:replace="~{fragments/layout/site-logo :: navbar}" />
+
+    <div class="navbar-links">
+      <a
+        href="/"
+        class="navbar-link"
+        th:classappend="${title == 'Home' ? 'active' : ''}"
+        >Home</a
+      >
+      <th:block th:if="${navAuthenticated}">
+        <a
+          href="/collection"
+          class="navbar-link"
+          th:classappend="${title == 'My collection' || title == 'Collection' ? 'active' : ''}"
+          >Collection</a
+        >
+        <a
+          href="/search"
+          class="navbar-link"
+          th:classappend="${title == 'Search' ? 'active' : ''}"
+          >Search</a
+        >
+      </th:block>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <th:block th:if="${navAuthenticated}">
+      <div class="navbar-tools" id="navbarTools">
+        <div class="navbar-datetime-widget" title="Local time">
+          <div class="navbar-datetime-time-row">
+            <time class="navbar-datetime" id="navbarClock" datetime="">
+              <span class="navbar-datetime-hm" id="navbarClockHm">--:--</span>
+            </time>
+            <span class="navbar-datetime-ampm-stack">
+              <span class="navbar-datetime-ampm" id="navbarClockAmPm"></span>
+            </span>
+          </div>
+          <div class="navbar-datetime-date" id="navbarClockDate"></div>
+        </div>
+      </div>
+    </th:block>
+    <th:block th:unless="${navAuthenticated}">
+      <div class="navbar-auth-guest">
+        <a th:href="@{/login}" class="btn btn-ghost navbar-signin">Sign in</a>
+        <a th:href="@{/register}" class="btn btn-ghost navbar-register"
+          >Register</a
+        >
+      </div>
+    </th:block>
+    <th:block th:if="${navAuthenticated}">
+      <div class="navbar-auth-user">
+        <div class="navbar-user-menu">
+          <button
+            type="button"
+            class="navbar-user-trigger"
+            id="navUserMenuTrigger"
+            aria-expanded="false"
+            aria-haspopup="true"
+            aria-controls="navbarUserDropdown"
+            th:attr="aria-label=|Account menu, signed in as ${navUsername != null ? navUsername : 'user'}|"
+          >
+            <span
+              class="navbar-user-avatar"
+              aria-hidden="true"
+              th:text="${#strings.isEmpty(navUsername) ? '?' : #strings.toUpperCase(#strings.substring(navUsername,0,1))}"
+              >U</span
+            >
+            <span class="navbar-user-name" th:text="${navUsername}">User</span>
+            <svg
+              class="navbar-user-chevron"
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              aria-hidden="true"
+            >
+              <path
+                d="M2.5 4.25 6 7.75 9.5 4.25"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.25"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <div
+            class="navbar-user-dropdown"
+            id="navbarUserDropdown"
+            role="menu"
+            aria-hidden="true"
+            hidden
+          >
+            <form
+              th:action="@{/logout}"
+              method="post"
+              class="navbar-user-menu-form"
+            >
+              <button
+                type="submit"
+                class="navbar-user-menu-item"
+                role="menuitem"
+              >
+                Log out
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </th:block>
+
+    <button
+      type="button"
+      class="btn btn-ghost navbar-hamburger"
+      id="navHamburger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="navbarMobilePanel"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <div class="navbar-mobile-panel" id="navbarMobilePanel" aria-hidden="true">
+    <div class="navbar-mobile-panel-inner">
+      <th:block th:if="${navAuthenticated}">
+        <div
+          class="navbar-mobile-user"
+          role="group"
+          aria-label="Signed-in account"
+        >
+          <span
+            class="navbar-mobile-user-avatar"
+            aria-hidden="true"
+            th:text="${#strings.isEmpty(navUsername) ? '?' : #strings.toUpperCase(#strings.substring(navUsername,0,1))}"
+            >C</span
+          >
+          <div class="navbar-mobile-user-meta">
+            <span class="navbar-mobile-user-name" th:text="${navUsername}"
+              >Conor</span
+            >
+          </div>
+        </div>
+        <hr class="navbar-mobile-rule" aria-hidden="true" />
+        <nav class="navbar-mobile-nav" aria-label="Library">
+          <a
+            href="/collection"
+            class="navbar-mobile-link"
+            th:classappend="${title == 'My collection' || title == 'Collection' ? 'active' : ''}"
+            >Library</a
+          >
+          <a
+            href="/search"
+            class="navbar-mobile-link"
+            th:classappend="${title == 'Search' ? 'active' : ''}"
+            >Search</a
+          >
+          <a
+            th:href="@{|/#hd-activity-heading|}"
+            class="navbar-mobile-link"
+            th:classappend="${title == 'Home' ? 'active' : ''}"
+            >Sessions</a
+          >
+        </nav>
+        <div
+          class="navbar-mobile-logout-block"
+          role="group"
+          aria-label="Sign out"
+        >
+          <form
+            th:action="@{/logout}"
+            method="post"
+            class="navbar-mobile-logout-form"
+          >
+            <button type="submit" class="navbar-mobile-logout">Log out</button>
+          </form>
+        </div>
+      </th:block>
+      <th:block th:unless="${navAuthenticated}">
+        <nav class="navbar-mobile-nav" aria-label="Site">
+          <a
+            href="/"
+            class="navbar-mobile-link"
+            th:classappend="${title == 'Home' ? 'active' : ''}"
+            >Home</a
+          >
+          <a
+            th:href="@{/login}"
+            class="navbar-mobile-link navbar-mobile-link--auth"
+            >Sign in</a
+          >
+          <a
+            th:href="@{/register}"
+            class="navbar-mobile-link navbar-mobile-link--auth"
+            >Register</a
+          >
+        </nav>
+      </th:block>
+    </div>
+  </div>
+</nav>

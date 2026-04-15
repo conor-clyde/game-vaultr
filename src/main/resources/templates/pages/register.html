@@ -1,60 +1,102 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout/layout-head :: head}"></head>
 
-<head th:replace="~{fragments/layout-head :: head}"></head>
-
-<body class="auth-page">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+  <body class="auth-page">
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
 
     <main class="auth-main" id="main-content">
-        <div class="auth-panel">
-            <div class="auth-card">
-                <div th:replace="~{fragments/site-logo :: authCard}"></div>
-                <h1 class="auth-title">Create account</h1>
-                <p class="auth-lead">Pick a username, email, and password to get started.</p>
+      <div class="auth-panel">
+        <div class="auth-card">
+          <div th:replace="~{fragments/layout/site-logo :: authCard}"></div>
+          <h1 class="auth-title">Create account</h1>
+          <p class="auth-lead">
+            Pick a username, email, and password to get started.
+          </p>
 
-                <p th:if="${registerError != null}" class="auth-alert auth-alert--error" role="alert" th:text="${registerError}">
-                    Something went wrong.
-                </p>
+          <p
+            th:if="${registerError != null}"
+            class="auth-alert auth-alert--error"
+            role="alert"
+            th:text="${registerError}"
+          >
+            Something went wrong.
+          </p>
 
-                <form class="auth-form" th:action="@{/register}" method="post">
-                    <div class="auth-field">
-                        <label class="auth-label" for="reg-username">Username</label>
-                        <input class="auth-input" type="text" id="reg-username" name="username" autocomplete="username"
-                            required minlength="3" maxlength="64" th:value="${registerUsername}">
-                        <p class="auth-hint">3–64 characters: letters, numbers, or underscores.</p>
-                    </div>
-                    <div class="auth-field">
-                        <label class="auth-label" for="reg-email">Email</label>
-                        <input class="auth-input" type="email" id="reg-email" name="email" autocomplete="email" required
-                            maxlength="254" th:value="${registerEmail}">
-                        <p class="auth-hint">Must be unique on this site.</p>
-                    </div>
-                    <div class="auth-field">
-                        <label class="auth-label" for="reg-password">Password</label>
-                        <input class="auth-input" type="password" id="reg-password" name="password"
-                            autocomplete="new-password" required minlength="8">
-                        <p class="auth-hint">At least 8 characters.</p>
-                    </div>
-                    <div class="auth-field">
-                        <label class="auth-label" for="reg-confirm">Confirm password</label>
-                        <input class="auth-input" type="password" id="reg-confirm" name="confirmPassword"
-                            autocomplete="new-password" required minlength="8">
-                    </div>
-                    <div class="auth-actions">
-                        <button type="submit" class="btn btn-primary auth-submit">Create account</button>
-                    </div>
-                </form>
-
-                <p class="auth-footer">
-                    Already have an account?
-                    <a th:href="@{/login}" class="auth-link">Sign in</a>
-                </p>
+          <form class="auth-form" th:action="@{/register}" method="post">
+            <div class="auth-field">
+              <label class="auth-label" for="reg-username">Username</label>
+              <input
+                class="auth-input"
+                type="text"
+                id="reg-username"
+                name="username"
+                autocomplete="username"
+                required
+                minlength="3"
+                maxlength="64"
+                th:value="${registerUsername}"
+              />
+              <p class="auth-hint">
+                3–64 characters: letters, numbers, or underscores.
+              </p>
             </div>
+            <div class="auth-field">
+              <label class="auth-label" for="reg-email">Email</label>
+              <input
+                class="auth-input"
+                type="email"
+                id="reg-email"
+                name="email"
+                autocomplete="email"
+                required
+                maxlength="254"
+                th:value="${registerEmail}"
+              />
+              <p class="auth-hint">Must be unique on this site.</p>
+            </div>
+            <div class="auth-field">
+              <label class="auth-label" for="reg-password">Password</label>
+              <input
+                class="auth-input"
+                type="password"
+                id="reg-password"
+                name="password"
+                autocomplete="new-password"
+                required
+                minlength="8"
+              />
+              <p class="auth-hint">At least 8 characters.</p>
+            </div>
+            <div class="auth-field">
+              <label class="auth-label" for="reg-confirm"
+                >Confirm password</label
+              >
+              <input
+                class="auth-input"
+                type="password"
+                id="reg-confirm"
+                name="confirmPassword"
+                autocomplete="new-password"
+                required
+                minlength="8"
+              />
+            </div>
+            <div class="auth-actions">
+              <button type="submit" class="btn btn-primary auth-submit">
+                Create account
+              </button>
+            </div>
+          </form>
+
+          <p class="auth-footer">
+            Already have an account?
+            <a th:href="@{/login}" class="auth-link">Sign in</a>
+          </p>
         </div>
+      </div>
     </main>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
-</body>
-
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
+  </body>
 </html>

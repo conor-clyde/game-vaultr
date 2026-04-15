@@ -1,221 +1,304 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<body>
+  <body>
     <th:block th:fragment="modal">
-        <div id="addPlatformModal" class="add-platform-modal" role="dialog" aria-modal="true"
-            aria-labelledby="addPlatformModalTitle" aria-hidden="true">
-            <div class="add-platform-modal-backdrop"></div>
-            <div class="add-platform-modal-dialog">
-                <header class="site-modal-header">
-                    <div class="site-modal-header-row">
-                        <div class="site-modal-header-titles">
-                            <p class="site-modal-eyebrow" id="addPlatformModalTitle">Add to collection</p>
-                            <h2 class="site-modal-heading" id="addPlatformModalGameName"></h2>
-                        </div>
-                        <button type="button" id="addPlatformModalClose" class="site-modal-close" aria-label="Close dialog">
-                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </header>
-                <div class="add-platform-modal-field" id="addPlatformModalPlatformField">
-                    <p class="add-platform-modal-prompt">Platform</p>
-                    <p class="add-platform-modal-error" id="addPlatformModalError" role="alert" hidden></p>
-                    <div class="add-platform-modal-platforms" id="addPlatformOptions" role="listbox"
-                        aria-label="Choose platform">
-                        
-                    </div>
-                </div>
-                <div class="add-platform-modal-actions">
-                    <button type="button" class="btn btn-ghost" id="addPlatformModalCancel">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="addPlatformModalConfirm">Add</button>
-                </div>
+      <div
+        id="addPlatformModal"
+        class="add-platform-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="addPlatformModalTitle"
+        aria-hidden="true"
+      >
+        <div class="add-platform-modal-backdrop"></div>
+        <div class="add-platform-modal-dialog">
+          <header class="site-modal-header">
+            <div class="site-modal-header-row">
+              <div class="site-modal-header-titles">
+                <p class="site-modal-eyebrow" id="addPlatformModalTitle">
+                  Add to collection
+                </p>
+                <h2
+                  class="site-modal-heading"
+                  id="addPlatformModalGameName"
+                ></h2>
+              </div>
+              <button
+                type="button"
+                id="addPlatformModalClose"
+                class="site-modal-close"
+                aria-label="Close dialog"
+              >
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+              </button>
             </div>
+          </header>
+          <div
+            class="add-platform-modal-field"
+            id="addPlatformModalPlatformField"
+          >
+            <p class="add-platform-modal-prompt">Platform</p>
+            <p
+              class="add-platform-modal-error"
+              id="addPlatformModalError"
+              role="alert"
+              hidden
+            ></p>
+            <div
+              class="add-platform-modal-platforms"
+              id="addPlatformOptions"
+              role="listbox"
+              aria-label="Choose platform"
+            ></div>
+          </div>
+          <div class="add-platform-modal-actions">
+            <button
+              type="button"
+              class="btn btn-ghost"
+              id="addPlatformModalCancel"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              id="addPlatformModalConfirm"
+            >
+              Add
+            </button>
+          </div>
         </div>
+      </div>
 
-        <script>
-            (function () {
-                var m = document.getElementById('addPlatformModal'); if (!m) return;
-                var back = m.querySelector('.add-platform-modal-backdrop'),
-                    closeX = document.getElementById('addPlatformModalClose'),
-                    cancel = document.getElementById('addPlatformModalCancel'),
-                    confirm = document.getElementById('addPlatformModalConfirm'),
-                    optionsEl = m.querySelector('#addPlatformOptions'),
-                    errEl = document.getElementById('addPlatformModalError'),
-                    fieldEl = document.getElementById('addPlatformModalPlatformField'),
-                    formToSubmit = null,
-                    currentValue = null,
-                    lastActiveElement = null,
-                    modalOptionsAvailable = false;
+      <script>
+        (function () {
+          var m = document.getElementById("addPlatformModal");
+          if (!m) return;
+          var back = m.querySelector(".add-platform-modal-backdrop"),
+            closeX = document.getElementById("addPlatformModalClose"),
+            cancel = document.getElementById("addPlatformModalCancel"),
+            confirm = document.getElementById("addPlatformModalConfirm"),
+            optionsEl = m.querySelector("#addPlatformOptions"),
+            errEl = document.getElementById("addPlatformModalError"),
+            fieldEl = document.getElementById("addPlatformModalPlatformField"),
+            formToSubmit = null,
+            currentValue = null,
+            lastActiveElement = null,
+            modalOptionsAvailable = false;
 
-                function clearPlatformError() {
-                    if (errEl) { errEl.textContent = ''; errEl.hidden = true; }
-                    if (fieldEl) fieldEl.classList.remove('add-platform-modal-field--error');
-                }
+          function clearPlatformError() {
+            if (errEl) {
+              errEl.textContent = "";
+              errEl.hidden = true;
+            }
+            if (fieldEl)
+              fieldEl.classList.remove("add-platform-modal-field--error");
+          }
 
-                function showPlatformError(msg) {
-                    if (errEl) {
-                        errEl.textContent = msg || 'Choose a platform before adding to your collection.';
-                        errEl.hidden = false;
-                    }
-                    if (fieldEl) fieldEl.classList.add('add-platform-modal-field--error');
-                }
+          function showPlatformError(msg) {
+            if (errEl) {
+              errEl.textContent =
+                msg || "Choose a platform before adding to your collection.";
+              errEl.hidden = false;
+            }
+            if (fieldEl)
+              fieldEl.classList.add("add-platform-modal-field--error");
+          }
 
-                function closeModal() {
-                    if (document.activeElement && m.contains(document.activeElement)) {
-                        var target = lastActiveElement && typeof lastActiveElement.focus === 'function'
-                            ? lastActiveElement
-                            : document.body;
-                        try { target.focus(); } catch (e) { /* no-op */ }
-                    }
-                    m.classList.remove('is-open');
-                    m.setAttribute('aria-hidden', 'true');
-                    formToSubmit = null;
-                    lastActiveElement = null;
-                    currentValue = null;
-                    modalOptionsAvailable = false;
-                    clearPlatformError();
-                    if (optionsEl) optionsEl.innerHTML = '';
-                    if (confirm) confirm.disabled = false;
-                }
+          function closeModal() {
+            if (document.activeElement && m.contains(document.activeElement)) {
+              var target =
+                lastActiveElement &&
+                typeof lastActiveElement.focus === "function"
+                  ? lastActiveElement
+                  : document.body;
+              try {
+                target.focus();
+              } catch (e) {
+                /* no-op */
+              }
+            }
+            m.classList.remove("is-open");
+            m.setAttribute("aria-hidden", "true");
+            formToSubmit = null;
+            lastActiveElement = null;
+            currentValue = null;
+            modalOptionsAvailable = false;
+            clearPlatformError();
+            if (optionsEl) optionsEl.innerHTML = "";
+            if (confirm) confirm.disabled = false;
+          }
 
-                function fallbackPlatformList() {
-                    var w = window.__psAddCollectionFallbackPlatforms;
-                    return Array.isArray(w) ? w : [];
-                }
+          function fallbackPlatformList() {
+            var w = window.__psAddCollectionFallbackPlatforms;
+            return Array.isArray(w) ? w : [];
+          }
 
-                function openModal(name, names, form) {
-                    lastActiveElement = document.activeElement;
-                    formToSubmit = form;
-                    clearPlatformError();
-                    var el = document.getElementById('addPlatformModalGameName');
-                    if (el) el.textContent = name || 'Game';
-                    currentValue = null;
-                    modalOptionsAvailable = false;
+          function openModal(name, names, form) {
+            lastActiveElement = document.activeElement;
+            formToSubmit = form;
+            clearPlatformError();
+            var el = document.getElementById("addPlatformModalGameName");
+            if (el) el.textContent = name || "Game";
+            currentValue = null;
+            modalOptionsAvailable = false;
 
-                    var fromCard = [];
-                    if (Array.isArray(names)) {
-                        names.forEach(function (n) {
-                            if (n != null && String(n).trim() !== '') fromCard.push(String(n).trim());
-                        });
-                    }
-                    var list = fromCard.length ? fromCard : fallbackPlatformList();
-                    if (!list.length) {
-                        modalOptionsAvailable = false;
-                        if (optionsEl) {
-                            optionsEl.innerHTML = '';
-                            var hint = document.createElement('p');
-                            hint.className = 'add-platform-modal-empty-hint';
-                            hint.textContent = 'No platform list loaded. Refresh the page and try again.';
-                            optionsEl.appendChild(hint);
-                        }
-                        showPlatformError('A platform is required to add a game. Reload the page to load platform choices.');
-                        if (confirm) confirm.disabled = true;
-                        m.classList.add('is-open');
-                        m.setAttribute('aria-hidden', 'false');
-                        if (cancel && typeof cancel.focus === 'function') cancel.focus();
-                        return;
-                    }
+            var fromCard = [];
+            if (Array.isArray(names)) {
+              names.forEach(function (n) {
+                if (n != null && String(n).trim() !== "")
+                  fromCard.push(String(n).trim());
+              });
+            }
+            var list = fromCard.length ? fromCard : fallbackPlatformList();
+            if (!list.length) {
+              modalOptionsAvailable = false;
+              if (optionsEl) {
+                optionsEl.innerHTML = "";
+                var hint = document.createElement("p");
+                hint.className = "add-platform-modal-empty-hint";
+                hint.textContent =
+                  "No platform list loaded. Refresh the page and try again.";
+                optionsEl.appendChild(hint);
+              }
+              showPlatformError(
+                "A platform is required to add a game. Reload the page to load platform choices.",
+              );
+              if (confirm) confirm.disabled = true;
+              m.classList.add("is-open");
+              m.setAttribute("aria-hidden", "false");
+              if (cancel && typeof cancel.focus === "function") cancel.focus();
+              return;
+            }
 
-                    modalOptionsAvailable = true;
-                    var needExplicitChoice = list.length > 1;
-                    currentValue = needExplicitChoice ? null : list[0];
+            modalOptionsAvailable = true;
+            var needExplicitChoice = list.length > 1;
+            currentValue = needExplicitChoice ? null : list[0];
 
-                    if (optionsEl) {
-                        optionsEl.innerHTML = '';
-                        list.forEach(function (n) {
-                            var btn = document.createElement('button');
-                            btn.type = 'button';
-                            btn.className = 'btn btn-ghost';
-                            btn.textContent = n;
-                            btn.setAttribute('role', 'option');
-                            btn.dataset.value = n;
-                            btn.addEventListener('click', function () {
-                                currentValue = n;
-                                clearPlatformError();
-                                Array.prototype.forEach.call(optionsEl.querySelectorAll('button'), function (b) {
-                                    b.classList.toggle('is-selected', b === btn);
-                                });
-                            });
-                            optionsEl.appendChild(btn);
-                        });
-                        if (!needExplicitChoice) {
-                            var only = optionsEl.querySelector('button');
-                            if (only) {
-                                only.classList.add('is-selected');
-                                currentValue = only.dataset.value || list[0];
-                            }
-                        }
-                    }
-
-                    if (confirm) confirm.disabled = false;
-
-                    m.classList.add('is-open');
-                    m.setAttribute('aria-hidden', 'false');
-                    if (needExplicitChoice && cancel && typeof cancel.focus === 'function') {
-                        cancel.focus();
-                    } else if (confirm && typeof confirm.focus === 'function' && !confirm.disabled) {
-                        confirm.focus();
-                    } else if (cancel && typeof cancel.focus === 'function') {
-                        cancel.focus();
-                    } else {
-                        try { m.focus(); } catch (e) { /* no-op */ }
-                    }
-                }
-
-                document.addEventListener('click', function (e) {
-                    var btn = e.target && e.target.closest('.js-add-to-collection');
-                    if (btn) {
-                        e.preventDefault();
-                        var form = btn.closest('.js-add-form'),
-                            card = btn.closest('.search-result-card'),
-                            div = card && card.querySelector('.platforms'),
-                            names = [];
-                        if (div) {
-                            var raw = div.getAttribute('data-platform-names');
-                            if (raw != null && String(raw).trim() !== '') {
-                                try { names = JSON.parse(raw); } catch (err) { names = []; }
-                            }
-                        }
-                        if (!Array.isArray(names)) names = [];
-                        openModal(
-                            form && form.querySelector('input[name="title"]') ? form.querySelector('input[name="title"]').value : '',
-                            names,
-                            form
-                        );
-                    }
+            if (optionsEl) {
+              optionsEl.innerHTML = "";
+              list.forEach(function (n) {
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "btn btn-ghost";
+                btn.textContent = n;
+                btn.setAttribute("role", "option");
+                btn.dataset.value = n;
+                btn.addEventListener("click", function () {
+                  currentValue = n;
+                  clearPlatformError();
+                  Array.prototype.forEach.call(
+                    optionsEl.querySelectorAll("button"),
+                    function (b) {
+                      b.classList.toggle("is-selected", b === btn);
+                    },
+                  );
                 });
+                optionsEl.appendChild(btn);
+              });
+              if (!needExplicitChoice) {
+                var only = optionsEl.querySelector("button");
+                if (only) {
+                  only.classList.add("is-selected");
+                  currentValue = only.dataset.value || list[0];
+                }
+              }
+            }
 
-                if (confirm) confirm.addEventListener('click', function () {
-                    if (!formToSubmit || confirm.disabled) return;
-                    if (!modalOptionsAvailable) return;
-                    var value = currentValue;
-                    if (!value || !String(value).trim()) {
-                        showPlatformError('Choose a platform before adding to your collection.');
-                        if (optionsEl && optionsEl.querySelector('button')) {
-                            try { optionsEl.querySelector('button').focus(); } catch (e) { /* no-op */ }
-                        }
-                        return;
-                    }
-                    clearPlatformError();
-                    var platformInput = formToSubmit.querySelector('input[name="platform"]');
-                    if (!platformInput) {
-                        platformInput = document.createElement('input');
-                        platformInput.type = 'hidden';
-                        platformInput.name = 'platform';
-                        formToSubmit.appendChild(platformInput);
-                    }
-                    platformInput.value = String(value).trim();
-                    formToSubmit.submit();
-                    closeModal();
-                });
+            if (confirm) confirm.disabled = false;
 
-                if (cancel) cancel.addEventListener('click', closeModal);
-                if (closeX) closeX.addEventListener('click', closeModal);
-                if (back) back.addEventListener('click', closeModal);
-            })();
-        </script>
+            m.classList.add("is-open");
+            m.setAttribute("aria-hidden", "false");
+            if (
+              needExplicitChoice &&
+              cancel &&
+              typeof cancel.focus === "function"
+            ) {
+              cancel.focus();
+            } else if (
+              confirm &&
+              typeof confirm.focus === "function" &&
+              !confirm.disabled
+            ) {
+              confirm.focus();
+            } else if (cancel && typeof cancel.focus === "function") {
+              cancel.focus();
+            } else {
+              try {
+                m.focus();
+              } catch (e) {
+                /* no-op */
+              }
+            }
+          }
+
+          document.addEventListener("click", function (e) {
+            var btn = e.target && e.target.closest(".js-add-to-collection");
+            if (btn) {
+              e.preventDefault();
+              var form = btn.closest(".js-add-form"),
+                card = btn.closest(".search-result-card"),
+                div = card && card.querySelector(".platforms"),
+                names = [];
+              if (div) {
+                var raw = div.getAttribute("data-platform-names");
+                if (raw != null && String(raw).trim() !== "") {
+                  try {
+                    names = JSON.parse(raw);
+                  } catch (err) {
+                    names = [];
+                  }
+                }
+              }
+              if (!Array.isArray(names)) names = [];
+              openModal(
+                form && form.querySelector('input[name="title"]')
+                  ? form.querySelector('input[name="title"]').value
+                  : "",
+                names,
+                form,
+              );
+            }
+          });
+
+          if (confirm)
+            confirm.addEventListener("click", function () {
+              if (!formToSubmit || confirm.disabled) return;
+              if (!modalOptionsAvailable) return;
+              var value = currentValue;
+              if (!value || !String(value).trim()) {
+                showPlatformError(
+                  "Choose a platform before adding to your collection.",
+                );
+                if (optionsEl && optionsEl.querySelector("button")) {
+                  try {
+                    optionsEl.querySelector("button").focus();
+                  } catch (e) {
+                    /* no-op */
+                  }
+                }
+                return;
+              }
+              clearPlatformError();
+              var platformInput = formToSubmit.querySelector(
+                'input[name="platform"]',
+              );
+              if (!platformInput) {
+                platformInput = document.createElement("input");
+                platformInput.type = "hidden";
+                platformInput.name = "platform";
+                formToSubmit.appendChild(platformInput);
+              }
+              platformInput.value = String(value).trim();
+              formToSubmit.submit();
+              closeModal();
+            });
+
+          if (cancel) cancel.addEventListener("click", closeModal);
+          if (closeX) closeX.addEventListener("click", closeModal);
+          if (back) back.addEventListener("click", closeModal);
+        })();
+      </script>
     </th:block>
-</body>
-
+  </body>
 </html>

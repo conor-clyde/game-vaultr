@@ -278,7 +278,9 @@
     function enterHistoryEdit() {
       dispatchCloseAllGamePageEdits();
       setHistoryEditing(true);
-      document.dispatchEvent(new CustomEvent("cg-inline-pt-open", { bubbles: true }));
+      document.dispatchEvent(
+        new CustomEvent("cg-inline-pt-open", { bubbles: true }),
+      );
     }
 
     document.addEventListener(CG_EVT_CLOSE_ALL_GAME_EDITS, function (ev) {
@@ -520,14 +522,14 @@
       });
     }
 
-    [
-      ["colGameReviewReadBody", "colGameReviewReadToggle"],
-    ].forEach(function (ids) {
-      wireClampedTextToggle(
-        document.getElementById(ids[0]),
-        document.getElementById(ids[1]),
-      );
-    });
+    [["colGameReviewReadBody", "colGameReviewReadToggle"]].forEach(
+      function (ids) {
+        wireClampedTextToggle(
+          document.getElementById(ids[0]),
+          document.getElementById(ids[1]),
+        );
+      },
+    );
 
     (function wireInfoGenresTwoLineOverflow() {
       var HID = "cg-genre-chip--overflow-hidden";
@@ -588,12 +590,14 @@
         document.fonts.ready.then(runAll);
       }
       if (typeof window.ResizeObserver === "function") {
-        document.querySelectorAll(".js-info-genres-chips").forEach(function (w) {
-          var ro = new ResizeObserver(function () {
-            apply(w);
+        document
+          .querySelectorAll(".js-info-genres-chips")
+          .forEach(function (w) {
+            var ro = new ResizeObserver(function () {
+              apply(w);
+            });
+            ro.observe(w);
           });
-          ro.observe(w);
-        });
       } else {
         window.addEventListener("resize", function () {
           runAll();
@@ -816,7 +820,9 @@
     }
     function colGameRefreshWhyEditDescription() {
       var panel = document.getElementById("colGamePersonalWhyDescriptionPanel");
-      var listWrap = document.getElementById("colGamePersonalWhyDescriptionList");
+      var listWrap = document.getElementById(
+        "colGamePersonalWhyDescriptionList",
+      );
       if (!panel || !listWrap) {
         return;
       }
@@ -827,7 +833,9 @@
         }
         selected.push({
           title: String(c.getAttribute("data-why") || "").trim(),
-          description: String(c.getAttribute("data-why-description") || "").trim(),
+          description: String(
+            c.getAttribute("data-why-description") || "",
+          ).trim(),
         });
       });
       if (!selected.length) {
@@ -1277,7 +1285,9 @@
         var section = document.getElementById("cgPsCurrentPtSection");
         var emptyWrap = document.getElementById("cgPsActivePtEmptyWrap");
         var emptyNoPts = document.getElementById("cgPsActivePtEmptyNoPts");
-        var emptyNoActive = document.getElementById("cgPsActivePtEmptyNoActive");
+        var emptyNoActive = document.getElementById(
+          "cgPsActivePtEmptyNoActive",
+        );
         var read = document.getElementById("cgPsActivePtRead");
         var jumpLink = document.getElementById("cgPsAptJumpLink");
         if (!section || !emptyWrap) {
@@ -1291,8 +1301,9 @@
           var sel = row && row.querySelector("[data-cg-progress-status]");
           if (
             sel &&
-            String(sel.value != null ? sel.value : "").trim().toUpperCase() ===
-              "ACTIVE"
+            String(sel.value != null ? sel.value : "")
+              .trim()
+              .toUpperCase() === "ACTIVE"
           ) {
             activeCard = cards[i];
             break;
@@ -1575,7 +1586,11 @@
           tryPushPlaythroughsToHidden();
         } else if (t && t.matches && t.matches("[data-cg-end-date]")) {
           tryPushPlaythroughsToHidden();
-        } else if (t && t.matches && t.matches("[data-cg-completion-percent]")) {
+        } else if (
+          t &&
+          t.matches &&
+          t.matches("[data-cg-completion-percent]")
+        ) {
           syncInlinePctBar(t.closest("[data-cg-row]"));
           tryPushPlaythroughsToHidden();
         } else if (t && t.matches && t.matches("[data-cg-progress-status]")) {
@@ -2514,7 +2529,9 @@
       ) {
         return;
       }
-      var statusWrap = document.getElementById("colGameFinishedDatePromptAnchor");
+      var statusWrap = document.getElementById(
+        "colGameFinishedDatePromptAnchor",
+      );
 
       function localIsoDate() {
         var d = new Date();
@@ -2843,8 +2860,7 @@
         panel.className = "cg-plog-kebab-panel";
         editBtn.className =
           "btn btn-ghost cg-plog-kebab-action cg-plog-kebab-action--edit";
-        delForm.className =
-          "cglog-delete-form cg-plog-kebab-delete-form";
+        delForm.className = "cglog-delete-form cg-plog-kebab-delete-form";
         editBtn.innerHTML =
           '<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>';
         editBtn.setAttribute("aria-label", "Edit play session");
@@ -2893,8 +2909,7 @@
           wrap.className = "cg-plog-note-expandable";
           /* One prose tree: clamp via CSS when collapsed so expand is the same text (no ellipsis remnant). */
           var prose = document.createElement("div");
-          prose.className =
-            "cg-plog-note-prose cg-plog-note-prose--collapsed";
+          prose.className = "cg-plog-note-prose cg-plog-note-prose--collapsed";
           appendNoteProseBody(prose, noteTrim);
 
           var toggleBtn = document.createElement("button");
@@ -2993,15 +3008,16 @@
           var durLblPt =
             row.durationLabel != null ? String(row.durationLabel).trim() : "";
           var hasDurPt =
-            row.durationMinutes != null &&
-            row.durationMinutes > 0 &&
-            durLblPt;
+            row.durationMinutes != null && row.durationMinutes > 0 && durLblPt;
 
           var mainCol = document.createElement("div");
           mainCol.className = "cg-plog-row-main";
 
           var ctrlsKebab = createPlayLogEditControls(row, gb);
-          var kebab = buildPlogKebabMenu(ctrlsKebab.editBtn, ctrlsKebab.delForm);
+          var kebab = buildPlogKebabMenu(
+            ctrlsKebab.editBtn,
+            ctrlsKebab.delForm,
+          );
           var kebabWrap = document.createElement("div");
           kebabWrap.className = "cg-plog-kebab-wrap";
           kebabWrap.appendChild(kebab);
@@ -3033,10 +3049,7 @@
             var durHead = document.createElement("span");
             durHead.className = "cg-plog-head-stat cg-plog-head-stat--duration";
             durHead.setAttribute("title", durLblPt);
-            durHead.setAttribute(
-              "aria-label",
-              "Time played " + durLblPt,
-            );
+            durHead.setAttribute("aria-label", "Time played " + durLblPt);
             var clockIc = document.createElement("i");
             clockIc.className = "fa-regular fa-clock";
             clockIc.setAttribute("aria-hidden", "true");
@@ -3049,15 +3062,17 @@
             row.sessionProgressCode != null
               ? String(row.sessionProgressCode).trim().toUpperCase()
               : "";
-          var progDisp = row.sessionProgressLabel != null
-            ? String(row.sessionProgressLabel).trim()
-            : "";
+          var progDisp =
+            row.sessionProgressLabel != null
+              ? String(row.sessionProgressLabel).trim()
+              : "";
           var progIsContinuing =
             progCodeRaw === "CONTINUING" ||
             progDisp.toLowerCase() === "continuing";
           if (progDisp && !progIsContinuing) {
             var progHead = document.createElement("span");
-            progHead.className = "cg-plog-head-stat cg-plog-head-stat--progress";
+            progHead.className =
+              "cg-plog-head-stat cg-plog-head-stat--progress";
             var progIc = document.createElement("i");
             progIc.className = "fa-solid fa-arrow-trend-up";
             progIc.setAttribute("aria-hidden", "true");
@@ -3101,7 +3116,9 @@
         } else {
           var mainStack = document.createElement("div");
           mainStack.className = "cglog-main-stack";
-          var prog = progressChipOnlyStartedOrFinished(row.sessionProgressLabel);
+          var prog = progressChipOnlyStartedOrFinished(
+            row.sessionProgressLabel,
+          );
           var thoughtsUnified = document.createElement("div");
           thoughtsUnified.className = "cglog-thoughts-unified";
           appendPlayLogThoughtsBlock(
