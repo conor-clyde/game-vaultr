@@ -286,6 +286,7 @@
                 <div
                   class="coll-platform"
                   th:classappend="${card.platformHeaderClass}"
+                  th:attr="title=${(card.platform != null && !card.platform.isEmpty()) ? card.platform : 'Not specified'}"
                   th:text="${(card.platform != null && !card.platform.isEmpty()) ? card.platform : 'Not specified'}"
                 >
                   Platform

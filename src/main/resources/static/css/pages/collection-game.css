@@ -7196,6 +7196,22 @@ details.cg-pt-accordion[open] .cgpd-card__pct-bar .cgpt-read-pct-fill {
   line-height: 1.18;
   padding: 0.38rem 0.78rem 0.4rem;
 }
+.cg-hero-meta-chip--platform {
+  justify-content: flex-start;
+  max-width: min(100%, 16.5rem);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cg-hero-meta-chip--platform:hover,
+.cg-hero-meta-chip--platform:focus-visible {
+  max-width: min(80vw, 38rem);
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-word;
+}
 .cg-hero-cta-column {
   align-items: flex-start;
   border-left: none;

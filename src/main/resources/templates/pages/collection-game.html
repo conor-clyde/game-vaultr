@@ -173,8 +173,9 @@
                     >Playing</span
                   >
                   <span
-                    class="cg-hero-meta-chip"
+                    class="cg-hero-meta-chip cg-hero-meta-chip--platform"
                     th:text="${userGame.platform != null and !userGame.platform.isEmpty() ? userGame.platform : 'Platform not set'}"
+                    th:attr="title=${userGame.platform != null and !userGame.platform.isEmpty() ? userGame.platform : 'Platform not set'}"
                     >PlayStation 4</span
                   >
                 </div>

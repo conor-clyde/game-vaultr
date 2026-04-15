@@ -87,11 +87,23 @@
     }
     var tokenMeta = document.querySelector('meta[name="_csrf"]');
     var paramMeta = document.querySelector('meta[name="_csrf_parameter"]');
-    if (!tokenMeta || !paramMeta) {
-      return;
+    var token = tokenMeta ? tokenMeta.getAttribute("content") : "";
+    var param = paramMeta ? paramMeta.getAttribute("content") : "";
+    if (!token || !param) {
+      // Fallback for pages where CSRF meta tags are missing:
+      // reuse the token Spring already injected into any regular POST form.
+      var fallback = Array.from(
+        document.querySelectorAll('input[type="hidden"][name]'),
+      ).find(function (input) {
+        var name = String(input.name || "");
+        var value = String(input.value || "");
+        return /csrf/i.test(name) && value !== "";
+      });
+      if (fallback) {
+        token = String(fallback.value || "");
+        param = String(fallback.name || "");
+      }
     }
-    var token = tokenMeta.getAttribute("content");
-    var param = paramMeta.getAttribute("content");
     if (!token || !param) {
       return;
     }
