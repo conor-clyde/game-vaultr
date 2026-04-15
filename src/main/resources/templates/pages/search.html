@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout-head :: head}"></head>
+
+<body class="search-page">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main th:with="hasQuery=${query != null and !#strings.isEmpty(query)}, hasFilters=${hasActiveFilters != null and hasActiveFilters}"
+        th:classappend="${hasQuery ? ' has-query' : ''}">
+        <section class="sr-hero" aria-labelledby="search-hero-heading">
+            <div class="sr-hero__shell">
+                <div class="sr-hero__stack">
+                    <p class="eyebrow">Game catalog</p>
+                    <h1 id="search-hero-heading" class="tagline">
+                        Build your <span class="search-accent">collection.</span>
+                    </h1>
+
+                    <form id="searchForm" th:action="@{/search}" method="get" autocomplete="off">
+                        <div class="search-row">
+                            <div class="search-inner">
+                                <span class="search-input-icon" aria-hidden="true">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </span>
+
+                                <input type="text" name="query" id="searchQueryInput" class="search-input"
+                                    placeholder="e.g. Hollow Knight, Zelda, Mario…"
+                                    th:aria-describedby="${!hasQuery ? 'search-hint' : null}"
+                                    th:value="${query}" autocomplete="off">
+
+                                <button type="button" id="searchClearBtn" class="btn btn-ghost btn-icon" aria-label="Clear search"
+                                    title="Clear search"
+                                    th:hidden="${!hasQuery}">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+
+                                <button type="submit" class="btn btn-primary">
+                                    <span class="btn-label">Search</span>
+                                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+
+                            <button type="button" id="filterToggle" class="btn btn-ghost"
+                                th:classappend="${hasFilters ? ' has-filters' : ''}"
+                                th:if="${hasQuery}"
+                                aria-label="Open search filters">
+                                <i class="fa-solid fa-filter search-filters-icon"></i>
+                                Filters
+                            </button>
+                        </div>
+                        <p class="search-helper sr-hero__hint" id="search-hint" th:if="${!hasQuery}">Search
+                            by title. Use Filters to narrow platform or release year.</p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <div class="sr-flashes" role="region" aria-label="Status updates"
+            th:if="${(searchCollectionAdded != null && searchCollectionAdded) or (searchCollectionAddError != null)}">
+            <div class="cg-flash cg-flash--ok cg-flash--dismissible search-collection-added-flash" role="status"
+                th:if="${searchCollectionAdded != null && searchCollectionAdded}">
+                <span class="cg-flash__body" th:text="|Added “${searchCollectionAddedTitle}” to your collection.|">Added to your collection.</span>
+                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+            </div>
+            <div class="cg-flash cg-flash--err cg-flash--dismissible" role="alert"
+                th:if="${searchCollectionAddError != null}">
+                <span class="cg-flash__body" th:text="${searchCollectionAddError}">Choose a platform before adding to your collection.</span>
+                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+            </div>
+        </div>
+
+        <template id="searchLoadingTemplate">
+            <div class="loading-inline" role="status" aria-live="polite" aria-label="Loading search results">
+                <div class="loading-inline__spinner" aria-hidden="true"></div>
+                <span class="loading-inline__text">Searching…</span>
+            </div>
+        </template>
+
+        <template id="searchResultCardTemplate">
+            <th:block th:replace="~{fragments/search-results :: cardSkeleton()}">
+            </th:block>
+        </template>
+
+        <div id="searchResultsContainer" class="results-root">
+            <th:block th:if="${hasQuery}">
+                <div th:class="${'results-layout' + (searchResult == null or searchResult.results == null or searchResult.results.isEmpty() ? ' results-layout--empty' : '')}">
+                    <div class="results-layout__main">
+                        <div th:if="${searchResult != null and searchResult.igdbError != null}" class="search-igdb-error" role="alert">
+                            <p class="search-igdb-error-text" th:text="${searchResult.igdbError}">Search unavailable.</p>
+                        </div>
+                        <div class="results-head" aria-label="Search results summary">
+                            <div class="results-head__row">
+                                <div class="results-head__main">
+                                    <h2 class="results-head__heading" id="search-results-count">
+                                        <span class="results-head__label"
+                                            th:text="${hasFilters ? 'Filtered results for' : 'Results for'}">Results for</span>
+                                        <span class="results-head__query" th:text="${query}">query</span>
+                                    </h2>
+
+                                    <div class="search-filters-active"
+                                        th:if="${hasFilters}">
+                                        <div class="active-filters-chips">
+                                            <a class="filter-chip" th:each="chip : ${activeFilterChips}"
+                                                th:href="${chip.clearUrl}">
+                                                <span th:text="${chip.label}"></span>
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="results-head__sort"
+                                    th:if="${searchResult != null and searchResult.results != null and !searchResult.results.isEmpty()}">
+                                    <form class="search-sort-form" th:action="@{/search}" method="get">
+                                        <input type="hidden" name="query" th:value="${query}">
+                                        <input type="hidden" name="sort" th:value="${sort}">
+
+                                        <label class="search-sort-label" for="sortDropdownTrigger">
+                                            Sort by
+                                        </label>
+
+                                        <div class="dropdown" data-context="sort">
+                                            <button id="sortDropdownTrigger" type="button" class="dropdown-trigger"
+                                                aria-haspopup="listbox" aria-expanded="false"
+                                                aria-label="Sort results by">
+                                                <span id="sortDropdownLabel" class="dropdown-label" th:text="${sort == 'popularity' ? 'Popularity' :
+                                                       sort == 'release_newest' ? 'Release date (newest)' :
+                                                       'Relevance'}">
+                                                </span>
+                                                <i class="fa-solid fa-chevron-down dropdown-icon"
+                                                    aria-hidden="true"></i>
+                                            </button>
+
+                                            <div id="sortDropdownPanel" class="dropdown-panel" role="listbox"
+                                                aria-hidden="true">
+                                                <button type="button" class="dropdown-option sort-option"
+                                                    data-sort="relevance">
+                                                    Relevance
+                                                </button>
+                                                <button type="button" class="dropdown-option sort-option"
+                                                    data-sort="popularity">
+                                                    Popularity
+                                                </button>
+                                                <button type="button" class="dropdown-option sort-option"
+                                                    data-sort="release_newest">
+                                                    Release Date
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            th:replace="~{fragments/search-results :: resultsList('searchResultsList', ${searchResult != null ? searchResult.results : null}, ${query})}">
+                        </div>
+
+                        <div id="searchResultsLoadMore" class="results-load-more"
+                            th:if="${searchResult != null && searchResult.results != null && !searchResult.results.isEmpty() && searchResult.hasMore}"
+                            th:attr="data-page=${page},data-query=${query},data-sort=${sort}">
+                            <button type="button" id="loadMoreResultsBtn" class="btn btn-ghost">
+                                Load more results
+                                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                            </button>
+                        </div>
+
+                        <section class="empty-state empty-state--surface"
+                            th:if="${searchResult != null && searchResult.results != null && searchResult.results.isEmpty()}"
+                            role="status" aria-label="No results">
+                            <div class="empty-state__icon" aria-hidden="true">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </div>
+                            <p class="empty-state__title">
+                                No games matched <span class="query" th:text="${query}"></span>
+                            </p>
+                            <p class="empty-state__hint">
+                                Check the game title, try a shorter name, or remove filters.
+                            </p>
+                        </section>
+                    </div>
+
+                    <th:block th:replace="~{fragments/search-filters-form :: sidebarPanel()}"></th:block>
+
+                </div>
+            </th:block>
+        </div>
+
+        <th:block th:replace="~{fragments/search-filters-form :: overlayPanel()}"></th:block>
+
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.__psAddCollectionFallbackPlatforms = /*[[${addCollectionPlatformFallback}]]*/ [];
+        /*]]>*/
+    </script>
+    <div th:replace="~{modals/add-platform-modal :: modal}"></div>
+
+    <script th:src="@{/js/pages/search.js}"></script>
+</body>
+
+</html>

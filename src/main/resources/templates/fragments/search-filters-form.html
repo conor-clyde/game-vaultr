@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    
+    <aside class="search-filters" id="searchFiltersSidebar" th:fragment="sidebarPanel()">
+        <header class="search-filters-header">
+            <span class="search-filters-icon" aria-hidden="true">
+                <i class="fa-solid fa-filter"></i>
+            </span>
+            <h3>Filters</h3>
+        </header>
+        <div class="search-filters-divider"></div>
+        <th:block th:replace="~{fragments/search-filters-form :: filtersInner('sidebar')}"></th:block>
+    </aside>
+
+    
+    <div class="filter-overlay" id="filterOverlay" aria-hidden="true" th:fragment="overlayPanel()">
+        <div class="filter-overlay-backdrop" id="filterOverlayBackdrop"></div>
+        <div class="filter-overlay-panel">
+            <div class="filter-overlay-header">
+                <div class="search-filters-header filter-overlay-header-inner">
+                    <span class="search-filters-icon" aria-hidden="true">
+                        <i class="fa-solid fa-filter"></i>
+                    </span>
+                    <h3>Filters</h3>
+                </div>
+                <button type="button" class="btn btn-ghost btn-icon filter-overlay-close" id="filterOverlayClose"
+                    aria-label="Close filters">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="search-filters-divider"></div>
+            <th:block th:replace="~{fragments/search-filters-form :: filtersInner('overlay')}"></th:block>
+        </div>
+    </div>
+
+    
+    <div class="search-filters-inner" th:fragment="filtersInner(mode)"
+        th:with="suffix=${mode == 'sidebar' ? 'Sidebar' : 'Overlay'}">
+        <form th:action="@{/search/filters}" method="post" class="search-filters-form">
+            <input type="hidden" name="query" th:value="${query}">
+
+                <div class="filter-group filter-group-platform">
+                    <span class="filter-group-label">Platform</span>
+                    <div class="filter-chip-row">
+                        <label class="filter-chip-toggle" th:each="chip : ${primaryPlatformChips}">
+                            <input type="checkbox" name="platform" th:value="${chip.igdbName}"
+                                th:checked="${#sets.contains(selectedPlatforms, chip.igdbName)}">
+                            <span th:text="${chip.label}">PC</span>
+                        </label>
+
+                        <button type="button" class="btn btn-ghost btn-sm filter-chip-other"
+                            th:id="|platformOther${suffix}|"
+                            th:classappend="${hasOtherPlatformSelected == true ? ' has-selection' : ''}">
+                            <span>Other</span>
+                        </button>
+                    </div>
+
+                    <div class="platform-dropdown-all platform-dropdown-all--chips"
+                        th:id="|platformAll${suffix}|"
+                        aria-hidden="true">
+                        <label class="filter-checkbox" th:each="p : ${catalogSecondaryPlatformNames}">
+                            <input type="checkbox" name="platform" th:value="${p}"
+                                th:checked="${#sets.contains(selectedPlatforms, p)}">
+                            <span th:text="${p}"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group filter-group-year">
+                    <span class="filter-group-label">Release year</span>
+                    <div class="filter-range-line" th:id="|releaseYearLine${suffix}|">
+                        <span class="filter-slider-value" th:id="|releaseYearMinValue${suffix}|"
+                            th:text="${releaseYearMin}"></span>
+                        <div class="filter-range-track">
+                            <div class="filter-range-fill" th:id="|releaseYearFill${suffix}|"></div>
+                            <input type="range" class="filter-slider filter-slider-min" name="releaseYearMin"
+                                th:attr="min=${releaseYearMinBound},max=${releaseYearMaxBound},value=${releaseYearMin},data-context=${mode}"
+                                th:id="|releaseYearMin${suffix}|">
+                            <input type="range" class="filter-slider filter-slider-max" name="releaseYearMax"
+                                th:attr="min=${releaseYearMinBound},max=${releaseYearMaxBound},value=${releaseYearMax},data-context=${mode}"
+                                th:id="|releaseYearMax${suffix}|">
+                        </div>
+                        <span class="filter-slider-value" th:id="|releaseYearMaxValue${suffix}|"
+                            th:text="${releaseYearMax}"></span>
+                    </div>
+                </div>
+
+                <div class="search-filters-actions">
+                    <a th:if="${hasQuery and hasFilters}" th:href="@{/search(query=${query}, clearFilters=true)}"
+                        class="btn btn-ghost">Clear</a>
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                </div>
+        </form>
+    </div>
+
+    
+    <div class="filter-overlay" id="colFilterOverlay" aria-hidden="true" th:fragment="collectionOverlay()">
+        <div class="filter-overlay-backdrop" id="colFilterBackdrop"></div>
+        <div class="filter-overlay-panel">
+            <div class="filter-overlay-header">
+                <div class="search-filters-header filter-overlay-header-inner">
+                    <span class="search-filters-icon" aria-hidden="true">
+                        <i class="fa-solid fa-filter"></i>
+                    </span>
+                    <h3>Filters</h3>
+                </div>
+                <button type="button" class="btn btn-ghost btn-icon filter-overlay-close" id="colFilterClose"
+                    aria-label="Close filters">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="search-filters-divider"></div>
+            <div class="search-filters-inner">
+                <div class="search-filters-form" id="colFilterForm">
+                    <div class="filter-group filter-group-platform coll-filter-group-platform">
+                        <div class="coll-filter-platform-head">
+                            <span class="filter-group-label">Platform</span>
+                        </div>
+                        <p class="coll-filter-hint" th:if="${collectionPlatformOptions == null or collectionPlatformOptions.isEmpty()}">
+                            Set a platform on your games to filter by platform here.
+                        </p>
+                        <div class="coll-filter-platform-options filter-chip-row"
+                            th:if="${collectionPlatformOptions != null && !collectionPlatformOptions.isEmpty()}">
+                            <label class="filter-chip-toggle" th:each="p : ${collectionPlatformOptions}">
+                                <input type="checkbox" name="platform" th:value="${p}" autocomplete="off"
+                                    th:checked="${selectedCollectionPlatforms != null && selectedCollectionPlatforms.contains(p)}"
+                                    class="coll-filter-platform-input">
+                                <span th:text="${p}">PC</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="filter-group filter-group-why-playing coll-filter-group-why-playing"
+                        th:if="${whyPlayings != null && !whyPlayings.isEmpty()}">
+                        <div class="coll-filter-platform-head">
+                            <span class="filter-group-label">Play intent</span>
+                        </div>
+                        <p class="coll-filter-hint coll-filter-hint--why">Match games you tagged with these reasons.</p>
+                        <div class="coll-filter-platform-options filter-chip-row coll-filter-why-playing-row">
+                            <label class="filter-chip-toggle" th:each="w : ${whyPlayings}">
+                                <input type="checkbox" name="whyPlaying" th:value="${w.name()}" autocomplete="off"
+                                    th:checked="${selectedCollectionWhyPlayings != null && selectedCollectionWhyPlayings.contains(w.name())}"
+                                    th:attr="data-chip-label=${w.badgeShort}"
+                                    class="coll-filter-why-playing-input">
+                                <span th:text="${w.badgeShort}">🌿 Unwind</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+

@@ -1,0 +1,247 @@
+/* Floating session — single card (no expand/collapse) */
+.nav-active-play-session {
+  --nas-mint: #5b8f72;
+  --nas-mint-bright: #a8d4bc;
+  --nas-border: rgba(42, 58, 50, 0.9);
+  --nas-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+  --nas-float-w: min(20rem, calc(100vw - 28px));
+  /* Cover column width; image fills full card height (top–bottom) */
+  --nas-thumb: 3.35rem;
+  --nas-card-pad-y: 0.45rem;
+
+  position: fixed;
+  right: max(28px, calc(12px + env(safe-area-inset-right, 0px)));
+  bottom: max(34px, calc(22px + env(safe-area-inset-bottom, 0px)));
+  z-index: 900;
+  pointer-events: none;
+  font-family: var(--font-dm), system-ui, sans-serif;
+}
+
+.nav-active-play-session__card {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0.85rem;
+  width: var(--nas-float-w);
+  max-width: var(--nas-float-w);
+  min-width: 0;
+  box-sizing: border-box;
+  padding: var(--nas-card-pad-y) 0.6rem var(--nas-card-pad-y) 0;
+  border-radius: 12px;
+  border: 1px solid var(--nas-border);
+  background: linear-gradient(165deg, #121816 0%, #0a0f0d 48%, #060807 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+/* Cover: fixed width, stretches top–bottom of card (bleeds past vertical padding) */
+.nav-active-play-session__cover-link {
+  flex: 0 0 var(--nas-thumb);
+  width: var(--nas-thumb);
+  align-self: stretch;
+  min-height: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: calc(-1 * var(--nas-card-pad-y));
+  margin-bottom: calc(-1 * var(--nas-card-pad-y));
+  border-top-left-radius: 11px;
+  border-bottom-left-radius: 11px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity 0.15s ease;
+}
+
+.nav-active-play-session__cover-link:hover {
+  opacity: 0.94;
+}
+
+.nav-active-play-session__cover-link:focus-visible {
+  outline: 2px solid var(--nas-mint);
+  outline-offset: -2px;
+  z-index: 1;
+}
+
+.nav-active-play-session__cover-wrap {
+  flex: 1 1 auto;
+  display: block;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border: none;
+  border-right: 1px solid rgba(91, 143, 114, 0.22);
+  box-sizing: border-box;
+}
+
+.nav-active-play-session__cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.nav-active-play-session__cover-ph {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  border: none;
+  border-right: 1px solid rgba(91, 143, 114, 0.22);
+  box-sizing: border-box;
+  background: linear-gradient(145deg, #1a2520 0%, #101814 100%);
+  color: var(--nas-mint);
+  font-size: 0.95rem;
+}
+
+.nav-active-play-session__body {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 0 0.1rem;
+  gap: 0.55rem;
+  box-sizing: border-box;
+}
+
+.nav-active-play-session__title-link {
+  font-size: clamp(0.98rem, 2.8vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.32;
+  color: #f8fcfa;
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  text-align: left;
+}
+
+.nav-active-play-session__title-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.nav-active-play-session__title-link:focus-visible {
+  outline: 2px solid var(--nas-mint);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.nav-active-play-session__time-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 0.65rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.nav-active-play-session__lcd-wrap {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  min-width: min-content;
+}
+
+.nav-active-play-session__lcd-inner {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.5rem;
+  border-radius: 8px;
+  background: radial-gradient(120% 100% at 50% 0%, #0f1512 0%, #020403 100%);
+  border: 1px solid rgba(34, 84, 58, 0.65);
+  box-shadow:
+    inset 0 2px 14px rgba(0, 0, 0, 0.75),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  flex-shrink: 0;
+}
+
+.nav-active-play-session__digits {
+  font-family: var(--nas-mono);
+  font-size: clamp(1rem, 2.8vw, 1.28rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  line-height: 1.12;
+  color: var(--nas-mint-bright);
+  white-space: nowrap;
+}
+
+.nav-active-play-session__end-btn {
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  min-height: 2.15rem;
+  border-radius: 10px;
+  border: 1px solid rgba(91, 143, 114, 0.45);
+  background: rgba(91, 143, 114, 0.08);
+  font-family: var(--font-dm), system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #e8f4ed;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-active-play-session__end-btn:hover {
+  background: rgba(91, 143, 114, 0.16);
+  border-color: rgba(91, 143, 114, 0.62);
+}
+
+.nav-active-play-session__end-btn:focus-visible {
+  outline: 2px solid var(--nas-mint);
+  outline-offset: 2px;
+}
+
+.nav-active-play-session__end-btn:disabled,
+.nav-active-play-session__end-btn:disabled:hover {
+  cursor: not-allowed;
+  opacity: 0.48;
+  color: rgba(226, 232, 240, 0.55);
+  background: rgba(15, 23, 42, 0.35);
+  border-color: rgba(100, 116, 139, 0.35);
+  filter: grayscale(0.25);
+}
+
+@media (max-width: 520px) {
+  .nav-active-play-session {
+    --nas-float-w: calc(100vw - 24px);
+  }
+  .nav-active-play-session__card {
+    --nas-card-pad-y: 0.42rem;
+    padding: var(--nas-card-pad-y) 0.5rem var(--nas-card-pad-y) 0;
+    gap: 0.72rem;
+  }
+  .nav-active-play-session__body {
+    gap: 0.48rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-active-play-session__time-row {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  .nav-active-play-session__end-btn {
+    margin-left: auto;
+  }
+}

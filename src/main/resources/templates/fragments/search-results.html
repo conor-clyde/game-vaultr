@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    
+    <th:block th:fragment="cardMarkup(game, query)">
+        <article class="search-result-card" tabindex="0" th:attr="data-pop-score=${game != null ? game.popScore : null}">
+
+            <figure>
+                <img th:if="${game != null && game.coverImageUrl != null}"
+                    th:src="${game.coverImageUrl}" alt="">
+                <div th:if="${game == null || (game != null && game.coverImageUrl == null)}"
+                    class="media-ph">
+                    <i class="fa-regular fa-image fa-3x" aria-hidden="true"></i>
+                </div>
+            </figure>
+
+            <aside th:if="${game != null && (game.reviewScore != null || game.discoverySignals != null)}">
+                <div class="signals signals--tight"
+                    th:if="${game.discoverySignals != null}">
+                    <span class="discovery-signal-badge" th:each="sig : ${game.discoverySignals}"
+                        th:classappend="|discovery-signal-badge--${#strings.toLowerCase(sig)}|"
+                        th:text="${#strings.capitalize(sig)}"></span>
+                </div>
+                <div class="review" th:if="${game.reviewScore != null}">
+                    <span class="score-val" th:text="${game.reviewScore}"></span>
+                </div>
+            </aside>
+
+            <div class="card-body">
+                <h3 th:title="${game != null ? game.name : ''}">
+                    <span class="title-line">
+                        <span th:text="${game != null ? game.name : ''}"></span>
+                        <span class="exact" th:if="${game != null && game.exactMatch == true}">Exact match</span>
+                        <span class="year"
+                            th:if="${game != null && game.releaseYear != null}"
+                            th:text="${game.releaseYear}"></span>
+                    </span>
+                </h3>
+
+                <div class="platforms js-card-platforms"
+                    th:if="${game != null}"
+                    th:attr="data-platform-names=${game.platformNamesJson != null ? game.platformNamesJson : '[]'}">
+                    <span class="tag" th:each="p : ${game.platforms}"
+                        th:text="${p.displayName != null ? p.displayName : p.name}">Platform</span>
+                    <span class="tag-more" style="display:none" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <footer class="toolbar">
+                <button type="button" th:if="${game != null && game.inCollection == true}"
+                    class="btn btn-ghost btn-in-collection" disabled>
+                    <i class="fa-solid fa-check"></i>
+                    <span class="act-label">Collection</span>
+                </button>
+
+                <form th:if="${game == null || game.inCollection != true}" th:action="@{/search/add}" method="post"
+                    class="js-add-form">
+                    <input type="hidden" name="apiId" th:value="${game != null ? game.id : ''}">
+                    <input type="hidden" name="title" th:value="${game != null ? game.name : ''}">
+                    <input type="hidden" name="imageUrl"
+                        th:value="${game != null && game.coverImageUrl != null ? game.coverImageUrl : ''}">
+
+                    <input type="hidden" name="query" th:if="${query != null}" th:value="${query}">
+
+                    <button type="button" class="btn btn-primary js-add-to-collection">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="act-label">Collection</span>
+                    </button>
+                </form>
+
+                
+            </footer>
+        </article>
+    </th:block>
+
+    
+    <th:block th:fragment="cardSkeleton()">
+        <article class="search-result-card" tabindex="0">
+
+            <figure>
+                <img src="" alt="" class="js-card-img" style="display:none">
+                <div class="media-ph js-card-img-placeholder">
+                    <i class="fa-regular fa-image fa-3x" aria-hidden="true"></i>
+                </div>
+            </figure>
+
+            <aside class="js-card-rating" style="display:none">
+                <div class="signals signals--tight js-card-discovery-signals" style="display:none">
+                </div>
+                <div class="review js-card-rating-score" style="display:none">
+                    <span class="score-val js-card-review-score"></span>
+                </div>
+            </aside>
+
+            <div class="card-body">
+                <h3 title="">
+                    <span class="title-line">
+                        <span class="js-card-title"></span>
+                        <span class="exact" style="display:none">Exact match</span>
+                        <span class="year js-card-year" style="display:none"></span>
+                    </span>
+                </h3>
+
+                <div class="platforms js-card-platforms">
+                    <span class="tag-more" style="display:none" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <footer class="toolbar">
+                <button type="button" class="btn btn-ghost btn-in-collection js-card-in-collection" style="display:none" disabled>
+                    <i class="fa-solid fa-check"></i>
+                    <span class="act-label">Collection</span>
+                </button>
+
+                <form th:action="@{/search/add}" method="post"
+                    class="js-add-form js-card-add-form">
+                    <input type="hidden" name="apiId" value="">
+                    <input type="hidden" name="title" value="">
+                    <input type="hidden" name="imageUrl" value="">
+                    <input type="hidden" name="query" value="">
+
+                    <button type="button" class="btn btn-primary js-add-to-collection">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="act-label">Collection</span>
+                    </button>
+                </form>
+
+                
+            </footer>
+        </article>
+    </th:block>
+
+    <th:block th:fragment="resultsList(listId, games, query)">
+        <div class="results-list" th:id="${listId}" th:if="${games != null && !games.isEmpty()}">
+            <th:block th:each="game : ${games}">
+                <th:block th:replace="::cardMarkup(${game}, ${query})"></th:block>
+            </th:block>
+        </div>
+    </th:block>
+
+</body>
+
+</html>

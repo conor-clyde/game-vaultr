@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+    <th:block th:fragment="modal (pageSessionHasPlayLogs, pageSessionLastPlayedRel, pagePlaySessionCount, pageLastPlayedCalendar, pageTotalPlayLabel)">
+        <div id="logPlayModal" class="add-platform-modal log-play-modal" role="dialog" aria-modal="true"
+            aria-labelledby="logPlayModalTitle" aria-hidden="true"
+            th:attr="data-log-games-url=@{/collection/log-play/games}"
+            th:data-page-has-play-logs="${pageSessionHasPlayLogs}"
+            th:data-page-last-played-relative="${pageSessionLastPlayedRel}"
+            th:data-page-play-session-count="${pagePlaySessionCount}"
+            th:data-page-last-played-calendar="${pageLastPlayedCalendar}"
+            th:data-page-total-play-label="${pageTotalPlayLabel}">
+            <div class="add-platform-modal-backdrop" data-log-play-backdrop tabindex="-1"></div>
+            <div class="add-platform-modal-dialog log-play-modal-dialog">
+                <header class="site-modal-header">
+                    <div class="site-modal-header-row">
+                        <div class="site-modal-header-titles">
+                            <div class="log-play-modal-title-row">
+                                <h2 class="log-play-modal-main-title" id="logPlayModalTitle">Log play</h2>
+                                <input type="hidden" id="logPlaySessionFlowMode" value="just-played">
+                            </div>
+                            <p class="log-play-modal-subtitle" id="logPlayModalSubtitle"></p>
+                        </div>
+                        <button type="button" id="logPlayModalClose" class="site-modal-close" aria-label="Close dialog">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </header>
+
+                <div id="logPlayPickStep" class="log-play-pick-step" hidden>
+                    <label class="log-play-search-label" for="logPlayGameSearch">Choose a game</label>
+                    <div class="log-play-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <input type="search" id="logPlayGameSearch" class="log-play-search-input"
+                            placeholder="Search your collection…" autocomplete="off" />
+                    </div>
+                    <div id="logPlayPickLoading" class="log-play-pick-loading" role="status" aria-live="polite" hidden>
+                        <span class="log-play-pick-loading__pulse" aria-hidden="true"></span>
+                        <span class="log-play-pick-loading__text">Loading your collection…</span>
+                    </div>
+                    <ul id="logPlayGameList" class="hd-tile-list log-play-game-list" role="listbox"
+                        aria-label="Your games"></ul>
+                    <div id="logPlayPickEmpty" class="empty-state empty-state--modal" role="status" hidden>
+                        <span class="empty-state__icon" aria-hidden="true"><i class="fa-solid fa-layer-group"></i></span>
+                        <p class="empty-state__title">No games in your collection yet</p>
+                        <p class="empty-state__hint">Add a game first, then you can log play sessions here.</p>
+                    </div>
+                    <div id="logPlayPickNoMatch" class="empty-state empty-state--modal" role="status" hidden>
+                        <span class="empty-state__icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <p class="empty-state__title">No matches</p>
+                        <p class="empty-state__hint">Try another name or clear the search box to see all games.</p>
+                    </div>
+                </div>
+
+                <div id="logPlayFormStep" class="log-play-form-step" hidden>
+                    <form id="logPlayModalForm" class="log-play-modal-form" method="post" action="#">
+                        <input type="hidden" name="redirectTo" id="logPlayRedirectTo" value="detail">
+                        <input type="hidden" name="durationMinutes" id="logPlayDurationMinutesHidden" value="">
+                        <input type="hidden" name="timeInputMode" id="logPlayTimeInputMode" value="hours">
+
+                        <div class="log-play-modal-progress-strip">
+                            <div class="log-play-details-progress-block">
+                                <input type="hidden" name="clientLocalToday" id="logPlayClientLocalToday" value="">
+                                <div class="log-play-playthrough-picker log-play-playthrough-picker--under-progress" id="logPlayPlaythroughPicker" hidden>
+                                    <div class="log-play-playthrough-picker-row">
+                                        <div class="log-play-modal-legend log-play-modal-legend--subtle log-play-playthrough-legend" id="logPlayPlaythroughHeading">Playthrough</div>
+                                        <div class="log-play-playthrough-picker-main">
+                                            <div id="logPlayPlaythroughDropdownWrap" class="log-play-playthrough-dropdown-inner">
+                                                <div class="dropdown log-play-playthrough-dropdown" id="logPlayPlaythroughDropdown">
+                                                    <button type="button" class="dropdown-trigger log-play-playthrough-trigger" id="logPlayPlaythroughTrigger"
+                                                        disabled
+                                                        aria-haspopup="listbox" aria-expanded="false"
+                                                        aria-controls="logPlayPlaythroughPanel"
+                                                        aria-label="Playthrough">
+                                                        <span class="log-play-playthrough-trigger-text">
+                                                            <span class="log-play-playthrough-current" id="logPlayPlaythroughLabel">No playthrough</span>
+                                                            <span class="log-play-playthrough-chevron" id="logPlayPlaythroughChevron" aria-hidden="true">
+                                                                <i class="fa-solid fa-chevron-down"></i>
+                                                            </span>
+                                                        </span>
+                                                    </button>
+                                                    <div id="logPlayPlaythroughPanel" class="dropdown-panel log-play-playthrough-panel" role="listbox" aria-hidden="true"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="logPlayPlaythroughValue" value="" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="log-play-modal-main-stack">
+                            <div class="log-play-time-simple-block" id="logPlayTimeSimpleBlock" aria-labelledby="logPlayTimePlayedHeading">
+                                <div class="log-play-time-played-head">
+                                    <div class="log-play-time-played-top">
+                                        <div class="log-play-modal-legend log-play-modal-legend--subtle log-play-inline-section-legend" id="logPlayTimePlayedHeading">
+                                            Time played<span class="log-play-section-label-optional"> (optional)</span>
+                                        </div>
+                                        <p class="log-play-time-readonly" id="logPlayTimeReadonly" hidden aria-live="polite"></p>
+                                    </div>
+                                    <div id="logPlayDurationModeBlock" class="log-play-duration-block">
+                                        <div class="log-play-duration-controls-row">
+                                            <div class="log-play-duration-row log-play-duration-row--inline-units" role="group" aria-label="Hours and minutes">
+                                                <div class="log-play-duration-field">
+                                                    <input type="text" class="log-play-modal-input log-play-duration-input log-play-duration-input--infield-unit" id="logPlayHoursPart"
+                                                        inputmode="numeric" maxlength="3" pattern="[0-9]*" autocomplete="off" spellcheck="false"
+                                                        placeholder="0" aria-label="Hours">
+                                                    <span class="log-play-duration-infield-unit" aria-hidden="true">Hours</span>
+                                                </div>
+                                                <div class="log-play-duration-field">
+                                                    <input type="text" class="log-play-modal-input log-play-duration-input log-play-duration-input--infield-unit" id="logPlayMinutesPart"
+                                                        inputmode="numeric" maxlength="2" pattern="[0-9]*" autocomplete="off" spellcheck="false"
+                                                        placeholder="0" aria-label="Minutes (0–59)">
+                                                    <span class="log-play-duration-infield-unit" aria-hidden="true">Minutes</span>
+                                                </div>
+                                            </div>
+                                            <div class="log-play-duration-quick-add" role="group" aria-label="Quick add time">
+                                                <button type="button" class="log-play-duration-quick-btn js-log-play-duration-quick" data-quick-add-min="30">+30 mins</button>
+                                                <button type="button" class="log-play-duration-quick-btn js-log-play-duration-quick" data-quick-add-min="60">+1 hr</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p id="logPlayTimeError" class="log-play-time-error" role="alert" hidden></p>
+                                <div id="logPlayRangeBlock" class="log-play-range-hidden-fields" aria-hidden="true">
+                                    <input type="hidden" id="logPlaySessionStartDate" name="sessionStartDate" value="">
+                                    <input type="hidden" id="logPlaySessionEndDate" name="sessionEndDate" value="">
+                                    <input type="hidden" id="logPlaySessionStartTime" name="sessionStartTime" value="" autocomplete="off">
+                                    <input type="hidden" id="logPlaySessionEndTime" name="sessionEndTime" value="" autocomplete="off">
+                                    <input type="checkbox" id="logPlayStartYesterday" hidden autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="log-play-exp-row" id="logPlayExpRow">
+                                <input type="hidden" name="sessionExperience" id="logPlaySessionExperience" value="OKAY">
+                                <div class="log-play-modal-legend log-play-modal-legend--subtle" id="logPlayFeelingHeading">Feeling</div>
+                                <div class="log-play-exp-icons" role="radiogroup" aria-labelledby="logPlayFeelingHeading">
+                                    <button type="button" class="log-play-exp-btn js-log-play-exp" data-exp="BURNT_OUT"
+                                        aria-label="Burnt out" title="Burnt out">
+                                        <span class="log-play-exp-stack">
+                                            <span class="log-play-exp-face" aria-hidden="true">
+                                                <svg class="log-play-exp-face-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                                    <circle class="log-play-exp-face-bg" cx="16" cy="16" r="13"/>
+                                                    <circle class="log-play-exp-face-eye" cx="11.5" cy="12.5" r="1.85"/>
+                                                    <circle class="log-play-exp-face-eye" cx="20.5" cy="12.5" r="1.85"/>
+                                                    <path class="log-play-exp-face-mouth" d="M 10 22 Q 16 17.5 22 22"/>
+                                                </svg>
+                                            </span>
+                                            <span class="log-play-exp-caption">Burnt out</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="log-play-exp-btn js-log-play-exp" data-exp="MEH"
+                                        aria-label="Meh" title="Meh">
+                                        <span class="log-play-exp-stack">
+                                            <span class="log-play-exp-face" aria-hidden="true">
+                                                <svg class="log-play-exp-face-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                                    <circle class="log-play-exp-face-bg" cx="16" cy="16" r="13"/>
+                                                    <circle class="log-play-exp-face-eye" cx="11.5" cy="12.5" r="1.85"/>
+                                                    <circle class="log-play-exp-face-eye" cx="20.5" cy="12.5" r="1.85"/>
+                                                    <path class="log-play-exp-face-mouth" d="M 10.5 21.5 Q 16 19 21.5 21.5"/>
+                                                </svg>
+                                            </span>
+                                            <span class="log-play-exp-caption">Meh</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="log-play-exp-btn js-log-play-exp is-active" data-exp="OKAY"
+                                        aria-label="Fine" title="Fine">
+                                        <span class="log-play-exp-stack">
+                                            <span class="log-play-exp-face" aria-hidden="true">
+                                                <svg class="log-play-exp-face-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                                    <circle class="log-play-exp-face-bg" cx="16" cy="16" r="13"/>
+                                                    <circle class="log-play-exp-face-eye" cx="11.5" cy="12.5" r="1.85"/>
+                                                    <circle class="log-play-exp-face-eye" cx="20.5" cy="12.5" r="1.85"/>
+                                                    <path class="log-play-exp-face-mouth" d="M 11 21 L 21 21"/>
+                                                </svg>
+                                            </span>
+                                            <span class="log-play-exp-caption">Fine</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="log-play-exp-btn js-log-play-exp" data-exp="GOOD"
+                                        aria-label="Good" title="Good">
+                                        <span class="log-play-exp-stack">
+                                            <span class="log-play-exp-face" aria-hidden="true">
+                                                <svg class="log-play-exp-face-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                                    <circle class="log-play-exp-face-bg" cx="16" cy="16" r="13"/>
+                                                    <circle class="log-play-exp-face-eye" cx="11.5" cy="12.5" r="1.85"/>
+                                                    <circle class="log-play-exp-face-eye" cx="20.5" cy="12.5" r="1.85"/>
+                                                    <path class="log-play-exp-face-mouth" d="M 10 20.5 Q 16 24 22 20.5"/>
+                                                </svg>
+                                            </span>
+                                            <span class="log-play-exp-caption">Good</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="log-play-exp-btn js-log-play-exp" data-exp="GREAT"
+                                        aria-label="Great" title="Great">
+                                        <span class="log-play-exp-stack">
+                                            <span class="log-play-exp-face" aria-hidden="true">
+                                                <svg class="log-play-exp-face-svg" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                                                    <circle class="log-play-exp-face-bg" cx="16" cy="16" r="13"/>
+                                                    <circle class="log-play-exp-face-eye" cx="11.5" cy="12.5" r="1.85"/>
+                                                    <circle class="log-play-exp-face-eye" cx="20.5" cy="12.5" r="1.85"/>
+                                                    <path class="log-play-exp-face-mouth" d="M 9 19.5 Q 16 25.5 23 19.5"/>
+                                                </svg>
+                                            </span>
+                                            <span class="log-play-exp-caption">Great</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="log-play-form-scroll">
+                            <div class="log-play-details-panel" id="logPlayDetailsPanel">
+                                <div class="log-play-modal-extras">
+                                    <div class="log-play-modal-extras-inner">
+                                        <div class="log-play-journal-block log-play-end-optional-details">
+                                            <div class="log-play-notes-head">
+                                                <label class="log-play-modal-legend log-play-modal-legend--subtle log-play-notes-legend log-play-inline-section-legend" for="logPlayNote">Thoughts</label>
+                                                <label class="log-play-spoiler-inline">
+                                                    <input type="checkbox" name="noteContainsSpoilers" id="logPlaySpoiler" value="true">
+                                                    <span>Mark as spoiler</span>
+                                                </label>
+                                            </div>
+                                            <div class="log-play-journal-field-wrap">
+                                                <textarea class="log-play-modal-journal" name="note" id="logPlayNote"
+                                                    rows="6" maxlength="1000"
+                                                    placeholder="Optional — what stood out this time? Short reminders or reactions are perfect."></textarea>
+                                                <p class="log-play-char-count" aria-live="polite"><span id="logPlayNoteCount">0</span> / 1000</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="log-play-modal-footer">
+                            <div class="log-play-modal-footer-row">
+                                <div class="log-play-modal-footer-preview" id="logPlayTimeSide" hidden>
+                                    <div class="log-play-footer-preview-line" id="logPlayTotalPreviewLine">
+                                        <span class="log-play-footer-preview-k">Total:</span>
+                                        <span id="logPlayLibraryPlaytimeDelta" class="log-play-footer-preview-v"></span>
+                                    </div>
+                                    <div class="log-play-footer-preview-line" id="logPlayPlaythroughPreviewLine" hidden>
+                                        <span class="log-play-footer-preview-k">Playthrough:</span>
+                                        <span id="logPlayPlaythroughPlaytimeDelta" class="log-play-footer-preview-v"></span>
+                                    </div>
+                                </div>
+                                <div class="log-play-modal-footer-actions log-play-modal-actions">
+                                    <button type="button" class="btn btn-ghost log-play-modal-cancel" id="logPlayModalCancel">Cancel</button>
+                                    <button type="submit" class="btn btn-primary log-play-quick-submit js-log-play-submit log-play-footer-submit log-play-footer-submit--primary" id="logPlayModalSubmit">Log session</button>
+                                    <button type="submit" class="btn btn-primary log-play-quick-submit js-log-play-submit log-play-footer-submit log-play-footer-submit--edit" id="logPlayModalSubmitEdit" disabled tabindex="-1">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+
+</html>

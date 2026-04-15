@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout-head :: head}"></head>
+
+<body class="home-page" th:classappend="${homeDashboard} ? ' home-page--dashboard' : ''">
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="home-main" id="main-content" th:classappend="${homeDashboard} ? ' home-main--dashboard'">
+        
+        <th:block th:if="${homeDashboard}">
+            <section class="home-hero home-hero--pro" aria-labelledby="hd-hero-heading">
+                <div class="home-hero-bg" aria-hidden="true">
+                </div>
+                <div class="home-hero-shell">
+                    <div class="home-hero-grid">
+                        <div class="home-hero-copy">
+                            <th:block th:replace="~{fragments/site-logo :: hero}" />
+                            <h1 id="hd-hero-heading" class="tagline">
+                                <th:block th:switch="${dashHeroCopy.phase.name()}">
+                                    <th:block th:case="'WELCOME_EMPTY'">
+                                        <span class="hd-welcome-greet">Hey <span
+                                                th:text="${dashboardFirstName}">there</span></span><span
+                                            class="search-accent"> — welcome to your vault.</span>
+                                    </th:block>
+                                    <th:block th:case="'COLLECTION_NO_SESSIONS'">
+                                        <span class="hd-welcome-greet">Hey <span
+                                                th:text="${dashboardFirstName}">there</span></span><span
+                                            class="search-accent"> — your collection is ready.</span>
+                                    </th:block>
+                                    <th:block th:case="'ACTIVE_LAST_PLAYED'">
+                                        <span class="hd-welcome-greet">Hey <span
+                                                th:text="${dashboardFirstName}">there</span></span><span
+                                            class="search-accent"> — your games are waiting.</span>
+                                    </th:block>
+                                    <th:block th:case="'SESSIONS_NO_ACTIVE_GAME'">
+                                        <span class="hd-welcome-greet">Hey <span
+                                                th:text="${dashboardFirstName}">there</span>.</span>
+                                    </th:block>
+                                </th:block>
+                            </h1>
+                            <p class="search-helper hd-hero-lead" th:switch="${dashHeroCopy.phase.name()}">
+                                <th:block th:case="'WELCOME_EMPTY'">
+                                    <span class="hd-hero-lead-run">Search for games you own and add them to your
+                                        collection.</span>
+                                    <span class="hd-hero-lead-run">After that, this page shows what you played
+                                        last and ideas for what to try next.</span>
+                                </th:block>
+                                <th:block th:case="'COLLECTION_NO_SESSIONS'">
+                                    <span class="hd-hero-lead-run">You have <strong
+                                            th:text="${heroStats.gamesInCollection}">0</strong> <span
+                                            th:text="${heroStats.gamesInCollection == 1 ? 'game' : 'games'}">games</span>
+                                        in your collection.</span>
+                                    <span class="hd-hero-lead-run">Log your first session and we will track your
+                                        recent plays here.</span>
+                                </th:block>
+                                <th:block th:case="'ACTIVE_LAST_PLAYED'">
+                                    <span class="hd-hero-lead-run">You last played <strong
+                                            th:text="${dashHeroCopy.lastPlayedGameTitle != null && !#strings.isEmpty(dashHeroCopy.lastPlayedGameTitle) ? dashHeroCopy.lastPlayedGameTitle : 'a game'}">a
+                                            game</strong><span
+                                            th:if="${dashHeroCopy.lastPlayedRelative != null && !#strings.isEmpty(dashHeroCopy.lastPlayedRelative)}"
+                                            th:text="${' ' + dashHeroCopy.lastPlayedRelative + '.'}"> today.</span><span
+                                            th:if="${dashHeroCopy.lastPlayedRelative == null || #strings.isEmpty(dashHeroCopy.lastPlayedRelative)}">
+                                            recently.</span></span>
+                                    <span class="hd-hero-lead-run">Pick up where you left off, or log something
+                                        new.</span>
+                                </th:block>
+                                <th:block th:case="'SESSIONS_NO_ACTIVE_GAME'">
+                                    <span class="hd-hero-lead-run">Nothing is marked as playing right now.</span>
+                                    <span class="hd-hero-lead-run">Open any game in your collection to continue
+                                        or
+                                        switch titles.</span>
+                                </th:block>
+                            </p>
+                            <div class="home-actions">
+                                <a th:if="${heroStats.gamesInCollection == 0}" th:href="@{/search}"
+                                    class="btn btn-primary home-btn-primary hd-welcome-log-btn"
+                                    title="Search the catalogue and add games to your collection">
+                                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                    <span class="btn-label">Search games</span>
+                                </a>
+                                <button type="button" th:unless="${heroStats.gamesInCollection == 0}"
+                                    class="btn btn-primary home-btn-primary hd-welcome-log-btn js-log-play-open"
+                                    data-log-mode="pick" data-log-redirect="home"
+                                    th:disabled="${navActivePlaySession}"
+                                    th:classappend="${navActivePlaySession} ? 'log-play-btn--elsewhere' : ''"
+                                    th:title="${navActivePlaySession ? 'End the session on your current game before starting a new log from here.' : 'Log a play session — search your collection'}"
+                                    th:aria-label="${navActivePlaySession ? 'Busy — finish your current play session first' : 'Log a play session — search your collection'}"
+                                >
+                                    <i th:class="${navActivePlaySession} ? 'fa-solid fa-lock' : 'fa-solid fa-play'" aria-hidden="true"></i>
+                                    <span class="btn-label" th:text="${navActivePlaySession} ? 'Session in progress' : 'Log play'">Log play</span>
+                                </button>
+                                <a th:href="@{/collection}"
+                                    class="btn btn-ghost home-btn-secondary hd-welcome-collection-btn">
+                                    <span class="btn-label">Collection</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="home-hero-visual hd-hero-aside">
+                            <div class="home-hero-visual-col">
+                                <div class="hd-vault" aria-labelledby="hd-hero-panel-heading">
+                                    <div class="hd-vault-plate">
+                                        <header class="hd-vault-head">
+                                            <h2 id="hd-hero-panel-heading" class="hd-vault-title">Your
+                                                collection</h2>
+                                            <span class="hd-vault-playing" title="Titles marked as playing">
+                                                <span class="hd-vault-playing-num"
+                                                    th:text="${heroStats.playingNow}">0</span>
+                                                <span class="hd-vault-playing-label">playing</span>
+                                            </span>
+                                        </header>
+                                        <div class="hd-vault-metrics" role="group" aria-label="Collection summary">
+                                            <div class="hd-vault-metric">
+                                                <span class="hd-vault-metric-value"
+                                                    th:text="${heroStats.gamesInCollection}">0</span>
+                                                <span class="hd-vault-metric-label">games</span>
+                                            </div>
+                                            <div class="hd-vault-metric">
+                                                <span class="hd-vault-metric-value"
+                                                    th:text="${heroStats.sessionsLogged}">0</span>
+                                                <span class="hd-vault-metric-label">sessions</span>
+                                            </div>
+                                            <div class="hd-vault-metric">
+                                                <span class="hd-vault-metric-value"
+                                                    th:text="${heroStats.avgRatingDisplay}">—</span>
+                                                <span class="hd-vault-metric-label">avg rating</span>
+                                            </div>
+                                            <div class="hd-vault-metric">
+                                                <span class="hd-vault-metric-value"
+                                                    th:text="${heroStats.playTimeHoursDisplay}">—</span>
+                                                <span class="hd-vault-metric-label">play time</span>
+                                            </div>
+                                        </div>
+                                        <div class="hd-vault-shelf">
+                                            <p class="hd-vault-shelf-label">Recently played</p>
+                                            <div class="hd-vault-covers" th:unless="${#lists.isEmpty(heroQuickRows)}">
+                                                <a th:each="q : ${heroQuickRows}" th:if="${!#strings.isEmpty(q.apiId)}"
+                                                    th:href="@{/collection/{id}(id=${q.apiId})}"
+                                                    class="hd-vault-cover-card"
+                                                    th:attr="aria-label=${q.title + (q.platform != null && !#strings.isEmpty(q.platform) ? ', ' + q.platform : '')}">
+                                                    <span class="hd-vault-cover-frame">
+                                                        <img th:if="${!#strings.isEmpty(q.imageUrl)}"
+                                                            th:src="${q.imageUrl}" alt="" width="72" height="96"
+                                                            loading="lazy" decoding="async" role="presentation" />
+                                                    </span>
+                                                    <span class="hd-vault-cover-body">
+                                                        <span class="hd-vault-cover-title" th:text="${q.title}">Title</span>
+                                                        <span class="hd-vault-cover-meta"
+                                                            th:if="${q.platform != null && !#strings.isEmpty(q.platform)}"
+                                                            th:text="${q.platform}">PC</span>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                            <div class="empty-state empty-state--panel empty-state--panel-tight"
+                                                role="status" th:if="${#lists.isEmpty(heroQuickRows)}">
+                                                <span class="empty-state__icon" aria-hidden="true"><i
+                                                        class="fa-solid fa-layer-group"></i></span>
+                                                <th:block th:if="${heroStats.gamesInCollection == 0}">
+                                                    <p class="empty-state__title">No recent plays yet</p>
+                                                    <p class="empty-state__hint">Add games from search, then log a
+                                                        session — up to
+                                                        three recent titles appear here.</p>
+                                                </th:block>
+                                                <th:block
+                                                    th:if="${heroStats.gamesInCollection > 0 and heroStats.sessionsLogged == 0}">
+                                                    <p class="empty-state__title">No sessions logged yet</p>
+                                                    <p class="empty-state__hint">Use <strong>Log play</strong> above or
+                                                        open a game
+                                                        to record time; recent titles show here.</p>
+                                                </th:block>
+                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <div th:if="${playLogSaved}" class="cg-flash cg-flash--ok cg-flash--dismissible hd-page-flash-msg" role="status">
+                <span class="cg-flash__body">Logged a play session.</span>
+                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+            </div>
+            <div th:if="${playLogError}" class="cg-flash cg-flash--err cg-flash--dismissible hd-page-flash-msg" role="alert">
+                <span class="cg-flash__body" th:text="${playLogError}">Could not log play.</span>
+                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+            </div>
+
+            <section class="hd-act" aria-labelledby="hd-activity-heading">
+                <div class="hw-shell">
+                    <header class="hw-head">
+                        <h2 id="hd-activity-heading" class="hw-title">Activity</h2>
+                        <p class="home-section-sub">You have been playing...</p>
+                    </header>
+                    <div class="hd-split">
+                        <div class="hd-col hd-col--play"
+                            aria-labelledby="hd-progress-heading">
+                            <div class="hd-slab">
+                                <h3 id="hd-progress-heading" class="hd-slab-head hd-h3">Playing</h3>
+                                <div class="hd-slab-body">
+                                    <ul class="hd-tile-list" th:if="${!inProgressTiles.isEmpty()}">
+                                        <li th:each="t : ${inProgressTiles}">
+                                            <a th:href="@{/collection/{id}(id=${t.apiId})}"
+                                                class="hd-tile hd-playing-tile">
+                                                <span class="hd-tile-cover">
+                                                    <img th:if="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
+                                                        th:src="${t.imageUrl}" th:alt="${t.title}" width="60"
+                                                        height="80" loading="lazy" />
+                                                    <span th:unless="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
+                                                        class="hd-tile-fallback" aria-hidden="true"><i
+                                                            class="fa-solid fa-gamepad"></i></span>
+                                                </span>
+                                                <span class="hd-tile-text">
+                                                    <span class="hd-playing-title-line">
+                                                        <span class="hd-playing-title-name"
+                                                            th:text="${t.title}">Fortnite</span><span
+                                                            th:if="${t.platformLabel != null && !#strings.isEmpty(t.platformLabel)}"
+                                                            class="hd-playing-title-platform"
+                                                            th:text="${t.platformLabel}">PlayStation 5</span>
+                                                    </span>
+                                                    <p class="hd-playing-why-line"
+                                                        th:if="${!#lists.isEmpty(t.whyPlayingBadgeShort)}"
+                                                        th:text="${t.whyPlayingSummaryLine}"
+                                                        th:attr="title=${t.whyPlayingSummaryLine}">Unwind · Story ·
+                                                        Explore</p>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <p class="hd-playing-more" th:if="${playingTilesOverflowCount > 0}">
+                                        <a th:href="@{/collection}" class="hd-playing-more-link">+<span
+                                                th:text="${playingTilesOverflowCount}">3</span> more</a>
+                                    </p>
+                                    <div class="empty-state empty-state--panel" role="status"
+                                        th:if="${inProgressTiles.isEmpty()}">
+                                        <span class="empty-state__icon" aria-hidden="true"><i
+                                                class="fa-solid fa-bookmark"></i></span>
+                                        <p class="empty-state__title">Nothing in Playing</p>
+                                        <p class="empty-state__hint">Open a game in your collection and set its status
+                                            to
+                                            <em>Playing</em> to see it here.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hd-col hd-col--logs"
+                            aria-labelledby="hd-play-logs-heading">
+                            <div class="hd-slab">
+                                <h3 id="hd-play-logs-heading" class="hd-slab-head hd-h3">Play logs</h3>
+                                <div class="hd-slab-body">
+                                    <ul class="cg-play-log hd-plog" th:if="${!recentSessions.isEmpty()}">
+                                        <li class="hd-plog-li" th:each="s : ${recentSessions}">
+                                            <a th:href="|@{/collection/{id}(id=${s.apiId})}#cg-play-summary|"
+                                                class="cg-play-log-item"
+                                                th:attr="aria-label=${'View play logs for ' + s.gameTitle}"
+                                                th:title="${(s.anchorTitle != null and !#strings.isEmpty(s.anchorTitle)) ? (s.anchorTitle + ' · Opens play logs') : ('Open ' + s.gameTitle + ' — play logs')}">
+                                                <span class="hd-plog-img">
+                                                    <img th:if="${s.imageUrl != null && !#strings.isEmpty(s.imageUrl)}"
+                                                        th:src="${s.imageUrl}" alt="" width="40" height="53"
+                                                        loading="lazy" decoding="async" />
+                                                    <span
+                                                        th:unless="${s.imageUrl != null && !#strings.isEmpty(s.imageUrl)}"
+                                                        class="hd-plog-img-fb" aria-hidden="true"><i
+                                                            class="fa-solid fa-gamepad"></i></span>
+                                                </span>
+                                                <div class="cglog-when cg-play-log-date-wrap hd-plog-when">
+                                                    <time class="cg-play-log-date" th:datetime="${s.playedAt}">
+                                                        <span class="cg-play-log-day"
+                                                            th:text="${s.playedAt != null ? #temporals.format(s.playedAt, 'd') : '—'}">31</span>
+                                                        <span class="cg-play-log-month"
+                                                            th:text="${s.playedAt != null ? #temporals.format(s.playedAt, 'MMM') : ''}">Mar</span>
+                                                    </time>
+                                                </div>
+                                                <div class="hd-plog-body">
+                                                    <span th:if="${s.noteDisplay != null and s.noteTruncated}"
+                                                        class="hd-plog-note-row">
+                                                        <span
+                                                            class="cg-play-log-note hd-plog-note hd-plog-note--clip"
+                                                            th:text="${s.noteDisplay}">Preview text</span><span
+                                                            class="hd-plog-ellip" aria-hidden="true">…</span>
+                                                    </span>
+                                                    <span
+                                                        th:if="${s.noteDisplay != null and !s.noteTruncated and s.noteContainsSpoilers}"
+                                                        class="hd-plog-sp-row">
+                                                        <span
+                                                            class="cg-play-log-note hd-plog-note hd-plog-note--sp">Spoiler
+                                                            Note</span><span class="hd-plog-sp-hint"> -
+                                                            View in
+                                                            game page</span>
+                                                    </span>
+                                                    <span
+                                                        th:if="${s.noteDisplay != null and !s.noteTruncated and !s.noteContainsSpoilers}"
+                                                        class="cg-play-log-note hd-plog-note"
+                                                        th:text="${s.noteDisplay}">Session note</span>
+                                                    <span th:unless="${s.noteDisplay != null}"
+                                                        class="cg-play-log-note hd-plog-note hd-plog-note--empty">No
+                                                        notes written</span>
+                                                </div>
+                                                <div class="cg-play-log-meta hd-plog-tail">
+                                                    <span class="cg-play-log-hours"
+                                                        th:text="${(s.durationMinutes != null && s.durationMinutes > 0) ? @playDurationFormat.forLogMinutesRowDisplay(s.durationMinutes) : ''}">2H
+                                                        15m</span>
+                                                    <span class="hd-plog-arrow" aria-hidden="true"><i
+                                                            class="fa-solid fa-chevron-right"></i></span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <p class="hd-playing-more hd-plog-xtra" role="status"
+                                        th:if="${!recentSessions.isEmpty() && recentPlayOverflowCount > 0}">
+                                        +<span th:text="${recentPlayOverflowCount}">1</span> more
+                                    </p>
+                                    <div class="empty-state empty-state--panel" role="status"
+                                        th:if="${recentSessions.isEmpty()}">
+                                        <span class="empty-state__icon" aria-hidden="true"><i
+                                                class="fa-solid fa-clock-rotate-left"></i></span>
+                                        <p class="empty-state__title">No play logs yet</p>
+                                        <p class="empty-state__hint">Open any game in your collection and record a
+                                            session to
+                                            see it here.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hd-why-playing" aria-labelledby="hd-why-heading">
+                <div class="hw-shell">
+                    <header class="hw-head">
+                        <h2 id="hd-why-heading" class="hw-title">Play intent</h2>
+                        <p class="home-section-sub">Filter your collection by the mood you want right now.</p>
+                    </header>
+                    <nav class="hd-chips" aria-label="Play intent filters"
+                        th:if="${whyPlayings != null and !whyPlayings.isEmpty()}">
+                        <a th:each="w : ${whyPlayings}" th:href="@{/collection(whyPlaying=${w.name()})}"
+                            class="hd-chip"
+                            th:attr="data-why=${w.title},aria-label=${'View collection: ' + w.title + ' — ' + w.description}"
+                            th:title="${w.description}" th:text="${w.badgeShort}">🌿 Unwind</a>
+                    </nav>
+                    <div class="empty-state empty-state--panel empty-state--panel-wide" role="status"
+                        th:if="${whyPlayings == null or whyPlayings.isEmpty()}">
+                        <span class="empty-state__icon" aria-hidden="true"><i
+                                class="fa-solid fa-wand-magic-sparkles"></i></span>
+                        <p class="empty-state__title">Reasons unavailable</p>
+                        <p class="empty-state__hint">None are configured right now. Check back later.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hd-next" aria-labelledby="hd-next-title">
+                <div class="home-mindful-shell">
+                    <header class="hd-next-head">
+                        <h2 id="hd-next-title" class="hw-title">Try next</h2>
+                        <p class="home-section-sub">Random picks from your collection</p>
+                    </header>
+                    <ul class="hd-preview" th:if="${!tryNextTiles.isEmpty()}">
+                        <li th:each="p : ${tryNextTiles}">
+                            <a th:href="@{/collection/{id}(id=${p.apiId})}" class="hd-preview-card"
+                                th:title="${p.title}">
+                                <span class="hd-preview-cover">
+                                    <img th:if="${p.imageUrl != null && !p.imageUrl.isEmpty()}" th:src="${p.imageUrl}"
+                                        th:alt="${p.title}" width="72" height="96" loading="lazy" />
+                                    <span th:unless="${p.imageUrl != null && !p.imageUrl.isEmpty()}"
+                                        class="hd-preview-fallback" aria-hidden="true"><i
+                                            class="fa-solid fa-gamepad"></i></span>
+                                    <span class="hd-preview-status" th:text="${p.statusLabel}">Paused</span>
+                                </span>
+                                <span class="hd-preview-cap" th:text="${p.title}">Game</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="empty-state empty-state--panel empty-state--panel-wide" role="status"
+                        th:if="${tryNextTiles.isEmpty()}">
+                        <span class="empty-state__icon" aria-hidden="true"><i class="fa-solid fa-shuffle"></i></span>
+                        <p class="empty-state__title">Nothing to suggest yet</p>
+                        <p class="empty-state__hint">Add games to your collection to see them
+                            here.</p>
+                    </div>
+                </div>
+            </section>
+        </th:block>
+
+        
+        <th:block th:unless="${homeDashboard}">
+            <section class="home-hero home-hero--pro" aria-labelledby="home-hero-heading">
+                <div class="home-hero-bg" aria-hidden="true">
+                </div>
+                <div class="home-hero-shell">
+                    <div class="home-hero-grid">
+                        <div class="home-hero-copy">
+                            <th:block th:replace="~{fragments/site-logo :: hero}" />
+                            <h1 class="tagline">
+                                Your games, <span class="search-accent">remembered.</span>
+                            </h1>
+                            <p class="search-helper home-hero-lead">Track your game collection, log play, keep notes and
+                                review
+                                <br> - all in one place.
+                            </p>
+                            <div class="home-actions">
+                                <a th:href="@{/login}" class="btn btn-primary home-btn-primary">
+                                    <span class="btn-label">Sign in</span>
+                                </a>
+                                <a th:href="@{/register}" class="btn btn-ghost home-btn-secondary">
+                                    <span class="btn-label">Sign up</span>
+                                </a>
+                            </div>
+                            <div class="home-hero-quick-stats" role="group" aria-label="Community stats">
+                                <div class="home-hero-quick-stat">
+                                    <div class="home-hero-quick-stat-primary">
+                                        <span class="home-hero-quick-stat-value" th:text="${siteUserCount}">0</span>
+                                        <span class="home-hero-quick-stat-word"
+                                            th:text="${siteUserCount == 1 ? 'player' : 'players'}">players</span>
+                                    </div>
+                                    <p class="home-hero-quick-stat-sub">tracking their games</p>
+                                </div>
+                                <span class="home-hero-quick-stats-sep" aria-hidden="true"></span>
+                                <div class="home-hero-quick-stat home-hero-quick-stat--trailing">
+                                    <div class="home-hero-quick-stat-primary">
+                                        <span class="home-hero-quick-stat-value"
+                                            th:text="${siteSessionsLogged}">0</span>
+                                        <span class="home-hero-quick-stat-word"
+                                            th:text="${siteSessionsLogged == 1 ? 'log' : 'logs'}"></span>
+                                    </div>
+                                    <p class="home-hero-quick-stat-sub">saved by players</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:replace="~{fragments/home-hero-marketing-visual :: marketingVisual}"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="hw" aria-labelledby="hw-heading">
+                <div class="hw-shell">
+                    <header class="hw-head">
+                        <h2 id="hw-heading" class="hw-title">How it works</h2>
+                        <p class="home-section-sub hw-lead">Set up your game collection in three steps.</p>
+                    </header>
+                    <div class="hw-split">
+                        <ol class="hw-steps">
+                            <li class="hw-step">
+                                <span class="hw-step-num" aria-hidden="true">1</span>
+                                <h3 class="hw-step-title">Search the catalogue</h3>
+                                <p class="hw-step-text">Find any game instantly using our built-in catalogue
+                                    of thousands of titles.</p>
+                            </li>
+                            <li class="hw-step">
+                                <span class="hw-step-num" aria-hidden="true">2</span>
+                                <h3 class="hw-step-title">Add to your collection</h3>
+                                <p class="hw-step-text">Add games in one click — we pull the cover art,
+                                    metadata, and details automatically.</p>
+                            </li>
+                            <li class="hw-step">
+                                <span class="hw-step-num" aria-hidden="true">3</span>
+                                <h3 class="hw-step-title">Log your play</h3>
+                                <p class="hw-step-text">Track status, log sessions, and write reviews. Your
+                                    history stays with every game.</p>
+                            </li>
+                        </ol>
+                        <figure class="hw-media">
+                            <div class="hw-browser" aria-hidden="true">
+                                <span class="hw-browser-dot"></span>
+                                <span class="hw-browser-dot"></span>
+                                <span class="hw-browser-dot"></span>
+                                <span class="hw-browser-url">gamevault / collection</span>
+                            </div>
+                            <div class="hw-shot">
+                                
+                                <div class="hw-shot-ph" role="img"
+                                    aria-label="Placeholder for collection screenshot">
+                                    <i class="fa-solid fa-layer-group hw-shot-ico" aria-hidden="true"></i>
+                                    <span class="hw-shot-lbl">Collection</span>
+                                    <span class="hw-shot-hint">Screenshot placeholder — replace with your
+                                        capture</span>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </div>
+            </section>
+
+            <section class="home-mindful" aria-labelledby="home-mindful-heading">
+                <div class="home-mindful-shell">
+                    <header class="hw-head home-mindful-header">
+                        <h2 id="home-mindful-heading" class="hw-title">Built for mindful play</h2>
+                        <p class="home-section-sub home-mindful-lead-sub">A calmer way to track what you play and why
+                            you
+                            play it.</p>
+                    </header>
+                    <div class="home-mindful-grid">
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i
+                                    class="fa-solid fa-magnifying-glass"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">Build your collection</h3>
+                                <p class="home-mindful-item-text">Search thousands of titles from the IGDB catalogue and
+                                    add
+                                    them in one click — cover art and details included.</p>
+                            </div>
+                        </article>
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i
+                                    class="fa-solid fa-clipboard-list"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">One record per game</h3>
+                                <p class="home-mindful-item-text">Status, time, play intent, dates, and milestone
+                                    all on
+                                    one page, tied to each title.</p>
+                            </div>
+                        </article>
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i
+                                    class="fa-solid fa-stopwatch"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">Log every session</h3>
+                                <p class="home-mindful-item-text">Record date, duration, and notes each time you play —
+                                    your full history, attached to the game.</p>
+                            </div>
+                        </article>
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">Rate and review</h3>
+                                <p class="home-mindful-item-text">Score each game out of 10 and share your thoughts.</p>
+                            </div>
+                        </article>
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i class="fa-solid fa-lock"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">Keep private notes</h3>
+                                <p class="home-mindful-item-text">A separate notes field just for you — for tips,
+                                    reminders,
+                                    or anything you want to remember.</p>
+                            </div>
+                        </article>
+                        <article class="home-mindful-item">
+                            <span class="home-mindful-icon" aria-hidden="true"><i
+                                    class="fa-solid fa-layer-group"></i></span>
+                            <div class="home-mindful-body">
+                                <h3 class="home-mindful-item-title">Your collection, organized</h3>
+                                <p class="home-mindful-item-text">Searchable, grouped by play status and filterable —
+                                    every title easy to find.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </th:block>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+</html>
