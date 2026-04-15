@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -25,13 +23,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalNavModelAdvice {
 
   private static final int SESSION_AWAITING_END_OPEN_HOURS = 24;
-  private static final long NAV_ACTIVE_SESSION_CACHE_TTL_MILLIS = 20_000L;
 
   private final PlayLogRepository playLogRepository;
   private final GameRepository gameRepository;
   private final UserGameRepository userGameRepository;
-  private final Map<String, CachedNavActiveSession> navActiveSessionCache =
-      new ConcurrentHashMap<>();
 
   public GlobalNavModelAdvice(
       PlayLogRepository playLogRepository,
@@ -75,7 +70,7 @@ public class GlobalNavModelAdvice {
     if (userId == null) {
       return;
     }
-    NavActiveSessionState state = getCachedNavActiveSessionState(userId);
+    NavActiveSessionState state = loadNavActiveSessionState(userId);
     if (!state.active()) {
       return;
     }
@@ -91,18 +86,6 @@ public class GlobalNavModelAdvice {
 
   private static boolean isSessionAwaitingEndWindowOpen(LocalDateTime sessionStartedAt) {
     return sessionStartedAt.plusHours(SESSION_AWAITING_END_OPEN_HOURS).isAfter(LocalDateTime.now());
-  }
-
-  private NavActiveSessionState getCachedNavActiveSessionState(String userId) {
-    long now = System.currentTimeMillis();
-    CachedNavActiveSession cached = navActiveSessionCache.get(userId);
-    if (cached != null && cached.expiresAtEpochMs() > now) {
-      return cached.state();
-    }
-    NavActiveSessionState refreshed = loadNavActiveSessionState(userId);
-    navActiveSessionCache.put(
-        userId, new CachedNavActiveSession(refreshed, now + NAV_ACTIVE_SESSION_CACHE_TTL_MILLIS));
-    return refreshed;
   }
 
   private NavActiveSessionState loadNavActiveSessionState(String userId) {
@@ -142,8 +125,6 @@ public class GlobalNavModelAdvice {
         platform,
         normalizedCover);
   }
-
-  private record CachedNavActiveSession(NavActiveSessionState state, long expiresAtEpochMs) {}
 
   private record NavActiveSessionState(
       boolean active,
