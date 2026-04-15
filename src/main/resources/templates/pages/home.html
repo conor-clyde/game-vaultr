@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{fragments/layout-head :: head}"></head>
+<head th:replace="~{fragments/layout/layout-head :: head}"></head>
 
 <body class="home-page" th:classappend="${homeDashboard} ? ' home-page--dashboard' : ''">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
 
     <main class="home-main" id="main-content" th:classappend="${homeDashboard} ? ' home-main--dashboard'">
         
@@ -15,7 +15,7 @@
                 <div class="home-hero-shell">
                     <div class="home-hero-grid">
                         <div class="home-hero-copy">
-                            <th:block th:replace="~{fragments/site-logo :: hero}" />
+                            <th:block th:replace="~{fragments/layout/site-logo :: hero}" />
                             <h1 id="hd-hero-heading" class="tagline">
                                 <th:block th:switch="${dashHeroCopy.phase.name()}">
                                     <th:block th:case="'WELCOME_EMPTY'">
@@ -180,11 +180,11 @@
             </section>
             <div th:if="${playLogSaved}" class="cg-flash cg-flash--ok cg-flash--dismissible hd-page-flash-msg" role="status">
                 <span class="cg-flash__body">Logged a play session.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+                <th:block th:replace="~{fragments/layout/flash-banner :: closeButton}"></th:block>
             </div>
             <div th:if="${playLogError}" class="cg-flash cg-flash--err cg-flash--dismissible hd-page-flash-msg" role="alert">
                 <span class="cg-flash__body" th:text="${playLogError}">Could not log play.</span>
-                <th:block th:replace="~{fragments/flash-banner :: closeButton}"></th:block>
+                <th:block th:replace="~{fragments/layout/flash-banner :: closeButton}"></th:block>
             </div>
 
             <section class="hd-act" aria-labelledby="hd-activity-heading">
@@ -206,7 +206,7 @@
                                                 <span class="hd-tile-cover">
                                                     <img th:if="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
                                                         th:src="${t.imageUrl}" th:alt="${t.title}" width="60"
-                                                        height="80" loading="lazy" />
+                                                        height="80" loading="lazy" decoding="async" />
                                                     <span th:unless="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
                                                         class="hd-tile-fallback" aria-hidden="true"><i
                                                             class="fa-solid fa-gamepad"></i></span>
@@ -363,7 +363,7 @@
                                 th:title="${p.title}">
                                 <span class="hd-preview-cover">
                                     <img th:if="${p.imageUrl != null && !p.imageUrl.isEmpty()}" th:src="${p.imageUrl}"
-                                        th:alt="${p.title}" width="72" height="96" loading="lazy" />
+                                        th:alt="${p.title}" width="72" height="96" loading="lazy" decoding="async" />
                                     <span th:unless="${p.imageUrl != null && !p.imageUrl.isEmpty()}"
                                         class="hd-preview-fallback" aria-hidden="true"><i
                                             class="fa-solid fa-gamepad"></i></span>
@@ -392,7 +392,7 @@
                 <div class="home-hero-shell">
                     <div class="home-hero-grid">
                         <div class="home-hero-copy">
-                            <th:block th:replace="~{fragments/site-logo :: hero}" />
+                            <th:block th:replace="~{fragments/layout/site-logo :: hero}" />
                             <h1 class="tagline">
                                 Your games, <span class="search-accent">remembered.</span>
                             </h1>
@@ -429,7 +429,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div th:replace="~{fragments/home-hero-marketing-visual :: marketingVisual}"></div>
+                        <div th:replace="~{fragments/home/home-hero-marketing-visual :: marketingVisual}"></div>
                     </div>
                 </div>
             </section>
@@ -552,7 +552,7 @@
         </th:block>
     </main>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
 </body>
 
 </html>

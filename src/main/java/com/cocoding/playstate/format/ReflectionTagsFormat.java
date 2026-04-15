@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component("reflectionTags")
 public class ReflectionTagsFormat {
 
-    public String toDisplayLabel(String normalized) {
-        return ReflectionTagsJson.toDisplayLabel(normalized);
-    }
+  public String toDisplayLabel(String normalized) {
+    return ReflectionTagsJson.toDisplayLabel(normalized);
+  }
 }

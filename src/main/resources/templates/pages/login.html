@@ -1,50 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout/layout-head :: head}"></head>
 
-<head th:replace="~{fragments/layout-head :: head}"></head>
-
-<body class="auth-page">
-    <div th:replace="~{fragments/navbar :: navbar}"></div>
+  <body class="auth-page">
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
 
     <main class="auth-main" id="main-content">
-        <div class="auth-panel">
-            <div class="auth-card">
-                <div th:replace="~{fragments/site-logo :: authCard}"></div>
-                <h1 class="auth-title">Sign in</h1>
-                <p class="auth-lead">Welcome back. Please provide your login details.</p>
+      <div class="auth-panel">
+        <div class="auth-card">
+          <div th:replace="~{fragments/layout/site-logo :: authCard}"></div>
+          <h1 class="auth-title">Sign in</h1>
+          <p class="auth-lead">
+            Welcome back. Please provide your login details.
+          </p>
 
-                <p th:if="${param.error != null}" class="auth-alert auth-alert--error" role="alert">
-                    Incorrect username or password.
-                </p>
-                <p th:if="${param.registered != null}" class="auth-alert auth-alert--success" role="status">
-                    Your account is ready. You can sign in below.
-                </p>
+          <p
+            th:if="${param.error != null}"
+            class="auth-alert auth-alert--error"
+            role="alert"
+          >
+            Incorrect username or password.
+          </p>
+          <p
+            th:if="${param.registered != null}"
+            class="auth-alert auth-alert--success"
+            role="status"
+          >
+            Your account is ready. You can sign in below.
+          </p>
 
-                <form class="auth-form" th:action="@{/login}" method="post">
-                    <div class="auth-field">
-                        <label class="auth-label" for="username">Username</label>
-                        <input class="auth-input" type="text" id="username" name="username" autocomplete="username"
-                            required autofocus>
-                    </div>
-                    <div class="auth-field">
-                        <label class="auth-label" for="password">Password</label>
-                        <input class="auth-input" type="password" id="password" name="password"
-                            autocomplete="current-password" required>
-                    </div>
-                    <div class="auth-actions">
-                        <button type="submit" class="btn btn-primary auth-submit">Sign in</button>
-                    </div>
-                </form>
-
-                <p class="auth-footer">
-                    New here?
-                    <a th:href="@{/register}" class="auth-link">Create an account</a>
-                </p>
+          <form class="auth-form" th:action="@{/login}" method="post">
+            <div class="auth-field">
+              <label class="auth-label" for="username">Username</label>
+              <input
+                class="auth-input"
+                type="text"
+                id="username"
+                name="username"
+                autocomplete="username"
+                required
+                autofocus
+              />
             </div>
+            <div class="auth-field">
+              <label class="auth-label" for="password">Password</label>
+              <input
+                class="auth-input"
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                required
+              />
+            </div>
+            <div class="auth-actions">
+              <button type="submit" class="btn btn-primary auth-submit">
+                Sign in
+              </button>
+            </div>
+          </form>
+
+          <p class="auth-footer">
+            New here?
+            <a th:href="@{/register}" class="auth-link">Create an account</a>
+          </p>
         </div>
+      </div>
     </main>
 
-    <div th:replace="~{fragments/footer :: footer}"></div>
-</body>
-
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
+  </body>
 </html>

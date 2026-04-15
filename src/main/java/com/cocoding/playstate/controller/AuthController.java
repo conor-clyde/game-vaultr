@@ -13,52 +13,52 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class AuthController {
 
-    private final UserRegistrationService userRegistrationService;
+  private final UserRegistrationService userRegistrationService;
 
-    public AuthController(UserRegistrationService userRegistrationService) {
-        this.userRegistrationService = userRegistrationService;
-    }
+  public AuthController(UserRegistrationService userRegistrationService) {
+    this.userRegistrationService = userRegistrationService;
+  }
 
-    @GetMapping("/login")
-    public String loginPage(Authentication authentication, Model model) {
-        if (isLoggedIn(authentication)) {
-            return "redirect:/";
-        }
-        model.addAttribute("title", "Sign in");
-        return "pages/login";
+  @GetMapping("/login")
+  public String loginPage(Authentication authentication, Model model) {
+    if (isLoggedIn(authentication)) {
+      return "redirect:/";
     }
+    model.addAttribute("title", "Sign in");
+    return "pages/login";
+  }
 
-    @GetMapping("/register")
-    public String registerPage(Authentication authentication, Model model) {
-        if (isLoggedIn(authentication)) {
-            return "redirect:/";
-        }
-        model.addAttribute("title", "Create account");
-        return "pages/register";
+  @GetMapping("/register")
+  public String registerPage(Authentication authentication, Model model) {
+    if (isLoggedIn(authentication)) {
+      return "redirect:/";
     }
+    model.addAttribute("title", "Create account");
+    return "pages/register";
+  }
 
-    @PostMapping("/register")
-    public String registerSubmit(
-            @RequestParam String username,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String confirmPassword,
-            RedirectAttributes redirectAttributes) {
-        return userRegistrationService
-                .validateAndRegister(username, email, password, confirmPassword)
-                .map(
-                        error -> {
-                            redirectAttributes.addFlashAttribute("registerError", error);
-                            redirectAttributes.addFlashAttribute("registerUsername", username);
-                            redirectAttributes.addFlashAttribute("registerEmail", email);
-                            return "redirect:/register";
-                        })
-                .orElse("redirect:/login?registered");
-    }
+  @PostMapping("/register")
+  public String registerSubmit(
+      @RequestParam String username,
+      @RequestParam String email,
+      @RequestParam String password,
+      @RequestParam String confirmPassword,
+      RedirectAttributes redirectAttributes) {
+    return userRegistrationService
+        .validateAndRegister(username, email, password, confirmPassword)
+        .map(
+            error -> {
+              redirectAttributes.addFlashAttribute("registerError", error);
+              redirectAttributes.addFlashAttribute("registerUsername", username);
+              redirectAttributes.addFlashAttribute("registerEmail", email);
+              return "redirect:/register";
+            })
+        .orElse("redirect:/login?registered");
+  }
 
-    private static boolean isLoggedIn(Authentication authentication) {
-        return authentication != null
-                && authentication.isAuthenticated()
-                && !(authentication instanceof AnonymousAuthenticationToken);
-    }
+  private static boolean isLoggedIn(Authentication authentication) {
+    return authentication != null
+        && authentication.isAuthenticated()
+        && !(authentication instanceof AnonymousAuthenticationToken);
+  }
 }

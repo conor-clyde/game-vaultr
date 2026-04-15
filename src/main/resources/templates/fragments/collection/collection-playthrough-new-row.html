@@ -1,0 +1,220 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <li
+      th:fragment="newPlaythroughLi"
+      class="cgpd-card cgpd-card--client-draft"
+      th:with="sfx='__DRAFT__'"
+      data-playthrough-id=""
+      data-cg-client-draft-row="true"
+    >
+      <details class="cg-pt-accordion" data-cg-pt-accordion="true" open="open">
+        <summary class="cg-pt-accordion__summary">
+          <div class="cg-pt-accordion__summary-body">
+            <header class="cgpd-card__header">
+              <div class="cgpd-card__header-main">
+                <span class="cgpd-card__ordinal">#__ORD__</span>
+                <div class="cgpd-card__title-block">
+                  <div class="cgpd-card__name-row">
+                    <div class="cgpd-card__name-line">
+                      <span class="cgpd-card__default-name">
+                        <span class="cgpd-card__default-name-word"
+                          >Playthrough</span
+                        >
+                        <span class="cgpd-card__default-name-num">__ORD__</span>
+                      </span>
+                      <span class="cgpd-card__badges">
+                        <span class="cgpd-badge cgpd-badge--stopped"
+                          >Stopped</span
+                        >
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn btn-ghost cg-section-edit cgpd-card__edit-btn cgpd-card__edit-btn--header"
+                th:id="|colGamePlaythroughEditBtn_${sfx}|"
+                data-cg-edit-playthrough="true"
+                data-playthrough-id=""
+                th:attr="aria-controls=|cgPtInlinePanel_${sfx}|,
+                  data-editing-label-id=|colGamePlaythroughEditingLabel_${sfx}|"
+                aria-label="Edit new playthrough"
+              >
+                <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                <span>Edit</span>
+              </button>
+              <span
+                class="cg-section-editing-label"
+                th:id="|colGamePlaythroughEditingLabel_${sfx}|"
+                th:attr="data-for-edit-btn=|colGamePlaythroughEditBtn_${sfx}|"
+                hidden
+                aria-live="polite"
+                >Editing</span
+              >
+            </header>
+          </div>
+        </summary>
+        <div class="cg-pt-accordion__panel">
+          <div class="cgpd-card__inner cgpd-card__inner--stopped">
+            <div class="cgpd-card__body">
+              <div class="cgpd-card__body-read">
+                <section
+                  class="cgps cgprs cgprs--pt-body"
+                  th:attr="aria-label=|New playthrough summary|"
+                >
+                  <div
+                    class="cgpd-card__segment cgpd-card__segment--pt-active-mirror"
+                  >
+                    <div
+                      class="cgpd-card__pt-active-stack"
+                      role="region"
+                      aria-label="Difficulty, last logged, playtime, and progress"
+                    >
+                      <div
+                        class="cgr-row cgr-row--dates-footer cg-play-summary-footer cg-play-summary-footer--pt-top"
+                        role="group"
+                        aria-label="Difficulty, last logged, and playtime"
+                      >
+                        <div
+                          class="cg-play-summary-footer__grid cg-play-summary-footer__grid--layout cg-play-summary-footer__grid--layout--pt-top-meta"
+                        >
+                          <div
+                            class="cg-play-summary-footer__kv cg-play-summary-footer__kv--pt-difficulty"
+                          >
+                            <span
+                              class="cg-play-summary-footer__k"
+                              id="cgPtDiffLbl___DRAFT__"
+                              >Difficulty</span
+                            >
+                            <span
+                              class="cg-play-summary-footer__v"
+                              aria-labelledby="cgPtDiffLbl___DRAFT__"
+                              th:text="${T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).NORMAL}"
+                              >Normal</span
+                            >
+                          </div>
+                          <div
+                            class="cg-play-summary-footer__kv cg-play-summary-footer__kv--pt-last-logged"
+                          >
+                            <span class="cg-play-summary-footer__k"
+                              >Last logged</span
+                            >
+                            <span
+                              class="cg-play-summary-footer__v cgpsum-meta-val--placeholder"
+                              >—</span
+                            >
+                          </div>
+                          <div
+                            class="cg-play-summary-footer__kv cg-play-summary-footer__kv--pt-playtime"
+                          >
+                            <span class="cg-play-summary-footer__k"
+                              >Playtime</span
+                            >
+                            <span class="cg-play-summary-footer__v">0h</span>
+                          </div>
+                        </div>
+                      </div>
+                      <section
+                        class="cgpd-card__pt-progress-section"
+                        aria-labelledby="cgPtProgressLbl___DRAFT__"
+                      >
+                        <div class="cgpd-card__pt-progress-head">
+                          <h3
+                            class="cgpd-card__pt-progress-eyebrow"
+                            id="cgPtProgressLbl___DRAFT__"
+                          >
+                            Progression
+                          </h3>
+                          <div
+                            class="cgpd-card__pt-pct-row cgpd-card__pt-pct-row--solo cgpd-card__pt-head-row"
+                          >
+                            <span
+                              class="cgpd-card__pt-pct cgpd-card__pt-pct--placeholder"
+                              >—</span
+                            >
+                          </div>
+                        </div>
+                        <div class="cgpd-card__pt-desc-block">
+                          <p class="cgpd-card__pt-desc-label">Where you are</p>
+                          <span
+                            class="cgpd-card__pt-desc-text cgpd-card__pt-desc-text--placeholder"
+                            >—</span
+                          >
+                        </div>
+                      </section>
+                    </div>
+                  </div>
+                  <div
+                    class="cgpd-card__segment cgpd-card__segment--playthrough-meta"
+                  >
+                    <div class="cgpd-card__stat-band">
+                      <div
+                        class="cgr-row cgr-row--dates-footer cg-play-summary-footer cg-play-summary-footer--pt-body"
+                        role="group"
+                        aria-label="Started and finished"
+                      >
+                        <div
+                          class="cg-play-summary-footer__grid cg-play-summary-footer__grid--layout cg-play-summary-footer__grid--layout--pt-meta"
+                        >
+                          <div
+                            class="cg-play-summary-footer__kv cg-play-summary-footer__kv--started"
+                          >
+                            <span class="cg-play-summary-footer__k"
+                              >Started</span
+                            >
+                            <span
+                              class="cg-play-summary-footer__v"
+                              th:text="${#temporals.format(T(java.time.LocalDate).now(), 'MMMM d, yyyy')}"
+                              >April 12, 2026</span
+                            >
+                          </div>
+                          <div
+                            class="cg-play-summary-footer__kv cg-play-summary-footer__kv--finished"
+                          >
+                            <span class="cg-play-summary-footer__k"
+                              >Finished</span
+                            >
+                            <span
+                              class="cg-play-summary-footer__v cgpsum-meta-val--placeholder"
+                              >—</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              <div
+                class="cgpd-card__body-edit cg-personal-history-edit"
+                hidden
+                th:attr="id=|cgPtInlinePanel_${sfx}|"
+              >
+                <div
+                  th:replace="~{fragments/collection/collection-playthrough-inline-edit :: draftFields(${sfx})}"
+                ></div>
+              </div>
+              <div class="cgpd-card__inline-actions" hidden>
+                <button
+                  type="button"
+                  class="btn btn-ghost js-cg-history-cancel"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  form="colGamePersonalForm"
+                  class="btn btn-primary js-cg-history-save"
+                >
+                  <span class="btn-label">Save</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </li>
+  </body>
+</html>
