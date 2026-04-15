@@ -799,17 +799,21 @@
   font-family: var(--font-dm);
   font-size: 0.64rem;
   font-weight: 500;
-  justify-content: flex-start;
+  justify-content: center;
   letter-spacing: 0.02em;
   min-height: 21px;
   min-width: 0;
   overflow: hidden;
   padding: 4px 9px;
-  text-align: left;
+  text-align: center;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
   width: 100%;
+}
+.coll-platform.coll-platform--left {
+  justify-content: flex-start;
+  text-align: left;
 }
 .coll-tile:hover .coll-platform,
 .coll-tile:focus-within .coll-platform {

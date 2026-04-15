@@ -974,6 +974,39 @@
           sync();
         });
 
+        function colSyncPlatformHeaderAlignmentOne(el) {
+          el.classList.remove("coll-platform--left");
+          var cs = window.getComputedStyle(el);
+          var lh = parseFloat(cs.lineHeight);
+          if (!isFinite(lh) || lh <= 0) {
+            lh = 18;
+          }
+          var truncated = el.scrollWidth > el.clientWidth + 1;
+          var wrapped = el.scrollHeight > lh * 1.5;
+          if (truncated || wrapped) {
+            el.classList.add("coll-platform--left");
+          }
+        }
+        function colSyncPlatformHeaderAlignment() {
+          document
+            .querySelectorAll(".coll-platform")
+            .forEach(colSyncPlatformHeaderAlignmentOne);
+        }
+        if (typeof ResizeObserver !== "undefined") {
+          var colPlatformResizeObserver = new ResizeObserver(function (entries) {
+            for (var i = 0; i < entries.length; i++) {
+              colSyncPlatformHeaderAlignmentOne(entries[i].target);
+            }
+          });
+          document.querySelectorAll(".coll-platform").forEach(function (el) {
+            colPlatformResizeObserver.observe(el);
+          });
+        }
+        colSyncPlatformHeaderAlignment();
+        requestAnimationFrame(function () {
+          requestAnimationFrame(colSyncPlatformHeaderAlignment);
+        });
+
         var chipsRow = document.querySelector(".coll-chips");
         var chipsInner = document.querySelector(".coll-chips-wrap");
         function syncChipsScrollEnd() {
@@ -992,11 +1025,14 @@
 
         var t;
         var tChips;
+        var tPlatform;
         window.addEventListener("resize", function () {
           clearTimeout(t);
           t = setTimeout(sync, 150);
           clearTimeout(tChips);
           tChips = setTimeout(syncChipsScrollEnd, 150);
+          clearTimeout(tPlatform);
+          tPlatform = setTimeout(colSyncPlatformHeaderAlignment, 150);
         });
       });
     </script>
