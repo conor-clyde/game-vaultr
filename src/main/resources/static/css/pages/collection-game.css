@@ -2470,6 +2470,9 @@ details.cg-pt-accordion[open] .cgpd-card__inner:has(.cg-pt-sessions) {
   margin: 0.06rem 0 0;
   line-height: 1.35;
 }
+#cg-play-summary .cg-ps-stat-block__playtime-input {
+  max-width: 11rem;
+}
 #cg-play-summary .cg-ps-playtime-pt-readonly {
   font-family: var(--font-dm);
   font-size: clamp(1.05rem, 1.85vw, 1.22rem);
@@ -2484,6 +2487,10 @@ details.cg-pt-accordion[open] .cgpd-card__inner:has(.cg-pt-sessions) {
   font-weight: 500;
   font-style: italic;
   color: rgba(188, 184, 212, 0.94);
+}
+.cg-pt-inline-edit__playtime-hint {
+  margin: 0.2rem 0 0;
+  line-height: 1.35;
 }
 @media (max-width: 520px) {
   #cg-play-summary .cg-ps-stat-blocks {
@@ -5574,7 +5581,7 @@ details.cg-pt-accordion[open]
   .cg-personal-history-edit
   .cgpd-card__pt-edit-where-pct-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(5.25rem, 7rem);
+  grid-template-columns: minmax(0, 1fr) minmax(8.25rem, 10.5rem);
   gap: var(--cg-pt-edit-row-gap);
   align-items: start;
   margin-top: 0;
@@ -5617,7 +5624,7 @@ details.cg-pt-accordion[open]
   display: flex;
   flex-direction: column;
   gap: var(--cg-pt-edit-label-gap);
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   min-width: 0;
   justify-self: end;
   align-self: start;

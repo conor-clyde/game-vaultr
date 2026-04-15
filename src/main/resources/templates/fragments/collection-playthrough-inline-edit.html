@@ -62,13 +62,13 @@
                           >State</span
                         >
                         <div class="cg-pt-inline-edit__field-control-wrap">
-                          <input
-                            type="hidden"
-                            data-cg-progress-status
-                            th:id="|cgPtProgSt_${p.id}|"
-                            th:value="${ptMode}"
-                          />
                           <div class="cg-dropdown-field">
+                            <input
+                              type="hidden"
+                              data-cg-progress-status
+                              th:id="|cgPtProgSt_${p.id}|"
+                              th:value="${ptMode}"
+                            />
                             <div class="dropdown cg-form-dropdown">
                               <button
                                 type="button"
@@ -253,6 +253,9 @@
                         />
                         <span class="cg-pt-edit-duration-suffix">m</span>
                       </div>
+                      <p class="cg-subtle-field-hint cg-pt-inline-edit__playtime-hint">
+                        Auto-calculated from play logs. You can manually override it.
+                      </p>
                     </div>
                   </div>
                   <div class="cgpd-card__pt-edit-where-pct-row">
@@ -410,13 +413,13 @@
                           >State</span
                         >
                         <div class="cg-pt-inline-edit__field-control-wrap">
-                          <input
-                            type="hidden"
-                            data-cg-progress-status
-                            th:id="|cgPtProgSt_${suffix}|"
-                            value="STOPPED"
-                          />
                           <div class="cg-dropdown-field">
+                            <input
+                              type="hidden"
+                              data-cg-progress-status
+                              th:id="|cgPtProgSt_${suffix}|"
+                              value="STOPPED"
+                            />
                             <div class="dropdown cg-form-dropdown">
                               <button
                                 type="button"
@@ -592,6 +595,9 @@
                         />
                         <span class="cg-pt-edit-duration-suffix">m</span>
                       </div>
+                      <p class="cg-subtle-field-hint cg-pt-inline-edit__playtime-hint">
+                        Auto-calculated from play logs. You can manually override it.
+                      </p>
                     </div>
                   </div>
                   <div class="cgpd-card__pt-edit-where-pct-row">

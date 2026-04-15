@@ -482,7 +482,6 @@
                         playing,
                         active playthrough (link to Playthroughs), platform,
                         ownership, and dates</span>
-                      <input type="hidden" name="totalPlayHours" th:value="${personalPlayTimeHours}" />
                       <input type="hidden" name="progressLabel"
                         th:value="${userGame.progressLabel != null ? userGame.progressLabel : ''}" />
                       <input type="hidden" name="progressPercent"
@@ -548,12 +547,13 @@
                             </div>
                             <div class="cg-ps-stat-block cg-ps-stat-block--edit cg-ps-stat-block--playtime">
                               <div class="cg-ps-stat-block__control">
-                                <div class="cg-ps-playtime-pt-readonly cg-ps-stat-block__playtime-display"
-                                  th:text="${totalPlayTimeLabel}">
-                                  33h 14m
-                                </div>
+                                <input type="text"
+                                  class="site-field-input cg-ps-playtime-total-input cg-ps-stat-block__playtime-input"
+                                  name="totalPlayHours" inputmode="decimal" maxlength="8" autocomplete="off"
+                                  th:value="${personalPlayTimeHours}" placeholder="e.g. 33.2"
+                                  aria-label="Total play time in hours" />
                                 <p class="cg-subtle-field-hint cg-ps-playtime-total__hint cg-ps-stat-block__field-hint">
-                                  Total across logs and sessions.
+                                  Auto-calculated from logs and sessions. You can manually override it.
                                 </p>
                               </div>
                               <span class="cg-ps-stat-block__label">Played</span>
