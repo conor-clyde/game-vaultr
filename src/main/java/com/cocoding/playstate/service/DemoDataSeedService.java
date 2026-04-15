@@ -71,7 +71,7 @@ public class DemoDataSeedService {
     @Value("${demo.username:demo}")
     private String demoUsername;
 
-    @Value("${demo.password:playstate-demo}")
+    @Value("${demo.password:}")
     private String demoPassword;
 
     @Value("${demo.email:demo@example.com}")

@@ -39,6 +39,10 @@ public class IgdbTokenService {
         if (accessToken != null && System.currentTimeMillis() < tokenExpiryTimeEpochMs) {
             return accessToken;
         }
+        if (clientId == null || clientId.isBlank() || clientSecret == null || clientSecret.isBlank()) {
+            throw new RuntimeException(
+                    "IGDB credentials are missing. Set IGDB_CLIENT_ID and IGDB_CLIENT_SECRET (or TWITCH_* variants).");
+        }
 
         String requestBody =
                 "client_id=" + urlEncode(clientId)
