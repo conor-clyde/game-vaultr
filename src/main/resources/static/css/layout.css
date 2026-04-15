@@ -459,13 +459,10 @@ main {
       max(16px, env(safe-area-inset-left, 0));
     position: relative;
   }
+  .navbar-auth-guest,
   .navbar-auth-user,
   .navbar-links {
     display: none;
-  }
-  .navbar-auth-guest .btn.btn-ghost {
-    font-size: 0.72rem;
-    padding: 6px 10px;
   }
   .navbar-hamburger.btn.btn-ghost {
     display: flex;

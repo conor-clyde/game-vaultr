@@ -191,11 +191,13 @@
           <a
             th:href="@{/login}"
             class="navbar-mobile-link navbar-mobile-link--auth"
+            th:classappend="${title == 'Sign in' ? 'active' : ''}"
             >Sign in</a
           >
           <a
             th:href="@{/register}"
             class="navbar-mobile-link navbar-mobile-link--auth"
+            th:classappend="${title == 'Create account' ? 'active' : ''}"
             >Register</a
           >
         </nav>
