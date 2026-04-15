@@ -7201,13 +7201,13 @@ details.cg-pt-accordion[open] .cgpd-card__pct-bar .cgpt-read-pct-fill {
 .cg-hero-meta-chip--platform {
   align-self: flex-start;
   border-radius: 0.95rem;
-  display: flex;
-  flex: 0 1 100%;
+  display: inline-flex;
+  flex: 0 1 auto;
   justify-content: flex-start;
   max-width: 100%;
   min-width: 0;
   text-align: left;
-  width: fit-content;
+  width: auto;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
@@ -7224,9 +7224,34 @@ details.cg-pt-accordion[open] .cgpd-card__pct-bar .cgpt-read-pct-fill {
   padding-left: 0;
 }
 .cg-hero-meta-chip--status {
+  background: rgba(39, 38, 56, 0.68);
+  border-color: rgba(156, 163, 175, 0.32);
+  color: rgba(226, 232, 240, 0.94);
+}
+.cg-hero-meta-chip--status-playing {
   background: rgba(5, 55, 44, 0.45);
   border-color: rgba(52, 211, 153, 0.4);
   color: #34d399;
+}
+.cg-hero-meta-chip--status-paused {
+  background: rgba(76, 29, 149, 0.42);
+  border-color: rgba(167, 139, 250, 0.45);
+  color: #c4b5fd;
+}
+.cg-hero-meta-chip--status-finished {
+  background: rgba(10, 48, 78, 0.44);
+  border-color: rgba(125, 211, 252, 0.42);
+  color: #7dd3fc;
+}
+.cg-hero-meta-chip--status-dropped {
+  background: rgba(83, 27, 27, 0.44);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fca5a5;
+}
+.cg-hero-meta-chip--status-backlog {
+  background: rgba(39, 38, 56, 0.68);
+  border-color: rgba(156, 163, 175, 0.32);
+  color: rgba(226, 232, 240, 0.94);
 }
 .cg-hero-last-played-corner {
   box-sizing: border-box;
