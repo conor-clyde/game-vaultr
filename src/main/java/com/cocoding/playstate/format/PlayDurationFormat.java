@@ -31,18 +31,7 @@ public class PlayDurationFormat {
   }
 
   public String forLogMinutesCompactLower(Integer minutes) {
-    if (minutes == null || minutes <= 0) {
-      return "";
-    }
-    long h = minutes / 60L;
-    long m = minutes % 60L;
-    if (h == 0) {
-      return m + "m";
-    }
-    if (m == 0) {
-      return h + "h";
-    }
-    return h + "h " + m + "m";
+    return formatMinutes(minutes, "h");
   }
 
   /**
@@ -50,18 +39,7 @@ public class PlayDurationFormat {
    * {@code 25m}).
    */
   public String forLogMinutesRowDisplay(Integer minutes) {
-    if (minutes == null || minutes <= 0) {
-      return "";
-    }
-    long h = minutes / 60L;
-    long m = minutes % 60L;
-    if (h == 0) {
-      return m + "m";
-    }
-    if (m == 0) {
-      return h + "H";
-    }
-    return h + "H " + m + "m";
+    return formatMinutes(minutes, "H");
   }
 
   public String forRecordTotalPlaytimeRead(int totalMinutes) {
@@ -79,5 +57,20 @@ public class PlayDurationFormat {
         .divide(BigDecimal.valueOf(60), 8, RoundingMode.HALF_UP)
         .stripTrailingZeros()
         .toPlainString();
+  }
+
+  private static String formatMinutes(Integer minutes, String hourSuffix) {
+    if (minutes == null || minutes <= 0) {
+      return "";
+    }
+    long h = minutes / 60L;
+    long m = minutes % 60L;
+    if (h == 0) {
+      return m + "m";
+    }
+    if (m == 0) {
+      return h + hourSuffix;
+    }
+    return h + hourSuffix + " " + m + "m";
   }
 }

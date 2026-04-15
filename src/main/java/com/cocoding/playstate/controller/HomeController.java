@@ -7,10 +7,10 @@ import com.cocoding.playstate.dto.home.HomeDashboardDtos.HomeInProgressTile;
 import com.cocoding.playstate.dto.home.HomeDashboardDtos.HomePreviewTile;
 import com.cocoding.playstate.dto.home.HomeDashboardDtos.HomeSessionRow;
 import com.cocoding.playstate.format.PlayDurationFormat;
-import com.cocoding.playstate.model.GameStatus;
+import com.cocoding.playstate.domain.enums.GameStatus;
 import com.cocoding.playstate.model.PlayLog;
 import com.cocoding.playstate.model.UserGame;
-import com.cocoding.playstate.model.WhyPlaying;
+import com.cocoding.playstate.domain.enums.WhyPlaying;
 import com.cocoding.playstate.repository.GameRepository;
 import com.cocoding.playstate.repository.PlayLogRepository;
 import com.cocoding.playstate.repository.UserAccountRepository;
@@ -49,6 +49,8 @@ public class HomeController {
   private static final int HOME_RECENT_SESSION_NOTE_PREVIEW_MAX = 120;
 
   private static final int HERO_RECENTLY_PLAYED_GAME_LIMIT = 3;
+
+  private static final String FALLBACK_DASHBOARD_NAME = "there";
 
   private final UserGameRepository userGameRepository;
   private final PlayLogRepository playLogRepository;
@@ -93,10 +95,15 @@ public class HomeController {
   private void populateDashboard(Model model, Authentication authentication) {
     String userId = LibraryUserIds.require(authentication);
     List<UserGame> library = userGameRepository.findByUserId(userId);
+    List<Long> gameIds = library.stream().map(UserGame::getGameId).distinct().toList();
     Map<Long, UserGame> byGameId = new HashMap<>();
     for (UserGame ug : library) {
       byGameId.put(ug.getGameId(), ug);
     }
+    Map<Long, com.cocoding.playstate.model.Game> fallbackGamesById =
+        loadMissingGamesById(byGameId, gameIds);
+    Map<Long, Long> logMinutesByGameId =
+        toLongMap(playLogRepository.sumDurationMinutesByUserIdAndGameIdIn(userId, gameIds));
 
     List<PlayLog> recentLogs = playLogRepository.findTop40ByUserIdOrderByPlayedAtDescIdDesc(userId);
 
@@ -106,16 +113,12 @@ public class HomeController {
       if (sessions.size() >= ACTIVITY_RECENT_PLAY_DISPLAY_LIMIT) {
         break;
       }
-      UserGame ug = byGameId.get(pl.getGameId());
       com.cocoding.playstate.model.Game g =
-          ug != null ? ug.getGame() : gameRepository.findById(pl.getGameId()).orElse(null);
+          resolveGame(byGameId, fallbackGamesById, pl.getGameId());
       if (g == null) {
         continue;
       }
-      String rawNote = pl.getNote();
-      if (rawNote != null && rawNote.isBlank()) {
-        rawNote = null;
-      }
+      String rawNote = blankToNull(pl.getNote());
       boolean spoilers = pl.isNoteContainsSpoilers();
       String noteDisplay = null;
       boolean noteTruncated = false;
@@ -161,9 +164,6 @@ public class HomeController {
         .filter(ug -> ug.getStatus() == GameStatus.PLAYING)
         .sorted(
             Comparator.comparing(
-                    UserGame::getUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder()))
-                .reversed()
-                .thenComparing(
                     UserGame::getProgressUpdatedAt, Comparator.nullsLast(Comparator.naturalOrder()))
                 .reversed()
                 .thenComparing(
@@ -174,10 +174,7 @@ public class HomeController {
             ug -> {
               com.cocoding.playstate.model.Game g = ug.getGame();
               if (g != null) {
-                String plat = ug.getPlatform();
-                if (plat != null && plat.isBlank()) {
-                  plat = null;
-                }
+                String plat = blankToNull(ug.getPlatform());
                 List<String> intentBadges = new ArrayList<>();
                 List<String> intentData = new ArrayList<>();
                 for (WhyPlaying p : ug.getWhyPlayings()) {
@@ -208,7 +205,7 @@ public class HomeController {
     int finished =
         (int) library.stream().filter(ug -> ug.getStatus() == GameStatus.FINISHED).count();
     long sessionsLogged = playLogRepository.countByUserId(userId);
-    long libraryTotalPlayMinutes = sumLibraryDisplayPlayMinutes(userId, library);
+    long libraryTotalPlayMinutes = sumLibraryDisplayPlayMinutes(library, logMinutesByGameId);
     String avgRatingDisplay = computeAvgRatingDisplay(library);
     String playTimeDisplay = playDurationFormat.forLibrarySumMinutes(libraryTotalPlayMinutes);
     String playTimeHoursDisplay = computeHoursOnlyPlayTimeDisplay(libraryTotalPlayMinutes);
@@ -225,11 +222,11 @@ public class HomeController {
 
     model.addAttribute("dashboardFirstName", formatDashboardFirstName(authentication));
     model.addAttribute(
-        "heroQuickRows", buildRecentlyPlayedHeroRows(recentLogs, byGameId, gameRepository));
+        "heroQuickRows", buildRecentlyPlayedHeroRows(recentLogs, byGameId, fallbackGamesById));
     model.addAttribute(
         "dashHeroCopy",
         buildDashboardHeroCopy(
-            gamesInCollection, sessionsLogged, playingNow, recentLogs, byGameId));
+            gamesInCollection, sessionsLogged, playingNow, recentLogs, byGameId, fallbackGamesById));
 
     model.addAttribute("recentSessions", sessions);
     model.addAttribute("recentPlayOverflowCount", recentPlayOverflowCount);
@@ -243,7 +240,8 @@ public class HomeController {
       long sessionsLogged,
       int playingNow,
       List<PlayLog> recentLogs,
-      Map<Long, UserGame> byGameId) {
+      Map<Long, UserGame> byGameId,
+      Map<Long, com.cocoding.playstate.model.Game> fallbackGamesById) {
     if (gamesInCollection == 0) {
       return new DashboardHeroCopy(DashboardHeroCopy.Phase.WELCOME_EMPTY, null, null);
     }
@@ -257,9 +255,8 @@ public class HomeController {
     if (latest == null) {
       return new DashboardHeroCopy(DashboardHeroCopy.Phase.ACTIVE_LAST_PLAYED, null, null);
     }
-    UserGame ug = byGameId.get(latest.getGameId());
     com.cocoding.playstate.model.Game g =
-        ug != null ? ug.getGame() : gameRepository.findById(latest.getGameId()).orElse(null);
+        resolveGame(byGameId, fallbackGamesById, latest.getGameId());
     if (g == null) {
       return new DashboardHeroCopy(DashboardHeroCopy.Phase.ACTIVE_LAST_PLAYED, null, null);
     }
@@ -320,16 +317,16 @@ public class HomeController {
 
   private static String formatDashboardFirstName(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
-      return "there";
+      return FALLBACK_DASHBOARD_NAME;
     }
     String name = authentication.getName();
     if (name == null || name.isBlank()) {
-      return "there";
+      return FALLBACK_DASHBOARD_NAME;
     }
     String base = name.contains("@") ? name.substring(0, name.indexOf('@')) : name;
     base = base.replace('.', ' ').replace('_', ' ').trim();
     if (base.isEmpty()) {
-      return "there";
+      return FALLBACK_DASHBOARD_NAME;
     }
     String[] parts = base.split("\\s+");
     String first = parts[0];
@@ -340,13 +337,13 @@ public class HomeController {
         + first.substring(1).toLowerCase(Locale.ROOT);
   }
 
-  private long sumLibraryDisplayPlayMinutes(String userId, List<UserGame> library) {
+  private long sumLibraryDisplayPlayMinutes(List<UserGame> library, Map<Long, Long> logMinutesByGameId) {
     long sum = 0;
     for (UserGame ug : library) {
       if (ug.getGame() == null) {
         continue;
       }
-      long logSum = playLogRepository.sumDurationMinutesByUserIdAndGameId(userId, ug.getGameId());
+      long logSum = logMinutesByGameId.getOrDefault(ug.getGameId(), 0L);
       int logSumInt = logSum > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) logSum;
       sum += UserGame.computeDisplayPlayMinutes(ug, logSumInt);
     }
@@ -364,7 +361,9 @@ public class HomeController {
   }
 
   private static List<HomeHeroQuickRow> buildRecentlyPlayedHeroRows(
-      List<PlayLog> recentLogs, Map<Long, UserGame> byGameId, GameRepository gameRepository) {
+      List<PlayLog> recentLogs,
+      Map<Long, UserGame> byGameId,
+      Map<Long, com.cocoding.playstate.model.Game> fallbackGamesById) {
     List<Long> recentUniqueIds = new ArrayList<>();
     Set<Long> seenGameIds = new HashSet<>();
     for (PlayLog pl : recentLogs) {
@@ -399,8 +398,7 @@ public class HomeController {
         break;
       }
       UserGame ug = byGameId.get(gid);
-      com.cocoding.playstate.model.Game g =
-          ug != null ? ug.getGame() : gameRepository.findById(gid).orElse(null);
+      com.cocoding.playstate.model.Game g = resolveGame(byGameId, fallbackGamesById, gid);
       if (g == null || g.getApiId() == null || g.getApiId().isBlank()) {
         continue;
       }
@@ -414,18 +412,12 @@ public class HomeController {
     if (g == null) {
       return new HomeHeroQuickRow("", "", "", "", "", "");
     }
-    String intent = ug.getWhyPlayingBadgeSummary();
-    if (intent == null || intent.isBlank()) {
-      intent = "";
-    }
-    String platform = ug.getPlatform();
-    if (platform == null || platform.isBlank()) {
-      platform = "";
-    }
+    String intent = nullToEmpty(blankToNull(ug.getWhyPlayingBadgeSummary()));
+    String platform = nullToEmpty(blankToNull(ug.getPlatform()));
     return new HomeHeroQuickRow(
         g.getTitle(),
-        g.getApiId() != null ? g.getApiId() : "",
-        g.getImageUrl() != null ? g.getImageUrl() : "",
+        nullToEmpty(g.getApiId()),
+        nullToEmpty(g.getImageUrl()),
         ug.getStatus().getDisplayName(),
         platform,
         intent);
@@ -437,11 +429,60 @@ public class HomeController {
     }
     return new HomeHeroQuickRow(
         g.getTitle(),
-        g.getApiId() != null ? g.getApiId() : "",
-        g.getImageUrl() != null ? g.getImageUrl() : "",
+        nullToEmpty(g.getApiId()),
+        nullToEmpty(g.getImageUrl()),
         "",
         "",
         "");
+  }
+
+  private static com.cocoding.playstate.model.Game resolveGame(
+      Map<Long, UserGame> byGameId,
+      Map<Long, com.cocoding.playstate.model.Game> fallbackGamesById,
+      long gameId) {
+    UserGame ug = byGameId.get(gameId);
+    if (ug != null && ug.getGame() != null) {
+      return ug.getGame();
+    }
+    return fallbackGamesById.get(gameId);
+  }
+
+  private Map<Long, com.cocoding.playstate.model.Game> loadMissingGamesById(
+      Map<Long, UserGame> byGameId, List<Long> gameIds) {
+    List<Long> missingIds =
+        gameIds.stream()
+            .filter(id -> {
+              UserGame ug = byGameId.get(id);
+              return ug == null || ug.getGame() == null;
+            })
+            .toList();
+    if (missingIds.isEmpty()) {
+      return Map.of();
+    }
+    Map<Long, com.cocoding.playstate.model.Game> out = new HashMap<>();
+    for (com.cocoding.playstate.model.Game game : gameRepository.findAllById(missingIds)) {
+      out.put(game.getId(), game);
+    }
+    return out;
+  }
+
+  private static Map<Long, Long> toLongMap(List<Object[]> rows) {
+    if (rows == null || rows.isEmpty()) {
+      return Map.of();
+    }
+    Map<Long, Long> out = new HashMap<>();
+    for (Object[] row : rows) {
+      out.put((Long) row[0], (Long) row[1]);
+    }
+    return out;
+  }
+
+  private static String blankToNull(String value) {
+    return value == null || value.isBlank() ? null : value;
+  }
+
+  private static String nullToEmpty(String value) {
+    return value == null ? "" : value;
   }
 
   private static List<HomePreviewTile> buildTryNextTiles(List<UserGame> library) {

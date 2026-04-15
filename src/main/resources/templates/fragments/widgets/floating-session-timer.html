@@ -24,11 +24,13 @@
             th:if="${navActivePlaySessionCoverUrl != null}"
           >
             <img
-              th:src="${navActivePlaySessionCoverUrl}"
+              th:src="${#strings.replace(navActivePlaySessionCoverUrl, 't_cover_big', 't_cover_small')}"
               th:alt="|${navActivePlaySessionGameTitle} cover|"
               class="nav-active-play-session__cover"
               width="54"
+              height="72"
               loading="lazy"
+              decoding="async"
             />
           </span>
           <span

@@ -65,8 +65,8 @@ public class DemoEnvironmentRunner implements ApplicationRunner {
   private void validateLocalIgdbCredentials() {
     if (isBlank(igdbClientId) || isBlank(igdbClientSecret)) {
       logger.warn(
-          "Local profile started without IGDB credentials. Set igdb.client.id and"
-              + " igdb.client.secret in application-local.properties.");
+          "Local profile started without IGDB credentials. Set IGDB_CLIENT_ID and"
+              + " IGDB_CLIENT_SECRET environment variables.");
       return;
     }
     try {

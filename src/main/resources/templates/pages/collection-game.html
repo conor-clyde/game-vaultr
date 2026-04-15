@@ -91,6 +91,10 @@
               th:src="${game.imageUrl}"
               th:alt="${game.title}"
               class="cg-hero-img"
+              width="300"
+              height="400"
+              decoding="async"
+              fetchpriority="high"
             />
             <div
               th:unless="${game.imageUrl != null and !game.imageUrl.isEmpty()}"
@@ -1699,10 +1703,10 @@
                                                 innerSuffix=${ptMode == 'ACTIVE' ? 'active' : (ptMode == 'FINISHED' ? 'finished' : 'stopped')},
                                                 timePart=${mm == 0 ? '0h' : @playDurationFormat.forLogMinutesCompactLower(pt.manualPlayMinutes)},
                                                 ptOrdinal=${playthroughNumberById != null and playthroughNumberById.get(pt.id) != null ? playthroughNumberById.get(pt.id) : 1},
-                                                startedLabel=${pt.createdDateDisplay != null ? pt.createdDateDisplay : '—'},
+                                                startedLabel=${pt.createdDateDisplayValue},
                                                 diffLabel=${pt.difficulty != null and !pt.difficulty.isBlank() ? pt.difficulty.trim() : null},
                                                 ptOpen=${expandedPlaythroughId != null ? (pt.id == expandedPlaythroughId) : (ptOrdinal == 1)},
-                                                endDateLabel=${pt.endedDateDisplay != null ? pt.endedDateDisplay : (pt.progressStatus != null and (pt.progressStatus.name() == 'COMPLETED' or pt.progressStatus.name() == 'STOPPED') and playthroughLastPlayedDisplay != null and playthroughLastPlayedDisplay.containsKey(pt.id) ? playthroughLastPlayedDisplay.get(pt.id) : null)},
+                                                endDateLabel=${pt.endedDateDisplayValue},
                                                 pctFill=${pt.completionPercent != null ? T(java.lang.Math).min(100, T(java.lang.Math).max(0, pt.completionPercent)) : null},
                                                 lastLoggedLabel=${playthroughLastPlayedDisplay != null and playthroughLastPlayedDisplay.containsKey(pt.id) ? playthroughLastPlayedDisplay.get(pt.id) : null}"
                         >

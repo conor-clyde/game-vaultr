@@ -4,11 +4,13 @@ import com.cocoding.playstate.model.UserGame;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserGameRepository extends JpaRepository<UserGame, UserGame.UserGameId> {
+  @EntityGraph(attributePaths = "game")
   List<UserGame> findByUserId(String userId);
 
   boolean existsByUserIdAndGameId(String userId, Long gameId);

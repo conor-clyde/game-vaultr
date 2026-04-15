@@ -13,27 +13,4 @@ public final class PlaythroughDifficultyPresets {
 
   private PlaythroughDifficultyPresets() {}
 
-  public static String displayBucket(String stored) {
-    if (stored == null || stored.isBlank()) {
-      return "";
-    }
-    for (String p : OPTIONS) {
-      if (p.equalsIgnoreCase(stored.trim())) {
-        return p;
-      }
-    }
-    return "Custom";
-  }
-
-  public static boolean isPreset(String stored) {
-    if (stored == null || stored.isBlank()) {
-      return false;
-    }
-    for (String p : OPTIONS) {
-      if (p.equalsIgnoreCase(stored.trim())) {
-        return true;
-      }
-    }
-    return false;
-  }
 }

@@ -10,11 +10,8 @@ public record PlayLogJsonRow(
     boolean noteContainsSpoilers,
     Integer durationMinutes,
     String durationLabel,
-    String sessionProgressLabel,
     String sessionExperienceLabel,
-    String sessionProgressCode,
     String sessionExperienceCode,
-    boolean countsTowardLibraryPlaytime,
     String sessionStartedAtIso,
     boolean sessionAwaitingEnd,
     Long playthroughId) {}

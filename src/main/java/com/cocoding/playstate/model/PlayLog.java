@@ -1,10 +1,9 @@
 package com.cocoding.playstate.model;
 
+import com.cocoding.playstate.domain.enums.PlayLogSessionExperience;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -40,36 +39,14 @@ public class PlayLog {
   @Column(name = "note_contains_spoilers")
   private Boolean noteContainsSpoilers;
 
-  @Enumerated(EnumType.STRING)
-  @Column(name = "session_progress", length = 32)
-  private PlayLogSessionProgress sessionProgress;
-
   @Convert(converter = PlayLogSessionExperienceAttributeConverter.class)
   @Column(name = "session_experience", length = 32)
   private PlayLogSessionExperience sessionExperience;
-
-  @Column(name = "counts_toward_library_playtime", nullable = false)
-  private boolean countsTowardLibraryPlaytime = true;
 
   @Column(name = "playthrough_id")
   private Long playthroughId;
 
   public PlayLog() {}
-
-  public PlayLog(
-      String userId, Long gameId, LocalDateTime playedAt, Integer durationMinutes, String note) {
-    this(userId, gameId, playedAt, durationMinutes, note, false, null, null);
-  }
-
-  public PlayLog(
-      String userId,
-      Long gameId,
-      LocalDateTime playedAt,
-      Integer durationMinutes,
-      String note,
-      boolean noteContainsSpoilers) {
-    this(userId, gameId, playedAt, durationMinutes, note, noteContainsSpoilers, null, null);
-  }
 
   public PlayLog(
       String userId,
@@ -78,7 +55,6 @@ public class PlayLog {
       Integer durationMinutes,
       String note,
       boolean noteContainsSpoilers,
-      PlayLogSessionProgress sessionProgress,
       PlayLogSessionExperience sessionExperience) {
     this.userId = userId;
     this.gameId = gameId;
@@ -86,9 +62,7 @@ public class PlayLog {
     this.durationMinutes = durationMinutes;
     this.note = note;
     this.noteContainsSpoilers = noteContainsSpoilers;
-    this.sessionProgress = sessionProgress;
     this.sessionExperience = sessionExperience;
-    this.countsTowardLibraryPlaytime = true;
   }
 
   public Long getId() {
@@ -155,28 +129,12 @@ public class PlayLog {
     this.noteContainsSpoilers = noteContainsSpoilers;
   }
 
-  public PlayLogSessionProgress getSessionProgress() {
-    return sessionProgress;
-  }
-
-  public void setSessionProgress(PlayLogSessionProgress sessionProgress) {
-    this.sessionProgress = sessionProgress;
-  }
-
   public PlayLogSessionExperience getSessionExperience() {
     return sessionExperience;
   }
 
   public void setSessionExperience(PlayLogSessionExperience sessionExperience) {
     this.sessionExperience = sessionExperience;
-  }
-
-  public boolean isCountsTowardLibraryPlaytime() {
-    return countsTowardLibraryPlaytime;
-  }
-
-  public void setCountsTowardLibraryPlaytime(boolean countsTowardLibraryPlaytime) {
-    this.countsTowardLibraryPlaytime = countsTowardLibraryPlaytime;
   }
 
   public Long getPlaythroughId() {

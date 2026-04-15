@@ -206,7 +206,7 @@
                                                 <span class="hd-tile-cover">
                                                     <img th:if="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
                                                         th:src="${t.imageUrl}" th:alt="${t.title}" width="60"
-                                                        height="80" loading="lazy" />
+                                                        height="80" loading="lazy" decoding="async" />
                                                     <span th:unless="${t.imageUrl != null && !t.imageUrl.isEmpty()}"
                                                         class="hd-tile-fallback" aria-hidden="true"><i
                                                             class="fa-solid fa-gamepad"></i></span>
@@ -363,7 +363,7 @@
                                 th:title="${p.title}">
                                 <span class="hd-preview-cover">
                                     <img th:if="${p.imageUrl != null && !p.imageUrl.isEmpty()}" th:src="${p.imageUrl}"
-                                        th:alt="${p.title}" width="72" height="96" loading="lazy" />
+                                        th:alt="${p.title}" width="72" height="96" loading="lazy" decoding="async" />
                                     <span th:unless="${p.imageUrl != null && !p.imageUrl.isEmpty()}"
                                         class="hd-preview-fallback" aria-hidden="true"><i
                                             class="fa-solid fa-gamepad"></i></span>

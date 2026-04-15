@@ -1130,11 +1130,6 @@
         openInlinePlaythroughEditForCard(target);
       }
 
-      function applyPlaythroughEditFocus(rawId) {
-        openInlinePlaythroughEdit(rawId);
-      }
-      window.cgApplyPlaythroughEditFocus = applyPlaythroughEditFocus;
-
       document.addEventListener("cg-inline-pt-open", function (ev) {
         var d = (ev && ev.detail) || {};
         var anchor = d.anchorCard;
@@ -2987,20 +2982,6 @@
 
         var noteRaw = row.note != null ? String(row.note) : "";
 
-        function progressChipOnlyStartedOrFinished(label) {
-          if (!label) {
-            return null;
-          }
-          var n = String(label).trim().toLowerCase();
-          if (n === "continuing") {
-            return null;
-          }
-          if (n === "started" || n === "finished") {
-            return String(label).trim();
-          }
-          return null;
-        }
-
         if (isPtSession) {
           whenWrap.classList.add("cg-plog-row-when");
           var mood = sessionExperienceParts(row);
@@ -3058,29 +3039,6 @@
             headStart.appendChild(durHead);
           }
 
-          var progCodeRaw =
-            row.sessionProgressCode != null
-              ? String(row.sessionProgressCode).trim().toUpperCase()
-              : "";
-          var progDisp =
-            row.sessionProgressLabel != null
-              ? String(row.sessionProgressLabel).trim()
-              : "";
-          var progIsContinuing =
-            progCodeRaw === "CONTINUING" ||
-            progDisp.toLowerCase() === "continuing";
-          if (progDisp && !progIsContinuing) {
-            var progHead = document.createElement("span");
-            progHead.className =
-              "cg-plog-head-stat cg-plog-head-stat--progress";
-            var progIc = document.createElement("i");
-            progIc.className = "fa-solid fa-arrow-trend-up";
-            progIc.setAttribute("aria-hidden", "true");
-            progHead.appendChild(progIc);
-            progHead.appendChild(document.createTextNode(" " + progDisp));
-            headStart.appendChild(progHead);
-          }
-
           headRow.appendChild(headStart);
           headRow.appendChild(kebabWrap);
           mainCol.appendChild(headRow);
@@ -3116,9 +3074,6 @@
         } else {
           var mainStack = document.createElement("div");
           mainStack.className = "cglog-main-stack";
-          var prog = progressChipOnlyStartedOrFinished(
-            row.sessionProgressLabel,
-          );
           var thoughtsUnified = document.createElement("div");
           thoughtsUnified.className = "cglog-thoughts-unified";
           appendPlayLogThoughtsBlock(

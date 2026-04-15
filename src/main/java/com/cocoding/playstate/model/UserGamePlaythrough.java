@@ -1,5 +1,6 @@
 package com.cocoding.playstate.model;
 
+import com.cocoding.playstate.domain.enums.PlaythroughProgressStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -10,6 +11,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -41,11 +43,11 @@ public class UserGamePlaythrough {
   @Column(name = "manual_play_minutes")
   private Integer manualPlayMinutes;
 
-  @Column(name = "created_at")
-  private Instant createdAt;
-
   @Column(name = "ended_at")
   private Instant endedAt;
+
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
   @Column(name = "short_name", length = 64)
   private String shortName;
@@ -60,30 +62,21 @@ public class UserGamePlaythrough {
   @Column(name = "progress_status", length = 32)
   private PlaythroughProgressStatus progressStatus;
 
-  @Convert(converter = PlaythroughRunTypeConverter.class)
-  @Column(name = "run_type", length = 32)
-  private PlaythroughRunType runType;
-
   @PrePersist
   void onPrePersist() {
     if (createdAt == null) {
-      createdAt = Instant.now();
+      createdAt = LocalDateTime.now();
     }
     if (progressStatus == null) {
       progressStatus = PlaythroughProgressStatus.PLAYING;
     }
-    if (runType == null) {
-      runType = PlaythroughRunType.FIRST_TIME;
-    }
   }
 
-  public String getCreatedDateDisplay() {
+  public String getCreatedDateDisplayValue() {
     if (createdAt == null) {
       return null;
     }
-    return DateTimeFormatter.ofPattern("MMM d, yyyy")
-        .withZone(ZoneId.systemDefault())
-        .format(createdAt);
+    return createdAt.format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
   }
 
   public String getEndedDateInputValue() {
@@ -94,13 +87,12 @@ public class UserGamePlaythrough {
         .format(DateTimeFormatter.ISO_LOCAL_DATE);
   }
 
-  public String getEndedDateDisplay() {
+  public String getEndedDateDisplayValue() {
     if (endedAt == null) {
       return null;
     }
-    return DateTimeFormatter.ofPattern("MMM d, yyyy")
-        .withZone(ZoneId.systemDefault())
-        .format(endedAt);
+    return LocalDate.ofInstant(endedAt, ZoneId.systemDefault())
+        .format(DateTimeFormatter.ofPattern("MMM d, yyyy"));
   }
 
   public Long getId() {
@@ -159,20 +151,20 @@ public class UserGamePlaythrough {
     this.manualPlayMinutes = manualPlayMinutes;
   }
 
-  public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
-  }
-
   public Instant getEndedAt() {
     return endedAt;
   }
 
   public void setEndedAt(Instant endedAt) {
     this.endedAt = endedAt;
+  }
+
+  public LocalDateTime getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
   }
 
   public String getShortName() {
@@ -205,13 +197,5 @@ public class UserGamePlaythrough {
 
   public void setProgressStatus(PlaythroughProgressStatus progressStatus) {
     this.progressStatus = progressStatus;
-  }
-
-  public PlaythroughRunType getRunType() {
-    return runType != null ? runType : PlaythroughRunType.FIRST_TIME;
-  }
-
-  public void setRunType(PlaythroughRunType runType) {
-    this.runType = runType;
   }
 }

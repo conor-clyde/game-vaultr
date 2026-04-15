@@ -3,7 +3,7 @@ package com.cocoding.playstate.web.advice;
 import com.cocoding.playstate.model.Game;
 import com.cocoding.playstate.model.PlayLog;
 import com.cocoding.playstate.model.UserGame;
-import com.cocoding.playstate.model.WhyPlaying;
+import com.cocoding.playstate.domain.enums.WhyPlaying;
 import com.cocoding.playstate.repository.GameRepository;
 import com.cocoding.playstate.repository.PlayLogRepository;
 import com.cocoding.playstate.repository.UserGameRepository;

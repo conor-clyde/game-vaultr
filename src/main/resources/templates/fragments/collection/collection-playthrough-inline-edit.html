@@ -8,10 +8,10 @@
         role="group"
         th:with="ptMode=${(p.current != null and p.current) and (p.progressStatus == null or #strings.equals(p.progressStatus.name(), 'PLAYING')) ? 'ACTIVE' : (p.progressStatus != null and #strings.equals(p.progressStatus.name(), 'COMPLETED') ? 'FINISHED' : 'STOPPED')},
             diffRaw=${p.difficulty != null ? p.difficulty.trim() : ''},
-            diffIsPreset=${T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).isPreset(p.difficulty)},
+            diffIsPreset=${diffRaw != null and !diffRaw.isEmpty() and playthroughDifficultyOptions != null and #lists.contains(playthroughDifficultyOptions, diffRaw)},
             mmTotal=${p.manualPlayMinutes != null and p.manualPlayMinutes > 0 ? p.manualPlayMinutes : 0},
-            diffPresetHidden=${diffRaw == null or diffRaw.isEmpty() ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).NORMAL : (diffIsPreset ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).displayBucket(diffRaw) : '__CUSTOM__')},
-            diffDropdownLabel=${diffRaw == null or diffRaw.isEmpty() ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).NORMAL : (diffIsPreset ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).displayBucket(diffRaw) : 'Custom')}"
+            diffPresetHidden=${diffRaw == null or diffRaw.isEmpty() ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).NORMAL : (diffIsPreset ? diffRaw : '__CUSTOM__')},
+            diffDropdownLabel=${diffRaw == null or diffRaw.isEmpty() ? T(com.cocoding.playstate.model.PlaythroughDifficultyPresets).NORMAL : (diffIsPreset ? diffRaw : 'Custom')}"
         th:attr="data-playthrough-id=${p.id},data-session-count=${sessionCt}"
       >
         <div
@@ -333,7 +333,7 @@
                         <span class="cgr-k">Started</span>
                         <span
                           class="cgr-v cg-pt-inline-edit__readonly-value"
-                          th:text="${p.createdDateDisplay != null ? p.createdDateDisplay : '—'}"
+                          th:text="${p.createdDateDisplayValue != null ? p.createdDateDisplayValue : '—'}"
                           >—</span
                         >
                       </div>

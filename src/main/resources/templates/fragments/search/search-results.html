@@ -8,7 +8,7 @@
 
             <figure>
                 <img th:if="${game != null && game.coverImageUrl != null}"
-                    th:src="${game.coverImageUrl}" alt="">
+                    th:src="${game.coverImageUrl}" alt="" width="90" height="120" loading="lazy" decoding="async">
                 <div th:if="${game == null || (game != null && game.coverImageUrl == null)}"
                     class="media-ph">
                     <i class="fa-regular fa-image fa-3x" aria-hidden="true"></i>
@@ -75,7 +75,7 @@
     <th:block th:fragment="cardSkeleton()">
         <article class="search-result-card" tabindex="0">
             <figure>
-                <img src="" alt="" class="js-card-img" style="display:none">
+                <img src="" alt="" class="js-card-img" style="display:none" width="90" height="120" loading="lazy" decoding="async">
                 <div class="media-ph js-card-img-placeholder">
                     <i class="fa-regular fa-image fa-3x" aria-hidden="true"></i>
                 </div>

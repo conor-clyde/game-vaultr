@@ -48,22 +48,12 @@ public class Game {
   @Column(name = "igdb_last_attempt_at")
   private LocalDateTime igdbLastAttemptAt;
 
-  @Column(name = "last_updated", nullable = false)
-  private LocalDateTime lastUpdated;
-
-  @PrePersist
-  @PreUpdate
-  protected void onUpdate() {
-    lastUpdated = LocalDateTime.now();
-  }
-
   public Game() {}
 
   public Game(String apiId, String title, String imageUrl) {
     this.apiId = apiId;
     this.title = title;
     this.imageUrl = imageUrl;
-    this.lastUpdated = LocalDateTime.now();
   }
 
   // Getters and Setters
@@ -139,14 +129,6 @@ public class Game {
     this.genres = genres;
   }
 
-  public String getPlatformOptions() {
-    return platformOptions;
-  }
-
-  public void setPlatformOptions(String platformOptions) {
-    this.platformOptions = platformOptions;
-  }
-
   public List<String> getPlatformOptionsList() {
     if (platformOptions == null || platformOptions.isBlank()) {
       return List.of();
@@ -184,14 +166,6 @@ public class Game {
       return;
     }
     this.platformOptions = String.join(PLATFORM_OPTIONS_SEPARATOR, unique);
-  }
-
-  public LocalDateTime getLastUpdated() {
-    return lastUpdated;
-  }
-
-  public void setLastUpdated(LocalDateTime lastUpdated) {
-    this.lastUpdated = lastUpdated;
   }
 
   public LocalDateTime getIgdbLastAttemptAt() {

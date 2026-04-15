@@ -55,6 +55,11 @@
 
                 <div id="logPlayFormStep" class="log-play-form-step" hidden>
                     <form id="logPlayModalForm" class="log-play-modal-form" method="post" action="#">
+                        <input
+                            th:if="${_csrf != null}"
+                            type="hidden"
+                            th:name="${_csrf.parameterName}"
+                            th:value="${_csrf.token}">
                         <input type="hidden" name="redirectTo" id="logPlayRedirectTo" value="detail">
                         <input type="hidden" name="durationMinutes" id="logPlayDurationMinutesHidden" value="">
                         <input type="hidden" name="timeInputMode" id="logPlayTimeInputMode" value="hours">

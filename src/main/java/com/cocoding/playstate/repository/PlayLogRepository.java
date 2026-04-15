@@ -40,9 +40,39 @@ public interface PlayLogRepository extends JpaRepository<PlayLog, Long> {
 
   @Query(
       """
+      SELECT p.gameId, COALESCE(SUM(p.durationMinutes), 0L)
+      FROM PlayLog p
+      WHERE p.userId = :userId
+      AND p.gameId IN :gameIds
+      GROUP BY p.gameId
+      """)
+  List<Object[]> sumDurationMinutesByUserIdAndGameIdIn(
+      @Param("userId") String userId, @Param("gameIds") List<Long> gameIds);
+
+  @Query(
+      """
+      SELECT p.gameId, COUNT(p)
+      FROM PlayLog p
+      WHERE p.userId = :userId AND p.gameId IN :gameIds
+      GROUP BY p.gameId
+      """)
+  List<Object[]> countByUserIdAndGameIdIn(
+      @Param("userId") String userId, @Param("gameIds") List<Long> gameIds);
+
+  @Query(
+      """
+      SELECT p.gameId, MAX(p.playedAt)
+      FROM PlayLog p
+      WHERE p.userId = :userId AND p.gameId IN :gameIds
+      GROUP BY p.gameId
+      """)
+  List<Object[]> latestPlayedAtByUserIdAndGameIdIn(
+      @Param("userId") String userId, @Param("gameIds") List<Long> gameIds);
+
+  @Query(
+      """
       SELECT COALESCE(SUM(p.durationMinutes), 0L) FROM PlayLog p
       WHERE p.userId = :userId AND p.gameId = :gameId
-      AND (p.countsTowardLibraryPlaytime IS NULL OR p.countsTowardLibraryPlaytime = true)
       """)
   long sumDurationMinutesByUserIdAndGameId(
       @Param("userId") String userId, @Param("gameId") Long gameId);
@@ -51,7 +81,6 @@ public interface PlayLogRepository extends JpaRepository<PlayLog, Long> {
       """
       SELECT COALESCE(SUM(p.durationMinutes), 0L) FROM PlayLog p
       WHERE p.userId = :userId AND p.gameId = :gameId
-      AND (p.countsTowardLibraryPlaytime IS NULL OR p.countsTowardLibraryPlaytime = true)
       AND (:excludeLogId IS NULL OR p.id <> :excludeLogId)
       """)
   long sumDurationMinutesByUserIdAndGameIdExcludingLog(

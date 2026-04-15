@@ -1,4 +1,4 @@
-package com.cocoding.playstate.model;
+package com.cocoding.playstate.domain.enums;
 
 /**
  * Library-level progress milestone for a title (stored on {@code user_games.completion_type}).
@@ -6,28 +6,22 @@ package com.cocoding.playstate.model;
  * #MAIN_STORY} in the UI.
  */
 public enum CompletionType {
-  NOT_STARTED("Not Started", "fa-solid fa-infinity"),
-  NOT_COMPLETED("Started", "fa-solid fa-hourglass-half"),
-  MAIN_STORY("Story complete", "fa-solid fa-flag-checkered"),
+  NOT_STARTED("Not Started"),
+  NOT_COMPLETED("Started"),
+  MAIN_STORY("Story complete"),
   /** Retained for persisted rows; new saves should use {@link #MAIN_STORY}. */
-  MAIN_PLUS_SIDE("Story complete", "fa-solid fa-layer-group"),
-  HUNDRED_PERCENT("100%", "fa-solid fa-circle-check"),
-  ENDLESS("Endless", "fa-solid fa-infinity");
+  MAIN_PLUS_SIDE("Story complete"),
+  HUNDRED_PERCENT("100%"),
+  ENDLESS("Endless");
 
   private final String displayLabel;
-  private final String faIconClasses;
 
-  CompletionType(String displayLabel, String faIconClasses) {
+  CompletionType(String displayLabel) {
     this.displayLabel = displayLabel;
-    this.faIconClasses = faIconClasses;
   }
 
   public String getDisplayLabel() {
     return displayLabel;
-  }
-
-  public String getFaIconClasses() {
-    return faIconClasses;
   }
 
   /**

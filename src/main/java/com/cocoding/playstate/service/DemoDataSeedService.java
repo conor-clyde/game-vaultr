@@ -1,20 +1,18 @@
 package com.cocoding.playstate.service;
 
+import com.cocoding.playstate.domain.enums.CompletionType;
+import com.cocoding.playstate.domain.enums.GameStatus;
+import com.cocoding.playstate.domain.enums.OwnershipType;
+import com.cocoding.playstate.domain.enums.PlayLogSessionExperience;
+import com.cocoding.playstate.domain.enums.PlaythroughProgressStatus;
+import com.cocoding.playstate.domain.enums.WhyPlaying;
 import com.cocoding.playstate.dto.search.SearchGameRow;
 import com.cocoding.playstate.igdb.IgdbService;
-import com.cocoding.playstate.model.CompletionType;
 import com.cocoding.playstate.model.Game;
-import com.cocoding.playstate.model.GameStatus;
-import com.cocoding.playstate.model.OwnershipType;
 import com.cocoding.playstate.model.PlayLog;
-import com.cocoding.playstate.model.PlayLogSessionExperience;
-import com.cocoding.playstate.model.PlayLogSessionProgress;
-import com.cocoding.playstate.model.PlaythroughProgressStatus;
-import com.cocoding.playstate.model.PlaythroughRunType;
 import com.cocoding.playstate.model.UserAccount;
 import com.cocoding.playstate.model.UserGame;
 import com.cocoding.playstate.model.UserGamePlaythrough;
-import com.cocoding.playstate.model.WhyPlaying;
 import com.cocoding.playstate.repository.GameRepository;
 import com.cocoding.playstate.repository.PlayLogRepository;
 import com.cocoding.playstate.repository.UserAccountRepository;
@@ -362,7 +360,6 @@ public class DemoDataSeedService {
     main.setManualPlayMinutes(62 * 60);
     main.setProgressNote("Exploring Altus Plateau — avoiding spoilers online.");
     main.setProgressStatus(PlaythroughProgressStatus.PLAYING);
-    main.setRunType(PlaythroughRunType.FIRST_TIME);
     main = playthroughRepository.save(main);
 
     UserGamePlaythrough shelved = new UserGamePlaythrough();
@@ -375,7 +372,6 @@ public class DemoDataSeedService {
     shelved.setManualPlayMinutes(8 * 60);
     shelved.setProgressNote("Switched to STR mid-game — parked for now.");
     shelved.setProgressStatus(PlaythroughProgressStatus.STOPPED);
-    shelved.setRunType(PlaythroughRunType.REPLAY);
     shelved.setEndedAt(Instant.parse("2025-11-02T22:00:00Z"));
     playthroughRepository.save(shelved);
 
@@ -386,7 +382,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2026, 3, 1, 20, 15),
         95,
         "Long session in Stormveil — finally clicked with the dodge timing.",
-        PlayLogSessionProgress.CONTINUING,
         PlayLogSessionExperience.GREAT);
     saveLog(
         userId,
@@ -395,7 +390,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2026, 3, 8, 21, 40),
         40,
         "Co-op with a friend: we melted a field boss with rotten breath.",
-        PlayLogSessionProgress.CONTINUING,
         PlayLogSessionExperience.GOOD);
     saveLog(
         userId,
@@ -404,7 +398,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2026, 3, 16, 19, 5),
         120,
         "Quiet night of exploration — found a catacomb I had walked past ten times.",
-        PlayLogSessionProgress.CONTINUING,
         PlayLogSessionExperience.OKAY);
   }
 
@@ -419,7 +412,6 @@ public class DemoDataSeedService {
     pt.setManualPlayMinutes(118 * 60);
     pt.setProgressNote("Epilogue choices still echoing — might replay Dark Urge later.");
     pt.setProgressStatus(PlaythroughProgressStatus.COMPLETED);
-    pt.setRunType(PlaythroughRunType.FIRST_TIME);
     pt.setEndedAt(Instant.parse("2025-01-20T18:30:00Z"));
     pt = playthroughRepository.save(pt);
 
@@ -430,7 +422,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2024, 10, 12, 17, 0),
         180,
         "Act II crunch — saved before the big decision point.",
-        PlayLogSessionProgress.CONTINUING,
         PlayLogSessionExperience.GREAT);
     saveLog(
         userId,
@@ -439,7 +430,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2024, 12, 3, 20, 10),
         240,
         "Final fights + wrap-up. Sat through credits — rare for me.",
-        PlayLogSessionProgress.FINISHED,
         PlayLogSessionExperience.GREAT);
   }
 
@@ -454,7 +444,6 @@ public class DemoDataSeedService {
     pt.setManualPlayMinutes(55 * 60);
     pt.setProgressNote("Community center done — working on obelisks.");
     pt.setProgressStatus(PlaythroughProgressStatus.PLAYING);
-    pt.setRunType(PlaythroughRunType.ONGOING_SANDBOX);
     pt = playthroughRepository.save(pt);
 
     saveLog(
@@ -464,7 +453,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2026, 2, 20, 8, 30),
         25,
         "Coffee, crops, and a lucky meteor strike.",
-        PlayLogSessionProgress.CONTINUING,
         PlayLogSessionExperience.GOOD);
   }
 
@@ -477,7 +465,6 @@ public class DemoDataSeedService {
     pt.setDifficulty("Normal");
     pt.setCurrent(false);
     pt.setProgressStatus(PlaythroughProgressStatus.COMPLETED);
-    pt.setRunType(PlaythroughRunType.FIRST_TIME);
     pt.setEndedAt(Instant.parse("2025-06-01T12:00:00Z"));
     pt = playthroughRepository.save(pt);
 
@@ -496,7 +483,6 @@ public class DemoDataSeedService {
         LocalDateTime.of(2025, 5, 14, 19, 45),
         75,
         note,
-        PlayLogSessionProgress.FINISHED,
         PlayLogSessionExperience.GOOD);
   }
 
@@ -507,7 +493,6 @@ public class DemoDataSeedService {
       LocalDateTime playedAt,
       int durationMinutes,
       String note,
-      PlayLogSessionProgress progress,
       PlayLogSessionExperience mood) {
     PlayLog log = new PlayLog();
     log.setUserId(userId);
@@ -517,9 +502,7 @@ public class DemoDataSeedService {
     log.setDurationMinutes(durationMinutes);
     log.setNote(note);
     log.setNoteContainsSpoilers(false);
-    log.setSessionProgress(progress);
     log.setSessionExperience(mood);
-    log.setCountsTowardLibraryPlaytime(true);
     playLogRepository.save(log);
   }
 }

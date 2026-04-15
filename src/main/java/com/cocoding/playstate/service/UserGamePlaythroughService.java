@@ -1,10 +1,9 @@
 package com.cocoding.playstate.service;
 
+import com.cocoding.playstate.domain.enums.PlaythroughProgressStatus;
 import com.cocoding.playstate.dto.playthrough.PlaythroughsPayload;
 import com.cocoding.playstate.dto.playthrough.PlaythroughsPayload.PlaythroughItem;
 import com.cocoding.playstate.model.PlaythroughDifficultyPresets;
-import com.cocoding.playstate.model.PlaythroughProgressStatus;
-import com.cocoding.playstate.model.PlaythroughRunType;
 import com.cocoding.playstate.model.UserGamePlaythrough;
 import com.cocoding.playstate.repository.PlayLogRepository;
 import com.cocoding.playstate.repository.UserGamePlaythroughRepository;
@@ -62,8 +61,7 @@ public class UserGamePlaythroughService {
                         p.getCompletionPercent(),
                         p.getProgressNote(),
                         p.getProgressStatus().name(),
-                        p.getEndedDateInputValue(),
-                        p.getRunType().name()))
+                        p.getEndedDateInputValue()))
             .toList();
     try {
       return objectMapper.writeValueAsString(new PlaythroughsPayload(items));
@@ -78,6 +76,17 @@ public class UserGamePlaythroughService {
 
   public long countForGame(String userId, Long gameId) {
     return playthroughRepository.countByUserIdAndGameId(userId, gameId);
+  }
+
+  public Map<Long, Long> countForGames(String userId, List<Long> gameIds) {
+    if (gameIds == null || gameIds.isEmpty()) {
+      return Map.of();
+    }
+    return playthroughRepository.countByUserIdAndGameIdIn(userId, gameIds).stream()
+        .collect(
+            Collectors.toMap(
+                row -> (Long) row[0],
+                row -> (Long) row[1]));
   }
 
   @Transactional
@@ -146,9 +155,6 @@ public class UserGamePlaythroughService {
         row.setProgressNote(progressNote);
         row.setProgressStatus(progressSt);
         row.setEndedAt(endedNorm);
-        if (it.runType() != null && !it.runType().isBlank()) {
-          row.setRunType(parseRunType(it.runType()));
-        }
         out.add(row);
       } else {
         UserGamePlaythrough row = new UserGamePlaythrough();
@@ -163,7 +169,6 @@ public class UserGamePlaythroughService {
         row.setProgressNote(progressNote);
         row.setProgressStatus(progressSt);
         row.setEndedAt(endedNorm);
-        row.setRunType(parseRunType(it.runType()));
         out.add(row);
       }
     }
@@ -264,17 +269,6 @@ public class UserGamePlaythroughService {
     }
   }
 
-  private static PlaythroughRunType parseRunType(String raw) {
-    if (raw == null || raw.isBlank()) {
-      return PlaythroughRunType.FIRST_TIME;
-    }
-    try {
-      return PlaythroughRunType.valueOf(raw.trim().toUpperCase());
-    } catch (IllegalArgumentException e) {
-      return PlaythroughRunType.FIRST_TIME;
-    }
-  }
-
   private static Integer normalizeManualPlayMinutes(Integer raw) {
     if (raw == null || raw <= 0) {
       return null;
@@ -295,12 +289,11 @@ public class UserGamePlaythroughService {
 
   /**
    * Updates the playthrough marked {@link UserGamePlaythrough#isCurrent()} (active run) from Play
-   * Summary edit: UI mode ACTIVE / STOPPED / FINISHED and run type. Mirrors {@link
-   * #replaceFromJson} invariants for current vs terminal progress.
+   * Summary edit: UI mode ACTIVE / STOPPED / FINISHED. Mirrors {@link #replaceFromJson} invariants
+   * for current vs terminal progress.
    */
   @Transactional
-  public void updateCurrentPlaythroughModeAndRunType(
-      String userId, Long gameId, String modeRaw, String runTypeRaw) {
+  public void updateCurrentPlaythroughMode(String userId, Long gameId, String modeRaw) {
     List<UserGamePlaythrough> all =
         new ArrayList<>(
             playthroughRepository.findByUserIdAndGameIdOrderBySortIndexAscIdAsc(userId, gameId));
@@ -310,10 +303,6 @@ public class UserGamePlaythroughService {
       return;
     }
     UserGamePlaythrough pt = curOpt.get();
-    if (runTypeRaw != null && !runTypeRaw.isBlank()) {
-      pt.setRunType(parseRunType(runTypeRaw));
-    }
-
     String m = modeRaw != null ? modeRaw.trim().toUpperCase() : "ACTIVE";
     switch (m) {
       case "ACTIVE" -> {
@@ -349,10 +338,8 @@ public class UserGamePlaythroughService {
   public Optional<UserGamePlaythrough> findNewestPlaythrough(String userId, Long gameId) {
     return findForGame(userId, gameId).stream()
         .max(
-            Comparator.comparing(
-                    UserGamePlaythrough::getCreatedAt,
-                    Comparator.nullsFirst(Comparator.naturalOrder()))
-                .thenComparing(UserGamePlaythrough::getId));
+            Comparator.comparingInt(UserGamePlaythrough::getSortIndex)
+                .thenComparingLong(UserGamePlaythrough::getId));
   }
 
   @Transactional
@@ -370,7 +357,6 @@ public class UserGamePlaythroughService {
     row.setShortName("Playthrough 1");
     row.setManualPlayMinutes(null);
     row.setCompletionPercent(null);
-    row.setRunType(PlaythroughRunType.FIRST_TIME);
     return playthroughRepository.save(row);
   }
 

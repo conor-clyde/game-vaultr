@@ -19,6 +19,11 @@
   const $ = (id) => document.getElementById(id);
   const qs = (s, r = document) => r.querySelector(s);
   const qsa = (s, r = document) => [...r.querySelectorAll(s)];
+  const optimizeIgdbCoverUrl = (url, sizePreset = "t_cover_big") => {
+    const raw = String(url ?? "").trim();
+    if (!raw) return "";
+    return raw.replace(/\/t_[^/]+\//, `/${sizePreset}/`);
+  };
 
   const toggleClass = (el, cls, force) => el?.classList.toggle(cls, force);
   const setAriaHidden = (el, hidden) =>
@@ -363,7 +368,11 @@
     const placeholder = qs(SELECTOR.cardImgPlaceholder, clone);
     if (imgEl && placeholder) {
       if (coverImageUrl) {
-        imgEl.src = coverImageUrl;
+        imgEl.src = optimizeIgdbCoverUrl(coverImageUrl);
+        imgEl.width = 90;
+        imgEl.height = 120;
+        imgEl.loading = "lazy";
+        imgEl.decoding = "async";
         imgEl.style.display = "";
         placeholder.style.display = "none";
       } else {

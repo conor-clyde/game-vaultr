@@ -1,5 +1,6 @@
 package com.cocoding.playstate.model;
 
+import com.cocoding.playstate.domain.enums.PlayLogSessionExperience;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

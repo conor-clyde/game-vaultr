@@ -16,6 +16,5 @@ public record PlaythroughsPayload(List<PlaythroughItem> items) {
       Integer completionPercent,
       String progressNote,
       String progressStatus,
-      String endDate,
-      String runType) {}
+      String endDate) {}
 }

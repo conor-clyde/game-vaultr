@@ -815,15 +815,6 @@
     return !!(cb && cb.checked);
   }
 
-  function syncStartedYesterdayDateLabel() {
-    var el = $("logPlayStartYesterdayDate");
-    if (el) {
-      var d = new Date();
-      d.setDate(d.getDate() - 1);
-      el.textContent = formatMonthDayOrdinal(d);
-    }
-  }
-
   function syncStartedYesterdayCheckboxFromDate() {
     var cb = $("logPlayStartYesterday");
     var sd = $("logPlaySessionStartDate");
@@ -847,6 +838,15 @@
 
   function trimInput(el) {
     return el && el.value != null ? String(el.value).trim() : "";
+  }
+
+  function optimizeIgdbCoverUrl(url, sizePreset) {
+    var raw = url != null ? String(url).trim() : "";
+    if (!raw) {
+      return "";
+    }
+    var preset = sizePreset || "t_cover_small";
+    return raw.replace(/\/t_[^/]+\//, "/" + preset + "/");
   }
 
   function normalizeTimeForParse(t) {
@@ -1016,22 +1016,6 @@
     syncLogPlayModalHeaderSubtitle();
   }
 
-  function applyLogPlaySessionSummaryFromModalPageDataset() {
-    var m = $("logPlayModal");
-    if (!m) {
-      return;
-    }
-    applyLogPlaySessionSummary();
-  }
-
-  function applyLogPlaySessionSummaryFromButton(btn) {
-    if (!btn) {
-      applyLogPlaySessionSummaryFromModalPageDataset();
-      return;
-    }
-    applyLogPlaySessionSummary();
-  }
-
   function setClientLocalTodayHidden() {
     var el = $("logPlayClientLocalToday");
     if (!el) return;
@@ -1050,6 +1034,21 @@
         el.value = "";
       }
     });
+  }
+
+  function readNonNegativeInt(value, fallback) {
+    var n = Number(value);
+    if (!isFinite(n) || isNaN(n)) {
+      return fallback;
+    }
+    return Math.max(0, Math.floor(n));
+  }
+
+  function readNonNegativeIntAttr(el, attrName, fallback) {
+    if (!el || !el.getAttribute) {
+      return fallback;
+    }
+    return readNonNegativeInt(el.getAttribute(attrName), fallback);
   }
 
   function parseDurationMinutesFromRangeFields() {
@@ -1098,101 +1097,41 @@
     return parseDurationMinutesFromFields();
   }
 
-  function updateRangeNextDayLabel() {
-    var el = $("logPlayRangeEndNextDay");
-    var modeEl = $("logPlayTimeInputMode");
-    if (!el || !modeEl || modeEl.value !== "range") {
-      if (el) {
-        el.hidden = true;
+  function formatMinutesParts(mins, mode, joinWith) {
+    var m = Math.floor(Number(mins));
+    if (!m || m < 0) {
+      return mode === "title" ? "0 Mins" : "0 mins";
+    }
+    var h = Math.floor(m / 60);
+    var mi = m % 60;
+    var parts = [];
+    if (h) {
+      if (mode === "title") {
+        parts.push(h === 1 ? "1 Hr" : h + " Hrs");
+      } else {
+        parts.push(h + (h === 1 ? " hr" : " hrs"));
       }
-      return;
     }
-    var sd = trimInput($("logPlaySessionStartDate"));
-    var st = trimInput($("logPlaySessionStartTime"));
-    var ed = trimInput($("logPlaySessionEndDate"));
-    var et = trimInput($("logPlaySessionEndTime"));
-    if (!sd || !ed || sd !== ed || !st || !et) {
-      el.hidden = true;
-      return;
-    }
-    var ms = timeStrToMinutesSinceMidnight(st);
-    var me = timeStrToMinutesSinceMidnight(et);
-    if (isNaN(ms) || isNaN(me)) {
-      el.hidden = true;
-      return;
-    }
-    el.hidden = !(me < ms);
-  }
-
-  function updateRangeComputedHint() {
-    var el = $("logPlayRangeComputed");
-    var modeEl = $("logPlayTimeInputMode");
-    if (!el || !modeEl || modeEl.value !== "range") {
-      if (el) {
-        el.hidden = true;
-        el.textContent = "";
+    if (mi) {
+      if (mode === "title") {
+        parts.push(mi === 1 ? "1 Min" : mi + " Mins");
+      } else {
+        parts.push(mi + (mi === 1 ? " min" : " mins"));
       }
-      return;
     }
-    var dur = parseDurationMinutesFromRangeFields();
-    if (dur.ok && !dur.empty && dur.mins > 0) {
-      el.textContent = "Playtime: " + formatPlaytimeLabel(dur.mins);
-      el.hidden = false;
-    } else {
-      el.hidden = true;
-      el.textContent = "";
-    }
+    return parts.length ? parts.join(joinWith || ", ") : "0 mins";
   }
 
   function formatPlaytimeLabel(mins) {
-    var m = Math.floor(Number(mins));
-    if (!m || m < 0) {
-      return "0 Mins";
-    }
-    var h = Math.floor(m / 60);
-    var mi = m % 60;
-    var parts = [];
-    if (h) {
-      parts.push(h === 1 ? "1 Hr" : h + " Hrs");
-    }
-    if (mi) {
-      parts.push(mi === 1 ? "1 Min" : mi + " Mins");
-    }
-    return parts.length ? parts.join(", ") : "0 Mins";
+    return formatMinutesParts(mins, "title", ", ");
   }
 
   function formatMinutesHumanParts(mins) {
-    var m = Math.floor(Number(mins));
-    if (!m || m < 0) {
-      return "0 mins";
-    }
-    var h = Math.floor(m / 60);
-    var mi = m % 60;
-    var parts = [];
-    if (h) {
-      parts.push(h + (h === 1 ? " hr" : " hrs"));
-    }
-    if (mi) {
-      parts.push(mi + (mi === 1 ? " min" : " mins"));
-    }
-    return parts.length ? parts.join(", ") : "0 mins";
+    return formatMinutesParts(mins, "normal", ", ");
   }
 
   function formatMinutesRecordedHint(mins) {
-    var m = Math.floor(Number(mins));
-    if (!m || m < 0) {
-      return "0 mins";
-    }
-    var h = Math.floor(m / 60);
-    var mi = m % 60;
-    var parts = [];
-    if (h) {
-      parts.push(h + (h === 1 ? " hr" : " hrs"));
-    }
-    if (mi) {
-      parts.push(mi + (mi === 1 ? " min" : " mins"));
-    }
-    return parts.length ? parts.join(" ") : "0 mins";
+    return formatMinutesParts(mins, "normal", " ");
   }
 
   function addQuickDurationMinutes(delta) {
@@ -1233,10 +1172,7 @@
   }
 
   function refreshTimeFieldsUi() {
-    syncStartedYesterdayDateLabel();
     syncRangeHiddenDatesFromTimes();
-    updateRangeNextDayLabel();
-    updateRangeComputedHint();
     updateLogPlayTotalPreview();
   }
 
@@ -1257,17 +1193,6 @@
     var durM = $("logPlayMinutesPart");
     if (durH) durH.value = "";
     if (durM) durM.value = "";
-    [
-      "logPlaySessionStartDate",
-      "logPlaySessionStartTime",
-      "logPlaySessionEndDate",
-      "logPlaySessionEndTime",
-    ].forEach(function (rid) {
-      var re = $(rid);
-      if (re) {
-        re.value = "";
-      }
-    });
     var yCb = $("logPlayStartYesterday");
     if (yCb) {
       yCb.checked = false;
@@ -1539,7 +1464,7 @@
         state.baselineDisplayMinutes = 0;
         updateLogPlayTotalPreview();
       });
-    applyLogPlaySessionSummaryFromModalPageDataset();
+    applyLogPlaySessionSummary();
     openLogPlayModal();
     var ptPrefEdit =
       row.playthroughId != null && row.playthroughId !== undefined
@@ -1633,7 +1558,7 @@
       endSessionTicker = null;
     }
     syncEndSessionRecordedHint();
-    applyLogPlaySessionSummaryFromModalPageDataset();
+    applyLogPlaySessionSummary();
     openLogPlayModal();
     var ptPref =
       row.playthroughId != null && row.playthroughId !== undefined
@@ -1845,7 +1770,7 @@
       imgWrap.className = "hd-tile-cover";
       if (g.imageUrl) {
         var img = document.createElement("img");
-        img.src = g.imageUrl;
+        img.src = optimizeIgdbCoverUrl(g.imageUrl, "t_cover_small");
         img.alt = "";
         img.width = 48;
         img.height = 64;
@@ -1867,16 +1792,10 @@
       nameEl.className = "hd-playing-title-name";
       nameEl.textContent = g.title || g.apiId;
       titleLine.appendChild(nameEl);
-      var dpm =
-        g.displayPlayMinutes !== undefined && g.displayPlayMinutes !== null
-          ? Number(g.displayPlayMinutes)
-          : 0;
-      if (isNaN(dpm)) {
-        dpm = 0;
-      }
+      var dpm = readNonNegativeInt(g.displayPlayMinutes, 0);
       btn.setAttribute(
         "data-log-baseline-minutes",
-        String(Math.max(0, Math.floor(dpm))),
+        String(dpm),
       );
       var hasLogs = g.hasPlayLogs === true;
       btn.setAttribute("data-log-has-play-logs", hasLogs ? "true" : "false");
@@ -1889,21 +1808,9 @@
       } else {
         btn.removeAttribute("data-log-last-played-relative");
       }
-      var scount =
-        g.playSessionCount !== undefined && g.playSessionCount !== null
-          ? Math.floor(Number(g.playSessionCount))
-          : 0;
-      if (isNaN(scount) || scount < 0) {
-        scount = 0;
-      }
+      var scount = readNonNegativeInt(g.playSessionCount, 0);
       btn.setAttribute("data-log-play-session-count", String(scount));
-      var ptc =
-        g.playthroughCount !== undefined && g.playthroughCount !== null
-          ? Math.floor(Number(g.playthroughCount))
-          : 0;
-      if (isNaN(ptc) || ptc < 0) {
-        ptc = 0;
-      }
+      var ptc = readNonNegativeInt(g.playthroughCount, 0);
       btn.setAttribute("data-log-playthrough-count", String(ptc));
       var calPick =
         g.lastPlayedCalendarLine != null &&
@@ -1966,12 +1873,12 @@
     setGameTitle(title);
     showPickStep(false);
     resetForm();
-    applyLogPlaySessionSummaryFromButton(pickBtn);
-    var raw =
-      pickBtn && pickBtn.getAttribute
-        ? String(pickBtn.getAttribute("data-log-baseline-minutes") || "").trim()
-        : "";
-    state.baselineDisplayMinutes = raw === "" ? 0 : parseInt(raw, 10) || 0;
+    applyLogPlaySessionSummary();
+    state.baselineDisplayMinutes = readNonNegativeIntAttr(
+      pickBtn,
+      "data-log-baseline-minutes",
+      0,
+    );
     updateLogPlayTotalPreview();
     applyLogPlayDetailsUi();
     loadAndApplyPlaythroughs(
@@ -2023,10 +1930,11 @@
         ) {
           return;
         }
-        var baseRaw = String(
-          openerBtn.getAttribute("data-log-baseline-minutes") || "",
-        ).trim();
-        var baselineFromBtn = baseRaw === "" ? 0 : parseInt(baseRaw, 10) || 0;
+        var baselineFromBtn = readNonNegativeIntAttr(
+          openerBtn,
+          "data-log-baseline-minutes",
+          0,
+        );
         openLogPlayModalForEndSession({
           apiId: apiId,
           title: title,
@@ -2130,13 +2038,13 @@
     setGameTitle(title);
     showPickStep(false);
     resetForm();
-    applyLogPlaySessionSummaryFromButton(btn);
+    applyLogPlaySessionSummary();
     applyLogPlayDetailsUi();
-    var baseRaw = String(
-      btn.getAttribute("data-log-baseline-minutes") || "",
-    ).trim();
-    state.baselineDisplayMinutes =
-      baseRaw === "" ? 0 : parseInt(baseRaw, 10) || 0;
+    state.baselineDisplayMinutes = readNonNegativeIntAttr(
+      btn,
+      "data-log-baseline-minutes",
+      0,
+    );
     updateLogPlayTotalPreview();
     openLogPlayModal();
     var ptPrefRaw = String(
@@ -2197,7 +2105,7 @@
     ensureHoursTimeMode();
     clearSessionRangeFields();
     syncSessionFlowButtonsUi();
-    applyLogPlaySessionSummaryFromModalPageDataset();
+    applyLogPlaySessionSummary();
 
     [
       "logPlaySessionStartDate",
@@ -2475,7 +2383,6 @@
     add("clientLocalToday", today);
     add("sessionStartDate", today);
     add("sessionStartTime", hms);
-    add("updateLibraryPlaytime", "true");
     add("updatePlaythroughPlaytime", "true");
     add("noteContainsSpoilers", "false");
     add("sessionExperience", "OKAY");

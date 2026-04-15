@@ -1,5 +1,9 @@
 package com.cocoding.playstate.model;
 
+import com.cocoding.playstate.domain.enums.CompletionType;
+import com.cocoding.playstate.domain.enums.GameStatus;
+import com.cocoding.playstate.domain.enums.OwnershipType;
+import com.cocoding.playstate.domain.enums.WhyPlaying;
 import com.cocoding.playstate.util.ReflectionTagsJson;
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -88,9 +92,6 @@ public class UserGame {
   @Column(name = "progress_updated_at")
   private LocalDateTime progressUpdatedAt;
 
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
-
   @Column(name = "play_time_manual_total_minutes")
   private Integer playTimeManualTotalMinutes;
 
@@ -102,20 +103,12 @@ public class UserGame {
     if (createdAt == null) {
       createdAt = LocalDateTime.now();
     }
-    if (updatedAt == null) {
-      updatedAt = createdAt;
-    }
     if (completionType == null) {
       completionType = CompletionType.NOT_COMPLETED;
     }
     if (status == null) {
       status = GameStatus.NOT_PLAYING;
     }
-  }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
   }
 
   public UserGame() {}
@@ -368,14 +361,6 @@ public class UserGame {
 
   public void setProgressUpdatedAt(LocalDateTime progressUpdatedAt) {
     this.progressUpdatedAt = progressUpdatedAt;
-  }
-
-  public LocalDateTime getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(LocalDateTime updatedAt) {
-    this.updatedAt = updatedAt;
   }
 
   public Integer getPlayTimeManualTotalMinutes() {

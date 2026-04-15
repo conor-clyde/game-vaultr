@@ -292,9 +292,13 @@
                 </div>
                 <div class="coll-cover">
                   <img
-                    th:src="${card.imageUrl}"
+                    th:src="${card.imageUrl != null ? card.imageUrl : ''}"
                     th:alt="${card.title}"
                     class="coll-cover-img"
+                    width="180"
+                    height="240"
+                    loading="lazy"
+                    decoding="async"
                     th:attr="onerror=|this.onerror=null;this.style.display='none';var n=this.nextElementSibling;if(n)n.style.display='flex';|"
                   />
                   <div

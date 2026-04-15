@@ -1,4 +1,4 @@
-package com.cocoding.playstate.model;
+package com.cocoding.playstate.domain.enums;
 
 public enum PlaythroughProgressStatus {
   PLAYING,
