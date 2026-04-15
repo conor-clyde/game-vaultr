@@ -190,7 +190,8 @@ public class DemoDataSeedService {
             account.setEmail(normalizedEmail);
         }
         try {
-            userAccountRepository.save(account);
+            // Force insert now so uniqueness violations are caught here, not at transaction commit.
+            userAccountRepository.saveAndFlush(account);
             logger.info("Created demo user '{}'.", username);
             return true;
         } catch (DataIntegrityViolationException e) {
