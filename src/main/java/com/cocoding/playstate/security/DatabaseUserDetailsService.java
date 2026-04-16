@@ -18,11 +18,13 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    String login = username == null ? "" : username.trim();
     return userAccountRepository
-        .findByUsernameIgnoreCase(username.trim())
+        .findByEmailIgnoreCase(login)
+        .or(() -> userAccountRepository.findByUsernameIgnoreCase(login))
         .map(
             account ->
-                User.withUsername(account.getUsername())
+                User.withUsername(account.getEmail() != null ? account.getEmail() : account.getUsername())
                     .password(account.getPasswordHash())
                     .roles("USER")
                     .build())

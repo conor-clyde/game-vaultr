@@ -10,7 +10,7 @@ public class UserAccount {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false, unique = true, length = 64)
+  @Column(unique = true, length = 64)
   private String username;
 
   @Column(name = "password_hash", nullable = false, length = 255)

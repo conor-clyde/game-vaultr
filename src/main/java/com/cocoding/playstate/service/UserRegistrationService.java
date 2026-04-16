@@ -4,14 +4,11 @@ import com.cocoding.playstate.model.UserAccount;
 import com.cocoding.playstate.repository.UserAccountRepository;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserRegistrationService {
-
-  private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{3,64}$");
 
   private static final int MIN_PASSWORD_LENGTH = 8;
 
@@ -28,15 +25,7 @@ public class UserRegistrationService {
   }
 
   public Optional<String> validateAndRegister(
-      String rawUsername, String rawEmail, String password, String confirmPassword) {
-    if (rawUsername == null || rawUsername.isBlank()) {
-      return Optional.of("Choose a username.");
-    }
-    String username = rawUsername.trim().toLowerCase(Locale.ROOT);
-    if (!USERNAME_PATTERN.matcher(username).matches()) {
-      return Optional.of(
-          "Username must be 3–64 characters and use letters, numbers, or underscores only.");
-    }
+      String rawEmail, String password, String confirmPassword) {
     Optional<String> emailError = validateEmail(rawEmail);
     if (emailError.isPresent()) {
       return emailError;
@@ -48,14 +37,10 @@ public class UserRegistrationService {
     if (!password.equals(confirmPassword)) {
       return Optional.of("Passwords do not match.");
     }
-    if (userAccountRepository.existsByUsernameIgnoreCase(username)) {
-      return Optional.of("That username is already taken.");
-    }
     if (userAccountRepository.existsByEmailIgnoreCase(email)) {
       return Optional.of("That email is already registered.");
     }
     UserAccount account = new UserAccount();
-    account.setUsername(username);
     account.setEmail(email);
     account.setPasswordHash(passwordEncoder.encode(password));
     userAccountRepository.save(account);
