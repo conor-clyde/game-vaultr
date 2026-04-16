@@ -1,6 +1,7 @@
 # Gamevaultr
-![Logo](docs/media/0gvlogo.png)
 A game tracking app to organize your collection, decide what to play, track playthroughs, and reflection on your gaming experience.
+
+![Logo](docs/media/0gvlogo.png)
 
 ---
 
@@ -38,8 +39,6 @@ Show the end-to-end core flow in one short GIF or clip:
 ```
 
 ### 2) Key Feature Walkthroughs
-
-Keep each clip focused on one action and add one sentence about user value.
 
 #### Add games to your collection
 
