@@ -2,14 +2,14 @@
 
 ![Logo](docs/media/0gvlogo.png)
 
-Gamevaultr is a game tracking app for building your collection, deciding what to play next, logging play sessions, and keeping personal notes/reviews per title.
+Gamevaultr is a personal game vault: build your game collection, then track playthroughs, sessions, ratings, and notes in one place.
 
 ## Live App
 
 [gamevaultr.com](https://gamevaultr.com)
 
 ### Use the credentials below to explore the application
-Username: demo
+Username: demo<br>
 Password: demopassword
 
 ## What You Can Do
