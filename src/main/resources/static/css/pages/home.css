@@ -582,6 +582,20 @@ body.home-page:not(.home-page--dashboard)
   .home-hero-figure {
   margin-bottom: clamp(0.35rem, 1.5vw, 1rem);
 }
+body.home-page:not(.home-page--dashboard) .home-hero-figure {
+  max-width: 380px;
+  min-height: min(340px, 78vw);
+}
+body.home-page:not(.home-page--dashboard) .home-hero-figure-ring {
+  width: min(96%, 374px);
+}
+body.home-page:not(.home-page--dashboard) .home-hero-figure-bloom {
+  width: min(112%, 388px);
+}
+body.home-page:not(.home-page--dashboard) .home-hero-figure-stack {
+  max-height: min(362px, 84vw);
+  width: min(94%, 352px);
+}
 @media (max-width: 380px) {
   body.home-page:not(.home-page--dashboard)
     main.home-main
