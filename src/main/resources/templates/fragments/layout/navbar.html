@@ -146,7 +146,13 @@
           </div>
         </div>
         <hr class="navbar-mobile-rule" aria-hidden="true" />
-        <nav class="navbar-mobile-nav" aria-label="Collection and search">
+        <nav class="navbar-mobile-nav" aria-label="Main navigation">
+          <a
+            href="/"
+            class="navbar-mobile-link"
+            th:classappend="${title == 'Home' ? 'active' : ''}"
+            >Home</a
+          >
           <a
             href="/collection"
             class="navbar-mobile-link"
