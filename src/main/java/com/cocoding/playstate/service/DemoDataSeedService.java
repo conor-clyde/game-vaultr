@@ -230,7 +230,6 @@ public class DemoDataSeedService {
     ug.setCompletionType(CompletionType.MAIN_STORY);
     ug.setNotes("Friday night co-op campaign with friends — voice acting carried so many scenes.");
     ug.setRating(10);
-    ug.setReviewHeadline("The new gold standard for party-based RPGs");
     ug.setReview(
         "Larian's writing respects player agency without losing heart. Combat stayed fresh through"
             + " Act III, and I actually cared about companion quests. Minor pacing dips in the city"
@@ -251,7 +250,6 @@ public class DemoDataSeedService {
         "Dropped after Phantom Liberty finale. The city is incredible, but I burned out on the"
             + " side-gig cleanup loop.");
     ug.setRating(7);
-    ug.setReviewHeadline("Style and side gigs shine");
     ug.setReview(
         "Night City is still the star. Main story landed better post-2.0; a few rough quest beats"
             + " remain.");
@@ -282,7 +280,6 @@ public class DemoDataSeedService {
     ug.setCompletionType(CompletionType.MAIN_STORY);
     ug.setNotes("Paused at Godhome content. Main ending done, but pantheons are a longer-term project.");
     ug.setRating(9);
-    ug.setReviewHeadline("Atmosphere and mobility in perfect lockstep");
     ug.setReview(
         "Every new ability recontextualizes old zones. Bosses teach patterns; deaths feel like"
             + " tuition, not punishment.");
@@ -301,7 +298,6 @@ public class DemoDataSeedService {
         "Finished years ago on another account. Keeping it in backlog for a possible co-op replay"
             + " with a new friend.");
     ug.setRating(10);
-    ug.setReviewHeadline("Pacing and wit still unmatched");
     ug.setReview("Lean, funny, and mechanically transparent. No filler between the good bits.");
     ug.setWhyPlayings(List.of(WhyPlaying.SOCIAL, WhyPlaying.LEGACY));
     ug.setStartedDate(LocalDate.of(2023, 11, 1));
@@ -315,7 +311,6 @@ public class DemoDataSeedService {
     ug.setCompletionType(CompletionType.MAIN_STORY);
     ug.setNotes("Boys-trip through the realms — combat weight feels incredible on a controller.");
     ug.setRating(8);
-    ug.setReviewHeadline("A confident reinvention");
     ug.setReview(
         "Character work carries the middle acts; optional realms padded the runtime a bit.");
     ug.setWhyPlayings(List.of(WhyPlaying.LEGACY, WhyPlaying.STORY));

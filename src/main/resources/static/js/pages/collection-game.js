@@ -664,23 +664,6 @@
     var ratingClearBtn = document.getElementById("colGameRatingClearBtn");
     var reviewTextarea = document.getElementById("colGamePersonalReview");
     var reviewCounter = document.getElementById("colGamePersonalReviewCounter");
-    var reviewHeadlineInput = document.getElementById(
-      "colGamePersonalReviewHeadline",
-    );
-    var reviewHeadlineHidden = document.getElementById(
-      "colGamePersonalReviewHeadlineHidden",
-    );
-
-    function syncReviewHeadlineToHidden() {
-      if (!reviewHeadlineHidden) {
-        return;
-      }
-      if (!reviewHeadlineInput) {
-        reviewHeadlineHidden.value = "";
-        return;
-      }
-      reviewHeadlineHidden.value = reviewHeadlineInput.value;
-    }
 
     function refreshStarEditFaces(value) {
       if (!ratingWrap) {
@@ -2294,7 +2277,6 @@
         var body = stack.getAttribute("data-seed-review-text");
         rt.value = body != null ? body : "";
       }
-      syncReviewHeadlineToHidden();
       if (ratingWrap && stack) {
         var rn = stack.getAttribute("data-seed-rating-num");
         ratingWrap.setAttribute(
@@ -2386,7 +2368,6 @@
     var colGameRatingForm = document.getElementById("colGameRatingForm");
     if (colGameRatingForm) {
       colGameRatingForm.addEventListener("submit", function (e) {
-        syncReviewHeadlineToHidden();
         var hasBody = reviewTextarea && reviewTextarea.value.trim() !== "";
         var errEl = document.getElementById("colGameRatingFormError");
         if (hasBody && !hasRatingSelected()) {

@@ -116,7 +116,6 @@ public class GameController {
   private static final int REFLECTION_MAX_TAG_LENGTH = 30;
   private static final int NOTES_MAX_LENGTH = 4000;
   private static final int REVIEW_MAX_LENGTH = 3000;
-  private static final int REVIEW_HEADLINE_MAX_LENGTH = 160;
   private static final int REFLECTION_HIGHLIGHT_MAX_LENGTH = 500;
   private static final int SESSION_AWAITING_END_OPEN_HOURS = 24;
 
@@ -1000,7 +999,6 @@ public class GameController {
       @RequestParam(value = "notes", required = false) String notesParam,
       @RequestParam(value = "rating", required = false) Integer ratingParam,
       @RequestParam(value = "review", required = false) String reviewParam,
-      @RequestParam(value = "reviewHeadline", required = false) String reviewHeadlineParam,
       @RequestParam(value = "reflectionTagsJson", required = false) String reflectionTagsJsonParam,
       @RequestParam(value = "reflectionHighlight", required = false)
           String reflectionHighlightParam,
@@ -1341,24 +1339,10 @@ public class GameController {
       if (trimmedReview.length() > REVIEW_MAX_LENGTH) {
         trimmedReview = trimmedReview.substring(0, REVIEW_MAX_LENGTH);
       }
-      String trimmedHeadline = reviewHeadlineParam != null ? reviewHeadlineParam.strip() : "";
-      if (trimmedHeadline.length() > REVIEW_HEADLINE_MAX_LENGTH) {
-        trimmedHeadline = trimmedHeadline.substring(0, REVIEW_HEADLINE_MAX_LENGTH);
-      }
       boolean hasBody = !trimmedReview.isEmpty();
-      boolean hasHeadline = !trimmedHeadline.isEmpty();
-      boolean reviewPartial = hasHeadline != hasBody;
-      if (reviewPartial) {
-        redirectAttributes.addFlashAttribute(
-            "personalError",
-            "Enter both a review headline and review text together, or leave both empty.");
-        redirectAttributes.addFlashAttribute("personalReopen", "reflection");
-        return "redirect:/collection/" + key;
-      }
-      boolean hasFullReview = hasHeadline && hasBody;
 
       if (ratingParam == null || ratingParam == 0) {
-        if (hasFullReview) {
+        if (hasBody) {
           redirectAttributes.addFlashAttribute(
               "personalError",
               "Choose a star rating (1–10) to save your review. You can save a rating on its own"
@@ -1368,7 +1352,6 @@ public class GameController {
         }
         ug.setRating(null);
         ug.setReview(null);
-        ug.setReviewHeadline(null);
       } else {
         if (ratingParam < 1 || ratingParam > 10) {
           redirectAttributes.addFlashAttribute("personalError", "Rating must be between 1 and 10.");
@@ -1376,12 +1359,10 @@ public class GameController {
           return "redirect:/collection/" + key;
         }
         ug.setRating(ratingParam);
-        if (hasFullReview) {
+        if (hasBody) {
           ug.setReview(trimmedReview);
-          ug.setReviewHeadline(trimmedHeadline);
         } else {
           ug.setReview(null);
-          ug.setReviewHeadline(null);
         }
       }
     }

@@ -58,9 +58,6 @@ public class UserGame {
   @Column(name = "review", length = 3000)
   private String review;
 
-  @Column(name = "review_headline", length = 160)
-  private String reviewHeadline;
-
   @Column(name = "reflection_tags_json", length = 800)
   private String reflectionTagsJson;
 
@@ -205,14 +202,6 @@ public class UserGame {
 
   public void setReview(String review) {
     this.review = review;
-  }
-
-  public String getReviewHeadline() {
-    return reviewHeadline;
-  }
-
-  public void setReviewHeadline(String reviewHeadline) {
-    this.reviewHeadline = reviewHeadline;
   }
 
   public String getReflectionTagsJson() {
