@@ -6,10 +6,13 @@
   min-height: 100vh;
   min-height: 100dvh;
 }
+.auth-page > .navbar {
+  flex-shrink: 0;
+}
 main.auth-main {
   background-color: #000;
   box-sizing: border-box;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   margin: 0;
   max-width: none;
   min-height: 0;
@@ -21,17 +24,17 @@ main.auth-main {
   align-items: center;
   box-sizing: border-box;
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-direction: column;
   isolation: isolate;
-  /* Center the card; safe center avoids clipping when the form is taller than the viewport */
+  /* Center the card between navbar and footer; safe center avoids clipping when tall */
   justify-content: center;
   justify-content: safe center;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  /* Symmetric vertical padding so centered forms never sit flush under the nav */
+  /* Symmetric padding within the flex region */
   padding: max(clamp(1.5rem, 5vmin, 2.75rem), env(safe-area-inset-top, 0))
     max(20px, env(safe-area-inset-right, 0))
     max(clamp(1.5rem, 5vmin, 2.75rem), env(safe-area-inset-bottom, 0))
@@ -54,7 +57,7 @@ main.auth-main {
     0 12px 24px -12px rgba(0, 0, 0, 0.45);
   box-sizing: border-box;
   flex-shrink: 0;
-  max-width: 400px;
+  max-width: min(26rem, calc(100vw - 2.5rem));
   padding: 1.65rem 1.55rem 1.4rem;
   position: relative;
   width: 100%;
@@ -66,7 +69,7 @@ main.auth-main {
   border-radius: 0;
   box-shadow: none;
   margin: 0 auto;
-  max-width: 400px;
+  max-width: min(26rem, calc(100vw - 2.5rem));
   padding: 2rem 2rem 1.75rem;
   width: 100%;
 }
@@ -160,9 +163,9 @@ main.auth-main {
   box-shadow: 0 0 0 3px var(--accent-glow);
 }
 .auth-hint {
-  color: var(--text-3);
-  font-size: 0.68rem;
-  line-height: 1.25;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.4;
   margin: 0;
 }
 .auth-actions {
@@ -192,7 +195,8 @@ main.auth-main {
   text-decoration: underline;
 }
 .auth-page .site-footer {
-  margin-top: 0.75rem;
+  flex-shrink: 0;
+  margin-top: 0;
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0));
   padding-left: max(16px, env(safe-area-inset-left, 0));
   padding-right: max(16px, env(safe-area-inset-right, 0));
@@ -205,6 +209,87 @@ main.auth-main {
   font-size: 0.65rem;
   line-height: 1.45;
   padding-top: 0.5rem;
+}
+@media (min-width: 721px) {
+  .auth-main {
+    padding: max(clamp(1.75rem, 4vmin, 3rem), env(safe-area-inset-top, 0))
+      max(28px, env(safe-area-inset-right, 0))
+      max(clamp(1.75rem, 4vmin, 3rem), env(safe-area-inset-bottom, 0))
+      max(28px, env(safe-area-inset-left, 0));
+  }
+  .auth-panel {
+    border-radius: 30px;
+    max-width: min(34rem, calc(100vw - 4rem));
+    padding: 2.45rem 2.85rem 2.15rem;
+  }
+  .auth-card {
+    max-width: none;
+  }
+  .auth-card-brand {
+    margin-bottom: 0.95rem;
+  }
+  .auth-card-logo .navbar-logo-text {
+    font-size: 1.08rem;
+  }
+  .auth-card-logo .navbar-logo-badge {
+    border-radius: 9px;
+    font-size: 0.74rem;
+    height: 36px;
+    width: 36px;
+  }
+  .auth-title {
+    font-size: 1.55rem;
+    margin-bottom: 0.4rem;
+  }
+  .auth-lead {
+    color: rgba(220, 216, 242, 0.94);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    margin-bottom: 1.15rem;
+  }
+  .auth-form {
+    gap: 0.95rem;
+  }
+  .auth-field {
+    gap: 0.42rem;
+  }
+  .auth-label {
+    color: rgba(205, 202, 228, 0.96);
+    font-size: 0.76rem;
+    letter-spacing: 0.07em;
+  }
+  .auth-input {
+    border-radius: 10px;
+    font-size: 1.02rem;
+    min-height: 3rem;
+    padding: 0.62rem 0.95rem;
+  }
+  .auth-hint {
+    color: rgba(198, 195, 222, 0.98);
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .auth-actions {
+    margin-top: 0.35rem;
+  }
+  .auth-submit.btn.btn-primary {
+    border-radius: 12px;
+    font-size: 1.02rem;
+    min-height: 3rem;
+    padding-top: 0.65rem;
+    padding-bottom: 0.65rem;
+  }
+  .auth-footer {
+    color: rgba(210, 206, 232, 0.92);
+    font-size: 0.88rem;
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+  }
+  .auth-alert {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    padding: 0.62rem 0.85rem;
+  }
 }
 @media (max-width: 720px) {
   .auth-page .navbar {
