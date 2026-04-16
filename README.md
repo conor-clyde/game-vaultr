@@ -25,14 +25,10 @@ You can explore the app using demo credentials:
 
 ## Product Demo Media
 
-### 2) Key Feature Walkthroughs
+### Key Feature Walkthroughs
 
-#### Add games to your collection
-
-```md
+#### Add games to your collection in a few clicks.
 ![Search and Add](docs/media/search-add.gif)
-```
-Find games through IGDB and add them to your collection in a few clicks.
 
 #### Collection Management
 
