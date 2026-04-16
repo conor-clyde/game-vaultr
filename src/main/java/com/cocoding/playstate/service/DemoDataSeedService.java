@@ -44,13 +44,20 @@ public class DemoDataSeedService {
   private static final Logger logger = LoggerFactory.getLogger(DemoDataSeedService.class);
 
   private static final long[] DEMO_GAME_IDS = {
+    7346L, // Zelda: Breath of the Wild
+    76253L, // Devil May Cry 5
+    472L, // Skyrim
+    14593L, // Hollow Knight
+    113112L, // Hades
+    1009L, // The Last of Us
+    11169L, // Final Fantasy VII Remake
+    1879L, // Terraria
     119133L, // Elden Ring
-    194267L, // Baldur's Gate 3
-    1877L, // Cyberpunk 2077
-    13577L, // Stardew Valley
-    18472L, // Hollow Knight
-    1068L, // Portal 2
-    19560L, // God of War (2018)
+    1020L, // GTA V
+    125174L, // Overwatch
+    119171L, // Baldur's Gate 3
+    186725L, // Vampire Survivors
+    17000L, // Stardew Valley
   };
 
   private final UserAccountRepository userAccountRepository;
@@ -191,13 +198,20 @@ public class DemoDataSeedService {
 
   private void applyGameProfile(long igdbId, UserGame ug) {
     switch ((int) igdbId) {
-      case 119133 -> applyElden(ug);
-      case 194267 -> applyBg3(ug);
-      case 1877 -> applyCyberpunk(ug);
-      case 13577 -> applyStardew(ug);
-      case 18472 -> applyHollowKnight(ug);
-      case 1068 -> applyPortal2(ug);
-      case 19560 -> applyGodOfWar(ug);
+      case 7346 -> applyZeldaBotw(ug);
+      case 76253 -> applyDevilMayCry5(ug);
+      case 472 -> applySkyrim(ug);
+      case 14593 -> applyHollowKnight(ug);
+      case 113112 -> applyHades(ug);
+      case 1009 -> applyLastOfUs(ug);
+      case 11169 -> applyFf7Remake(ug);
+      case 1879 -> applyTerraria(ug);
+      case 119133 -> applyEldenRing(ug);
+      case 1020 -> applyGtaV(ug);
+      case 125174 -> applyOverwatch(ug);
+      case 119171 -> applyBg3(ug);
+      case 186725 -> applyVampireSurvivors(ug);
+      case 17000 -> applyStardewValley(ug);
       default -> {
         ug.setStatus(GameStatus.PLAYING);
         ug.setNotes("Demo entry — customize me.");
@@ -205,23 +219,149 @@ public class DemoDataSeedService {
     }
   }
 
-  private static void applyElden(UserGame ug) {
+  private static void applyZeldaBotw(UserGame ug) {
     ug.setStatus(GameStatus.PLAYING);
     ug.setOwnershipType(OwnershipType.DIGITAL);
     ug.setCompletionType(CompletionType.NOT_COMPLETED);
     ug.setNotes(
-        "Taking it slow: I clear every cave before moving the story. The world feels endless in the"
-            + " best way.");
-    ug.setWhyPlaying(WhyPlaying.EXPLORE);
-    ug.setProgressPercent(62);
-    ug.setProgressLabel("Approaching Leyndell");
+        "Wandering shrines before tackling Divine Beasts. I keep getting distracted by side routes.");
+    ug.setWhyPlayings(List.of(WhyPlaying.EXPLORE, WhyPlaying.UNWIND));
+    ug.setProgressPercent(54);
+    ug.setProgressLabel("Two Divine Beasts cleared");
     ug.setDifficulty("Normal");
     ug.setTimesPlayed(1);
-    ug.setStartedDate(java.time.LocalDate.of(2025, 8, 12));
+    ug.setStartedDate(LocalDate.of(2026, 1, 9));
     ug.setReflectionHighlight(
-        "Level design rewards curiosity without waypoints holding your hand.");
+        "The world rewards curiosity better than objective-chasing.");
     ug.setReflectionTagsJson(
-        ReflectionTagsJson.serializeList(List.of("open-world", "tough-but-fair", "co-op-summons")));
+        ReflectionTagsJson.serializeList(List.of("open-world", "exploration", "sandbox")));
+  }
+
+  private static void applyDevilMayCry5(UserGame ug) {
+    ug.setStatus(GameStatus.PAUSED);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.NOT_COMPLETED);
+    ug.setNotes("Stopped at Mission 11 while learning style-switch combos.");
+    ug.setRating(8);
+    ug.setWhyPlayings(List.of(WhyPlaying.CHALLENGE, WhyPlaying.INTENSITY));
+    ug.setProgressPercent(48);
+    ug.setProgressLabel("Nero route mid-campaign");
+    ug.setStartedDate(LocalDate.of(2025, 12, 4));
+    ug.setTimesPlayed(1);
+  }
+
+  private static void applySkyrim(UserGame ug) {
+    ug.setStatus(GameStatus.NOT_PLAYING);
+    ug.setOwnershipType(OwnershipType.PHYSICAL);
+    ug.setCompletionType(CompletionType.MAIN_STORY);
+    ug.setNotes("Legacy save from years ago. Keeping it installed for modded wandering nights.");
+    ug.setRating(9);
+    ug.setReview("Still unmatched for sandbox roleplay freedom despite showing its age.");
+    ug.setWhyPlayings(List.of(WhyPlaying.LEGACY, WhyPlaying.EXPLORE));
+    ug.setStartedDate(LocalDate.of(2023, 2, 10));
+    ug.setFinishedDate(LocalDate.of(2023, 5, 21));
+    ug.setTimesPlayed(3);
+  }
+
+  private static void applyHollowKnight(UserGame ug) {
+    ug.setStatus(GameStatus.PLAYING);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.NOT_COMPLETED);
+    ug.setNotes("Main path done before, now pushing through Pantheon attempts.");
+    ug.setRating(9);
+    ug.setWhyPlayings(List.of(WhyPlaying.CHALLENGE, WhyPlaying.PROGRESS));
+    ug.setProgressPercent(83);
+    ug.setProgressLabel("Godhome pantheon grind");
+    ug.setStartedDate(LocalDate.of(2025, 10, 15));
+  }
+
+  private static void applyHades(UserGame ug) {
+    ug.setStatus(GameStatus.FINISHED);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.MAIN_STORY);
+    ug.setNotes("Heat runs after credits were just as fun as the first clear.");
+    ug.setRating(9);
+    ug.setReview("Every run feels meaningful thanks to smart build variety and pacing.");
+    ug.setWhyPlayings(List.of(WhyPlaying.CHALLENGE, WhyPlaying.UNWIND));
+    ug.setStartedDate(LocalDate.of(2025, 6, 6));
+    ug.setFinishedDate(LocalDate.of(2025, 9, 1));
+    ug.setTimesPlayed(1);
+  }
+
+  private static void applyLastOfUs(UserGame ug) {
+    ug.setStatus(GameStatus.FINISHED);
+    ug.setOwnershipType(OwnershipType.PHYSICAL);
+    ug.setCompletionType(CompletionType.MAIN_STORY);
+    ug.setNotes("Played over two weekends and let the ending sit for a while.");
+    ug.setRating(9);
+    ug.setReview("Excellent tension and character payoff. Combat remains grounded and tense.");
+    ug.setWhyPlayings(List.of(WhyPlaying.STORY, WhyPlaying.LEGACY));
+    ug.setStartedDate(LocalDate.of(2025, 3, 14));
+    ug.setFinishedDate(LocalDate.of(2025, 3, 30));
+    ug.setTimesPlayed(1);
+  }
+
+  private static void applyFf7Remake(UserGame ug) {
+    ug.setStatus(GameStatus.DROPPED);
+    ug.setOwnershipType(OwnershipType.SUBSCRIPTION);
+    ug.setCompletionType(CompletionType.NOT_COMPLETED);
+    ug.setNotes("Loved the combat system, but sidequest pacing in the middle chapters lost me.");
+    ug.setWhyPlayings(List.of(WhyPlaying.CURIOSITY, WhyPlaying.STORY));
+    ug.setProgressPercent(45);
+    ug.setProgressLabel("Chapter 10");
+    ug.setStartedDate(LocalDate.of(2025, 7, 2));
+    ug.setFinishedDate(LocalDate.of(2025, 7, 28));
+    ug.setTimesPlayed(1);
+  }
+
+  private static void applyTerraria(UserGame ug) {
+    ug.setStatus(GameStatus.PLAYING);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.ENDLESS);
+    ug.setNotes("Building a sky bridge and prepping for hardmode bosses.");
+    ug.setWhyPlayings(List.of(WhyPlaying.EXPLORE, WhyPlaying.SOCIAL));
+    ug.setProgressLabel("Pre-hardmode base setup");
+    ug.setProgressPercent(38);
+    ug.setStartedDate(LocalDate.of(2026, 2, 1));
+    ug.setTimesPlayed(2);
+  }
+
+  private static void applyEldenRing(UserGame ug) {
+    ug.setStatus(GameStatus.PLAYING);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.NOT_COMPLETED);
+    ug.setNotes("Taking it slow: every cave before story bosses.");
+    ug.setWhyPlayings(List.of(WhyPlaying.CHALLENGE, WhyPlaying.EXPLORE));
+    ug.setProgressPercent(68);
+    ug.setProgressLabel("Leyndell approach");
+    ug.setDifficulty("Normal");
+    ug.setStartedDate(LocalDate.of(2025, 8, 12));
+    ug.setReflectionHighlight("Open areas still reward wandering more than checklist play.");
+    ug.setReflectionTagsJson(
+        ReflectionTagsJson.serializeList(List.of("open-world", "tough-but-fair", "build-testing")));
+  }
+
+  private static void applyGtaV(UserGame ug) {
+    ug.setStatus(GameStatus.NOT_PLAYING);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
+    ug.setCompletionType(CompletionType.MAIN_STORY);
+    ug.setNotes("Finished story years ago, now mostly revisit for occasional chaos sessions.");
+    ug.setRating(8);
+    ug.setWhyPlayings(List.of(WhyPlaying.LEGACY, WhyPlaying.UNWIND));
+    ug.setStartedDate(LocalDate.of(2022, 9, 18));
+    ug.setFinishedDate(LocalDate.of(2022, 11, 2));
+    ug.setTimesPlayed(2);
+  }
+
+  private static void applyOverwatch(UserGame ug) {
+    ug.setStatus(GameStatus.PAUSED);
+    ug.setOwnershipType(OwnershipType.FREE);
+    ug.setCompletionType(CompletionType.ENDLESS);
+    ug.setNotes("Taking a break between ranked seasons after support-heavy grind.");
+    ug.setWhyPlayings(List.of(WhyPlaying.SOCIAL, WhyPlaying.INTENSITY));
+    ug.setProgressLabel("Ranked placements done");
+    ug.setTimesPlayed(1);
+    ug.setStartedDate(LocalDate.of(2025, 11, 3));
   }
 
   private static void applyBg3(UserGame ug) {
@@ -242,26 +382,22 @@ public class DemoDataSeedService {
     ug.setDifficulty("Tactical / Hard");
   }
 
-  private static void applyCyberpunk(UserGame ug) {
+  private static void applyVampireSurvivors(UserGame ug) {
     ug.setStatus(GameStatus.DROPPED);
-    ug.setOwnershipType(OwnershipType.SUBSCRIPTION);
+    ug.setOwnershipType(OwnershipType.DIGITAL);
     ug.setCompletionType(CompletionType.NOT_COMPLETED);
     ug.setNotes(
-        "Dropped after Phantom Liberty finale. The city is incredible, but I burned out on the"
-            + " side-gig cleanup loop.");
+        "Super fun loop but I bounced after unlock grind felt repetitive.");
     ug.setRating(7);
-    ug.setReview(
-        "Night City is still the star. Main story landed better post-2.0; a few rough quest beats"
-            + " remain.");
-    ug.setWhyPlayings(List.of(WhyPlaying.CURIOSITY, WhyPlaying.INTENSITY));
-    ug.setProgressPercent(78);
-    ug.setProgressLabel("Post-Dogtown wrap-up");
-    ug.setStartedDate(java.time.LocalDate.of(2025, 2, 5));
-    ug.setFinishedDate(java.time.LocalDate.of(2025, 5, 30));
+    ug.setWhyPlayings(List.of(WhyPlaying.UNWIND, WhyPlaying.CURIOSITY));
+    ug.setProgressPercent(52);
+    ug.setProgressLabel("Most base unlocks");
+    ug.setStartedDate(LocalDate.of(2025, 4, 8));
+    ug.setFinishedDate(LocalDate.of(2025, 5, 10));
     ug.setTimesPlayed(1);
   }
 
-  private static void applyStardew(UserGame ug) {
+  private static void applyStardewValley(UserGame ug) {
     ug.setStatus(GameStatus.PLAYING);
     ug.setOwnershipType(OwnershipType.FREE);
     ug.setCompletionType(CompletionType.ENDLESS);
@@ -274,60 +410,50 @@ public class DemoDataSeedService {
     ug.setProgressPercent(40);
   }
 
-  private static void applyHollowKnight(UserGame ug) {
-    ug.setStatus(GameStatus.PAUSED);
-    ug.setOwnershipType(OwnershipType.DIGITAL);
-    ug.setCompletionType(CompletionType.MAIN_STORY);
-    ug.setNotes("Paused at Godhome content. Main ending done, but pantheons are a longer-term project.");
-    ug.setRating(9);
-    ug.setReview(
-        "Every new ability recontextualizes old zones. Bosses teach patterns; deaths feel like"
-            + " tuition, not punishment.");
-    ug.setWhyPlayings(List.of(WhyPlaying.CHALLENGE, WhyPlaying.PROGRESS));
-    ug.setStartedDate(java.time.LocalDate.of(2024, 4, 10));
-    ug.setFinishedDate(java.time.LocalDate.of(2024, 6, 2));
-    ug.setProgressPercent(86);
-    ug.setProgressLabel("Godhome pantheon attempts");
-  }
-
-  private static void applyPortal2(UserGame ug) {
-    ug.setStatus(GameStatus.NOT_PLAYING);
-    ug.setOwnershipType(OwnershipType.UNOWNED);
-    ug.setCompletionType(CompletionType.HUNDRED_PERCENT);
-    ug.setNotes(
-        "Finished years ago on another account. Keeping it in backlog for a possible co-op replay"
-            + " with a new friend.");
-    ug.setRating(10);
-    ug.setReview("Lean, funny, and mechanically transparent. No filler between the good bits.");
-    ug.setWhyPlayings(List.of(WhyPlaying.SOCIAL, WhyPlaying.LEGACY));
-    ug.setStartedDate(LocalDate.of(2023, 11, 1));
-    ug.setFinishedDate(LocalDate.of(2023, 11, 18));
-    ug.setTimesPlayed(2);
-  }
-
-  private static void applyGodOfWar(UserGame ug) {
-    ug.setStatus(GameStatus.FINISHED);
-    ug.setOwnershipType(OwnershipType.PHYSICAL);
-    ug.setCompletionType(CompletionType.MAIN_STORY);
-    ug.setNotes("Boys-trip through the realms — combat weight feels incredible on a controller.");
-    ug.setRating(8);
-    ug.setReview(
-        "Character work carries the middle acts; optional realms padded the runtime a bit.");
-    ug.setWhyPlayings(List.of(WhyPlaying.LEGACY, WhyPlaying.STORY));
-    ug.setStartedDate(java.time.LocalDate.of(2024, 1, 8));
-    ug.setFinishedDate(java.time.LocalDate.of(2024, 2, 14));
-  }
-
   private void seedPlaythroughsAndLogs(String userId, Long gameId, long igdbId) {
     playLogRepository.deleteByUserIdAndGameId(userId, gameId);
     playthroughRepository.deleteByUserIdAndGameId(userId, gameId);
     switch ((int) igdbId) {
+      case 7346 -> seedZelda(userId, gameId);
+      case 113112 -> seedHades(userId, gameId);
+      case 1009 -> seedLastOfUs(userId, gameId);
+      case 1879 -> seedTerraria(userId, gameId);
       case 119133 -> seedEldenRing(userId, gameId);
-      case 194267 -> seedBg3(userId, gameId);
-      case 13577 -> seedStardew(userId, gameId);
-      case 1877, 18472, 1068, 19560 -> seedSingleCasualLog(userId, gameId, igdbId);
+      case 119171 -> seedBg3(userId, gameId);
+      case 17000 -> seedStardewValley(userId, gameId);
+      case 76253, 472, 14593, 11169, 1020, 125174, 186725 -> seedSingleCasualLog(userId, gameId, igdbId);
       default -> {}
     }
+  }
+
+  private void seedZelda(String userId, Long gameId) {
+    UserGamePlaythrough pt = new UserGamePlaythrough();
+    pt.setUserId(userId);
+    pt.setGameId(gameId);
+    pt.setSortIndex(0);
+    pt.setShortName("Shrine route");
+    pt.setDifficulty("Normal");
+    pt.setCurrent(true);
+    pt.setManualPlayMinutes(42 * 60);
+    pt.setProgressNote("Collecting towers and shrine clusters before final push.");
+    pt.setProgressStatus(PlaythroughProgressStatus.PLAYING);
+    pt = playthroughRepository.save(pt);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2026, 2, 12, 20, 20),
+        85,
+        "Shrine chain in Hebra and one accidental guardian panic sprint.",
+        PlayLogSessionExperience.GOOD);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2026, 3, 2, 19, 45),
+        70,
+        "Farmed materials and mapped side quests near Gerudo.",
+        PlayLogSessionExperience.OKAY);
   }
 
   private void seedEldenRing(String userId, Long gameId) {
@@ -446,7 +572,99 @@ public class DemoDataSeedService {
         PlayLogSessionExperience.GOOD);
   }
 
-  private void seedStardew(String userId, Long gameId) {
+  private void seedHades(String userId, Long gameId) {
+    UserGamePlaythrough pt = new UserGamePlaythrough();
+    pt.setUserId(userId);
+    pt.setGameId(gameId);
+    pt.setSortIndex(0);
+    pt.setShortName("First clear");
+    pt.setDifficulty("Normal");
+    pt.setCurrent(false);
+    pt.setManualPlayMinutes(28 * 60);
+    pt.setProgressNote("Beat final boss and unlocked heat runs.");
+    pt.setProgressStatus(PlaythroughProgressStatus.COMPLETED);
+    pt.setEndedAt(Instant.parse("2025-09-01T22:20:00Z"));
+    pt = playthroughRepository.save(pt);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2025, 8, 20, 21, 5),
+        55,
+        "Strong Artemis build carried two clean clears.",
+        PlayLogSessionExperience.GREAT);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2025, 8, 29, 22, 15),
+        45,
+        "First post-credits heat attempt, still fun even when it fails.",
+        PlayLogSessionExperience.GOOD);
+  }
+
+  private void seedLastOfUs(String userId, Long gameId) {
+    UserGamePlaythrough pt = new UserGamePlaythrough();
+    pt.setUserId(userId);
+    pt.setGameId(gameId);
+    pt.setSortIndex(0);
+    pt.setShortName("Story run");
+    pt.setDifficulty("Normal");
+    pt.setCurrent(false);
+    pt.setManualPlayMinutes(16 * 60);
+    pt.setProgressNote("Single playthrough focused on story pacing.");
+    pt.setProgressStatus(PlaythroughProgressStatus.COMPLETED);
+    pt.setEndedAt(Instant.parse("2025-03-30T20:10:00Z"));
+    pt = playthroughRepository.save(pt);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2025, 3, 15, 19, 10),
+        100,
+        "Stealth section took longer than expected but nailed it eventually.",
+        PlayLogSessionExperience.GOOD);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2025, 3, 30, 21, 0),
+        110,
+        "Wrapped the finale and sat with credits for a while.",
+        PlayLogSessionExperience.GREAT);
+  }
+
+  private void seedTerraria(String userId, Long gameId) {
+    UserGamePlaythrough pt = new UserGamePlaythrough();
+    pt.setUserId(userId);
+    pt.setGameId(gameId);
+    pt.setSortIndex(0);
+    pt.setShortName("Co-op world");
+    pt.setDifficulty("Normal");
+    pt.setCurrent(true);
+    pt.setManualPlayMinutes(24 * 60);
+    pt.setProgressNote("Preparing hardmode boss path with shared base upgrades.");
+    pt.setProgressStatus(PlaythroughProgressStatus.PLAYING);
+    pt = playthroughRepository.save(pt);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2026, 2, 9, 20, 0),
+        60,
+        "Built arena and gathered potion mats for next boss attempts.",
+        PlayLogSessionExperience.GOOD);
+    saveLog(
+        userId,
+        gameId,
+        pt.getId(),
+        LocalDateTime.of(2026, 2, 23, 22, 5),
+        75,
+        "Mining run turned into an accidental biome tunnel project.",
+        PlayLogSessionExperience.OKAY);
+  }
+
+  private void seedStardewValley(String userId, Long gameId) {
     UserGamePlaythrough pt = new UserGamePlaythrough();
     pt.setUserId(userId);
     pt.setGameId(gameId);
@@ -502,18 +720,23 @@ public class DemoDataSeedService {
     pt.setDifficulty("Normal");
     pt.setCurrent(false);
     pt.setProgressStatus(
-        igdbId == 18472 ? PlaythroughProgressStatus.PLAYING : PlaythroughProgressStatus.COMPLETED);
-    if (igdbId != 18472) {
+        (igdbId == 14593 || igdbId == 125174)
+            ? PlaythroughProgressStatus.PLAYING
+            : PlaythroughProgressStatus.COMPLETED);
+    if (igdbId != 14593 && igdbId != 125174) {
       pt.setEndedAt(Instant.parse("2025-06-01T12:00:00Z"));
     }
     pt = playthroughRepository.save(pt);
 
     String note =
         switch ((int) igdbId) {
-          case 1877 -> "Side gigs in Japantown — photo mode ate 20 minutes.";
-          case 18472 -> "Short Godhome attempts tonight. Muscle memory is coming back slowly.";
-          case 1068 -> "Wheatley chapters — perfect difficulty curve.";
-          case 19560 -> "Baldur fight choreography is still stunning.";
+          case 76253 -> "Training mode + combo challenges before returning to campaign.";
+          case 472 -> "Short dungeon crawl to test a mod list refresh.";
+          case 14593 -> "Pantheon attempts; one clean run, two fast wipes.";
+          case 11169 -> "Boss encounter felt great, chapter pacing still dragging.";
+          case 1020 -> "One chaos sandbox session and a few stunt challenges.";
+          case 125174 -> "Quick support queue block to finish weekly tasks.";
+          case 186725 -> "One more unlock run before deciding to shelve it.";
           default -> "Wrapped a memorable run.";
         };
     saveLog(
@@ -529,15 +752,18 @@ public class DemoDataSeedService {
         gameId,
         pt.getId(),
         LocalDateTime.of(2025, 5, 28, 21, 5),
-        igdbId == 1068 ? 60 : 90,
+        igdbId == 125174 ? 55 : 90,
         switch ((int) igdbId) {
-          case 1877 -> "Tried a stealth-heavy build and bounced off it after one mission chain.";
-          case 18472 -> "Practiced one boss for an hour. Great combat rhythm, still very rusty.";
-          case 1068 -> "Co-op replay with a first-timer. Their reaction to each reveal was gold.";
-          case 19560 -> "Cleaned up valkyrie fights. Optional bosses are still a huge spike.";
+          case 76253 -> "Can execute the flashy stuff in training, still messy under pressure.";
+          case 472 -> "Spent most of the night crafting and forgot the main quest existed.";
+          case 14593 -> "Close on one pantheon clear — reaction timing still inconsistent.";
+          case 11169 -> "Took a break after long corridor chapter; might revisit later.";
+          case 1020 -> "Fun in short bursts, but no pull for long campaign replay now.";
+          case 125174 -> "Placements felt uneven; pausing ranked for now.";
+          case 186725 -> "Loop is satisfying, but progression goals started to feel repetitive.";
           default -> "Another evening session to push progress.";
         },
-        igdbId == 1877 ? PlayLogSessionExperience.MEH : PlayLogSessionExperience.GREAT);
+        (igdbId == 11169 || igdbId == 186725) ? PlayLogSessionExperience.MEH : PlayLogSessionExperience.GREAT);
   }
 
   private void saveLog(
