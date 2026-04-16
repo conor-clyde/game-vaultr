@@ -836,10 +836,14 @@ body.search-page .empty-state--surface {
     padding: 8px 0 46px;
   }
   .search-result-card .platforms {
+    box-sizing: border-box;
     flex-wrap: nowrap;
     font-size: 0.88rem;
     margin-top: 0;
     max-height: 1.45em;
+    /* Keep tags and +N clear of the 40px FAB + gutter (right: 10px) */
+    max-width: 100%;
+    padding-right: 52px;
   }
   .search-result-card .platforms .tag-more {
     color: var(--accent-mid);
@@ -867,7 +871,11 @@ body.search-page .empty-state--surface {
     padding-right: 40px;
   }
   .search-result-card > .card-body {
-    padding: 6px 0;
+    gap: 6px;
+    padding: 6px 0 46px;
+  }
+  .search-result-card .platforms {
+    padding-right: 48px;
   }
   .results-list {
     gap: 10px;
