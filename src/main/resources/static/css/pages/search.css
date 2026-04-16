@@ -776,9 +776,37 @@ body.search-page .empty-state--surface {
     padding: 0 16px 0 0;
   }
   .search-result-card .signals--tight,
-  .search-result-card > aside:not(:has(.review)),
-  .search-result-card > footer.toolbar {
+  .search-result-card > aside:not(:has(.review)) {
     display: none !important;
+  }
+  /* Icon-only add / in-collection — same behavior as desktop, bottom-right */
+  .search-result-card > footer.toolbar {
+    align-items: center;
+    bottom: 8px;
+    display: flex !important;
+    justify-content: flex-end;
+    left: auto;
+    margin: 0;
+    padding: 0 !important;
+    position: absolute;
+    right: 10px;
+    top: auto;
+    width: auto;
+    z-index: 4;
+  }
+  .search-result-card > footer.toolbar .btn-in-collection,
+  .search-result-card > footer.toolbar form .btn-primary {
+    border-radius: 10px;
+    height: 40px;
+    min-height: 40px;
+    min-width: 40px;
+    padding: 0;
+    width: 40px;
+  }
+  .search-result-card > footer.toolbar .btn .fa-plus,
+  .search-result-card > footer.toolbar .btn .fa-check {
+    font-size: 1rem;
+    margin: 0;
   }
   .search-result-card > figure {
     width: 64px;
@@ -804,18 +832,22 @@ body.search-page .empty-state--surface {
   }
   .search-result-card > .card-body {
     gap: 6px;
-    padding: 8px 0;
+    /* Reserve space for bottom-right add / collection FAB */
+    padding: 8px 0 46px;
   }
   .search-result-card .platforms {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     font-size: 0.88rem;
     margin-top: 0;
-    max-height: 2.8em;
+    max-height: 1.45em;
   }
   .search-result-card .platforms .tag-more {
-    color: var(--text-3);
+    color: var(--accent-mid);
     cursor: default;
+    flex-shrink: 0;
     font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 }
 @media (max-width: 380px) {

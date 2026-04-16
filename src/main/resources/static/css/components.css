@@ -2476,10 +2476,13 @@
 }
 .search-result-card .platforms .tag-more {
   color: var(--accent-mid);
-  cursor: pointer;
+  cursor: default;
+  flex-shrink: 0;
   font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
   margin-left: 0.2em;
   padding: 0;
+  white-space: nowrap;
 }
 .search-result-card .signals {
   align-items: baseline;
