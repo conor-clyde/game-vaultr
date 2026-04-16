@@ -39,16 +39,16 @@ public class AuthController {
 
   @PostMapping("/register")
   public String registerSubmit(
-      @RequestParam String email,
+      @RequestParam String username,
       @RequestParam String password,
       @RequestParam String confirmPassword,
       RedirectAttributes redirectAttributes) {
     return userRegistrationService
-        .validateAndRegister(email, password, confirmPassword)
+        .validateAndRegister(username, password, confirmPassword)
         .map(
             error -> {
               redirectAttributes.addFlashAttribute("registerError", error);
-              redirectAttributes.addFlashAttribute("registerEmail", email);
+              redirectAttributes.addFlashAttribute("registerUsername", username);
               return "redirect:/register";
             })
         .orElse("redirect:/login?registered");

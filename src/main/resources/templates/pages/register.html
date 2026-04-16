@@ -11,7 +11,7 @@
           <div th:replace="~{fragments/layout/site-logo :: authCard}"></div>
           <h1 class="auth-title">Create account</h1>
           <p class="auth-lead">
-            Use your email and a password to get started.
+            Pick a username and password to get started.
           </p>
 
           <p
@@ -25,18 +25,21 @@
 
           <form class="auth-form" th:action="@{/register}" method="post">
             <div class="auth-field">
-              <label class="auth-label" for="reg-email">Email</label>
+              <label class="auth-label" for="reg-username">Username</label>
               <input
                 class="auth-input"
-                type="email"
-                id="reg-email"
-                name="email"
-                autocomplete="email"
+                type="text"
+                id="reg-username"
+                name="username"
+                autocomplete="username"
                 required
-                maxlength="254"
-                th:value="${registerEmail}"
+                minlength="3"
+                maxlength="64"
+                th:value="${registerUsername}"
               />
-              <p class="auth-hint">Must be unique on this site.</p>
+              <p class="auth-hint">
+                3–64 characters: letters, numbers, or underscores.
+              </p>
             </div>
             <div class="auth-field">
               <label class="auth-label" for="reg-password">Password</label>
