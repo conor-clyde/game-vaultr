@@ -8,6 +8,8 @@
 
 The site is fully usable at **[gamevaultr.com](https://gamevaultr.com)**.
 
+*Note:* The application is hosted on a free tier service, so it may take a few minutes to load if it hasn’t been used recently.
+
 Demo login:
 
 ```
