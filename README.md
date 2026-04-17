@@ -29,19 +29,19 @@ Password: demopassword
 ## Product preview
 
 ### Home — your collection at a glance
-<img src="docs/media/Home.png" width="700"/>
+<img src="docs/media/Home.png" width="750"/>
 
 ---
 ### Search and add — build your library quickly
-<img src="docs/media/search-add.gif" width="700"/>
+<img src="docs/media/search-add.gif" width="750"/>
 
 ---
 ### Collection — organize and manage your games
-<img src="docs/media/collection.gif" width="700"/>
+<img src="docs/media/collection.gif" width="750"/>
 
 ---
 ### Game page — know exactly where you left off
-<img src="docs/media/game.png" width="700"/>
+<img src="docs/media/game.png" width="750"/>
 
 ---
 ### Intentions — define how you want to play
@@ -60,7 +60,7 @@ Password: demopassword
 
 ---
 ### Reflect and review
-<img src="docs/media/reflect.png" width="700"/>
+<img src="docs/media/reflect.png" width="650"/>
 
 ---
 
