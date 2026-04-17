@@ -1,0 +1,81 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout/layout-head :: head}"></head>
+
+  <body class="legal-page">
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
+
+    <main class="legal-main" id="main-content">
+      <article class="legal-doc">
+        <h1>Privacy policy</h1>
+        <p class="legal-updated">Last updated: April 17, 2026</p>
+
+        <p>
+          This policy applies to <strong>GameVaultr</strong> at
+          <a href="https://gamevaultr.com/">https://gamevaultr.com/</a>. It describes how I handle
+          information when you use the site. Contact me at clydeconor@gmail.com.
+        </p>
+
+        <h2>What is collected</h2>
+        <ul>
+          <li>
+            <strong>Account.</strong> Username and a <strong>hashed</strong> password only (no plain
+            text passwords; no email for sign-up in the current product).
+          </li>
+          <li>
+            <strong>Your content.</strong> What you add in the app—collection, play logs, reviews,
+            playthroughs, notes, and similar—stored with your account.
+          </li>
+          <li>
+            <strong>IGDB.</strong> Public game catalog data (titles, art, etc.) from
+            <a href="https://www.igdb.com" target="_blank" rel="noopener noreferrer">IGDB</a> may be
+            cached in my database; that is general catalog info, not a profile “about” you. Search
+            queries go to IGDB to return results. A Twitch API token for IGDB lives on the server (app
+            credentials)—that is not your personal Twitch login.
+          </li>
+          <li>
+            <strong>Session &amp; device.</strong> A server session keeps you signed in and can
+            remember in-app choices (e.g. search filters) during your visit. Session and CSRF cookies
+            are strictly necessary for login and secure forms. The collection page may store optional
+            UI preferences in <code>localStorage</code> on your device. I do not add advertising or
+            analytics trackers in the shipped app; fonts/icons may load from a public CDN and game
+            art from IGDB as described.
+          </li>
+        </ul>
+
+        <h2>Use, storage, and sharing</h2>
+        <p>
+          I use this data only to run GameVaultr (accounts, collection, search, reliability, security).
+          Your account and library data are stored in <strong>PostgreSQL on Neon</strong>
+          (<a href="https://neon.tech" target="_blank" rel="noopener noreferrer">neon.tech</a>).
+          Neon and other providers may keep backups or replicas under their own terms—I do not run a
+          separate personal backup or export routine beyond relying on that infrastructure. Hosting may
+          still produce routine operational logs; I do not use logs to advertise or to track you
+          across sites. I send search/metadata requests to IGDB as needed. I do <strong>not</strong>
+          sell your personal information. I may disclose information if the law requires it or to
+          protect the service, users, or others.
+        </p>
+
+        <h2>Your rights &amp; deletion</h2>
+        <p>
+          You may have rights (depending on where you live) to access, correct, delete, or restrict
+          processing of your information. Self-serve tools may not exist in every deployment. To
+          request access, correction, or deletion of your account and data, email me at the address
+          above. I retain your data
+          while your account exists and only as needed to run the service; when you ask for deletion, I
+          delete or anonymize it subject to legal requirements and how long copies may persist in
+          infrastructure backups outside my direct control.
+        </p>
+
+        <h2>Security &amp; children</h2>
+        <p>
+          Passwords are hashed. Use HTTPS in production. No storage or transmission is perfect.
+          GameVaultr is not aimed at children under 13; I do not knowingly collect their personal
+          information. If you think I have, contact me and I will delete it.
+        </p>
+      </article>
+    </main>
+
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
+  </body>
+</html>

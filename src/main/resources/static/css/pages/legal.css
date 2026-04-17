@@ -1,0 +1,73 @@
+/* Let the document grow past the viewport; fixed html/body height + flex-shrink on main
+   was squeezing long legal content so text drew over the footer. */
+html:has(body.legal-page) {
+  height: auto;
+  min-height: 100%;
+}
+.legal-page {
+  background: #000;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.legal-page > .navbar {
+  flex-shrink: 0;
+}
+main.legal-main {
+  background-color: #000;
+  box-sizing: border-box;
+  flex: 1 0 auto;
+  margin: 0 auto;
+  max-width: min(42rem, calc(100vw - 2.5rem));
+  padding: max(clamp(1.5rem, 5vmin, 2.75rem), env(safe-area-inset-top, 0))
+    max(20px, env(safe-area-inset-right, 0))
+    max(clamp(2.5rem, 7vmin, 4rem), env(safe-area-inset-bottom, 0))
+    max(20px, env(safe-area-inset-left, 0));
+  width: 100%;
+}
+.legal-page .site-footer {
+  position: relative;
+  z-index: 2;
+}
+.legal-doc h1 {
+  font-size: clamp(1.5rem, 4vw, 1.85rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 0.35rem;
+}
+.legal-doc .legal-updated {
+  color: var(--text-muted, rgba(255, 255, 255, 0.55));
+  font-size: 0.9rem;
+  margin: 0 0 1.75rem;
+}
+.legal-doc h2 {
+  font-size: 1.05rem;
+  font-weight: 650;
+  margin: 1.75rem 0 0.65rem;
+}
+.legal-doc p,
+.legal-doc li {
+  color: var(--text-secondary, rgba(255, 255, 255, 0.82));
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 0.85rem;
+}
+.legal-doc ul {
+  margin: 0 0 1rem;
+  padding-left: 1.35rem;
+}
+.legal-doc li {
+  margin-bottom: 0.45rem;
+}
+.legal-doc a {
+  color: var(--accent, #8b9cff);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.legal-doc a:hover {
+  color: var(--text-primary);
+}

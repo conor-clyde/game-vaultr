@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout/layout-head :: head}"></head>
+
+  <body class="legal-page">
+    <div th:replace="~{fragments/layout/navbar :: navbar}"></div>
+
+    <main class="legal-main" id="main-content">
+      <article class="legal-doc">
+        <h1>Contact</h1>
+        <p class="legal-updated">How to reach me</p>
+
+        <p>
+          About GameVaultr at <a href="https://gamevaultr.com/">https://gamevaultr.com/</a>. For
+          privacy questions, account or data requests, or general feedback, email me at
+          clydeconor@gmail.com.
+        </p>
+      </article>
+    </main>
+
+    <div th:replace="~{fragments/layout/footer :: footer}"></div>
+  </body>
+</html>

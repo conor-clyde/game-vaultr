@@ -48,7 +48,7 @@ public class Game {
   @Column(name = "igdb_last_attempt_at")
   private LocalDateTime igdbLastAttemptAt;
 
-  @Column(name = "last_updated", nullable = false)
+  @Column(name = "last_updated")
   private LocalDateTime lastUpdated;
 
   public Game() {}

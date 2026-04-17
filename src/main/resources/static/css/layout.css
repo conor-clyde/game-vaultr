@@ -677,12 +677,27 @@ main {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+.site-footer-contact,
 .site-footer-attribution,
 .site-footer-copy {
   color: var(--text-3);
   font-size: 0.75rem;
   line-height: 1.5;
   margin: 0;
+}
+.site-footer-contact a {
+  color: var(--accent-mid);
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+}
+.site-footer-contact a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+.site-footer-contact a:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 .site-footer-attribution {
   border-top: 1px solid var(--border);
