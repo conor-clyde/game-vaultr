@@ -2,8 +2,6 @@
 
 ![Gamevaultr logo](docs/media/0gvlogo.png)
 
-![Gamevaultr wordmark on dark](docs/media/gvlogo.png)
-
 **Gamevaultr** is a personal game vault: build your collection, then track playthroughs, sessions, ratings, and notes in one place.
 
 ## Live app
@@ -31,42 +29,38 @@ Password: demopassword
 ## Product preview
 
 ### Home — your collection at a glance
+<img src="docs/media/Home.png" width="700"/>
 
-![Home](docs/media/Home.png)
-
-![Home — alternate view](docs/media/HomeScreenshot.png)
-
+---
 ### Search and add — build your library quickly
+<img src="docs/media/search-add.gif" width="700"/>
 
-![Search and add](docs/media/search-add.gif)
-
+---
 ### Collection — organize and manage your games
+<img src="docs/media/collection.gif" width="700"/>
 
-![Collection](docs/media/collection.gif)
+---
+### Game page — know exactly where you left off
+<img src="docs/media/game.png" width="700"/>
 
-### Game page — pick up where you left off
-
-![Game page](docs/media/game.png)
-
+---
 ### Intentions — define how you want to play
+<img src="docs/media/intentions.png" width="550"/>
 
-![Intentions](docs/media/intentions.png)
-
+---
 ### Session logging — record each play session
+<img src="docs/media/log-play.png" width="550"/>
 
-![Log a play session](docs/media/log-play.png)
+#### Play history saved under playthroughs
+<img src="docs/media/play-history.png" width="650"/>
 
-![Play history — detailed view](docs/media/log-play-history.png)
+---
+### Session timer widget — track playtime in real time
+<img src="docs/media/timer.png" width="400"/>
 
-![Play history](docs/media/play-history.png)
-
-### Session timer — track playtime in real time
-
-![Session timer](docs/media/timer.png)
-
-### Review and reflect — capture your experience
-
-![Reflect](docs/media/reflect.png)
+---
+### Reflect and review
+<img src="docs/media/reflect.png" width="700"/>
 
 ---
 
